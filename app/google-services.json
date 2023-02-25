@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "332181083566",
+    "project_id": "chatjet-29eee",
+    "storage_bucket": "chatjet-29eee.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:332181083566:android:350278c48e96709d45243f",
+        "android_client_info": {
+          "package_name": "com.example.chatjet"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "332181083566-f5dpj4kp7pkl8qfev6sfnnf2beaoj869.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA35f2lnXI_a_t8Y7_1mpn3L2pPvAyG0ks"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "332181083566-f5dpj4kp7pkl8qfev6sfnnf2beaoj869.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

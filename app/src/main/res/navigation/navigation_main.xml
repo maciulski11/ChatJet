@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<navigation xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/navigation_main"
+    app:startDestination="@id/loginFragment">
+
+    <fragment
+        android:id="@+id/loginFragment"
+        android:name="com.example.chatjet.ui.screen.LoginFragment"
+        android:label="LoginFragment" >
+
+
+    </fragment>
+    <fragment
+        android:id="@+id/chatFragment"
+        android:name="com.example.chatjet.ui.screen.ChatFragment"
+        android:label="ChatFragment" >
+
+
+    </fragment>
+    <fragment
+        android:id="@+id/usersFragment"
+        android:name="com.example.chatjet.ui.screen.UsersFragment"
+        android:label="UsersFragment" >
+
+    </fragment>
+</navigation>
