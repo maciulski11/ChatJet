@@ -1,4 +1,8 @@
 package com.example.chatjet.data.model
 
-class User {
-}
+data class User (
+    val email: String? = null,
+    val uid: String? = null,
+    val full_name: String? = null,
+    val photo: String? = null
+)

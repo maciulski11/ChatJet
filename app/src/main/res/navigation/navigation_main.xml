@@ -10,6 +10,9 @@
         android:label="LoginFragment" >
 
 
+        <action
+            android:id="@+id/action_loginFragment_to_usersFragment"
+            app:destination="@id/usersFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
