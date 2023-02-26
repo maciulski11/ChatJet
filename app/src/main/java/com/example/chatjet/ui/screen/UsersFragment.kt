@@ -28,7 +28,7 @@ class UsersFragment: BaseFragment() {
         // We initialize our user list:
         usersList = arrayListOf()
 
-        adapter = UsersAdapter(usersList)
+        adapter = UsersAdapter(usersList, requireView())
         usersRecyclerView.adapter = adapter
 
         viewModel.usersList.observe(this) {

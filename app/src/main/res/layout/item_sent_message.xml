@@ -16,7 +16,7 @@
         android:backgroundTint="@color/powderBlue">
 
     <TextView
-        android:id="@+id/sentMessage"
+        android:id="@+id/messageTV"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
