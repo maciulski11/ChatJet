@@ -1,19 +1,23 @@
 package com.example.chatjet.services
 
-import android.annotation.SuppressLint
 import android.util.Log
 import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import kotlinx.android.synthetic.main.fragment_chat.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class FirebaseRepository {
 
-    private val fbAuth = FirebaseAuth.getInstance()
-    private val fbUser = fbAuth.currentUser
     private val db = FirebaseFirestore.getInstance()
+    private val fbAuth = FirebaseAuth.getInstance()
 
-    private val currentUserUid: String?
+    val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
+
+    private val dbUser = db.collection("users").document(currentUserUid!!)
+    private val dbChat = db.collection("chat")
 
     companion object {
         const val USERS = "users"
@@ -55,6 +59,41 @@ class FirebaseRepository {
                     Log.e("Jest blad", task.exception?.message.toString())
                     onComplete.invoke(arrayListOf())
                 }
+            }
+    }
+
+    fun fetchFullNameUser(userUid: String, onComplete: (User?) -> Unit) {
+        // Load full name user to you write
+        db.collection(FirebaseRepository.USERS).document(userUid)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                if (documentSnapshot.exists()) {
+                    val user = documentSnapshot.toObject(User::class.java)
+                    onComplete(user)
+                }
+            }
+            .addOnFailureListener { exception ->
+                Log.d("TAG", "Error getting user document: ", exception)
+            }
+    }
+
+    fun sendMessage(senderId: String, receiverId: String, message: String) {
+        val currentTime = System.currentTimeMillis()
+        val chat = hashMapOf(
+            "senderId" to senderId,
+            "receiverId" to receiverId,
+            "message" to message,
+            "timestamp" to currentTime,
+            "sentAt" to Date(currentTime)
+        )
+
+        db.collection("chat")
+            .add(chat)
+            .addOnSuccessListener { documentReference ->
+                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error adding document", e)
             }
     }
 }

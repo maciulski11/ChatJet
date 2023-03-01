@@ -1,8 +1,6 @@
 package com.example.chatjet.ui.screen
 
-import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
-import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -40,6 +38,8 @@ class ChatFragment : BaseFragment() {
     // Added object which registration listener in Firebase
     private var chatListenerRegistration: ListenerRegistration? = null
 
+    private val viewModel: MainViewModel by activityViewModels()
+
     override fun subscribeUi() {
 
         val userUid = requireArguments().getString("uid").toString()
@@ -50,18 +50,7 @@ class ChatFragment : BaseFragment() {
         chatRecyclerView.layoutManager = layoutManager
         chatRecyclerView.setHasFixedSize(true)
 
-        // Wczytuje imie do kogo piszesz
-        db.collection("users").document(userUid)
-            .get()
-            .addOnSuccessListener { documentSnapshot ->
-                if (documentSnapshot.exists()) {
-                    val user = documentSnapshot.toObject(User::class.java)
-                    nameUser.text = user!!.full_name
-                }
-            }
-            .addOnFailureListener { exception ->
-                Log.d("TAG", "Error getting user document: ", exception)
-            }
+        viewModel.fetchFullNameUser(userUid, requireView())
 
         returnBT.setOnClickListener {
 
@@ -77,23 +66,25 @@ class ChatFragment : BaseFragment() {
                 return@setOnClickListener
 
             } else {
-
-                dbUser.addSnapshotListener(object : EventListener<DocumentSnapshot> {
-                    override fun onEvent(
-                        snapshot: DocumentSnapshot?,
-                        error: FirebaseFirestoreException?
-                    ) {
-                        if (error != null) {
-                            Log.w("TAG", "Listen failed.", error)
-                            return
-                        }
-                        if (snapshot != null && snapshot.exists()) {
-                            val user = snapshot.toObject(User::class.java)
-                            val namee: String = user!!.full_name.toString()
-
-                            sendMessage(currentUserUid!!, userUid, message)
-                            Log.d("REPOUSER", "$userUid, $message")
-                            writeMessage.setText("")
+                sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
+                Log.d("REPOUSER", "$userUid, $message")
+                writeMessage.setText("")
+//                dbUser.addSnapshotListener(object : EventListener<DocumentSnapshot> {
+//                    override fun onEvent(
+//                        snapshot: DocumentSnapshot?,
+//                        error: FirebaseFirestoreException?
+//                    ) {
+//                        if (error != null) {
+//                            Log.w("TAG", "Listen failed.", error)
+//                            return
+//                        }
+//                        if (snapshot != null && snapshot.exists()) {
+//                            val user = snapshot.toObject(User::class.java)
+//                            val namee: String = user!!.full_name.toString()
+//
+//                            sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
+//                            Log.d("REPOUSER", "$userUid, $message")
+//                            writeMessage.setText("")
 //                            topic = "/topics/${userUid}"
 //                            PushNotification(
 //                                NotificationData("${namee} :", message),
@@ -107,11 +98,11 @@ class ChatFragment : BaseFragment() {
 //                                .document(firebaseUser.uid)
 //                                .update("message", message)
 
-                        } else {
-                            Log.d("TAG", "Current data: null")
-                        }
-                    }
-                })
+//                        } else {
+//                            Log.d("TAG", "Current data: null")
+//                        }
+//                    }
+//                })
             }
         }
         readMessage(currentUserUid!!, userUid)
@@ -120,22 +111,9 @@ class ChatFragment : BaseFragment() {
     }
 
     private fun sendMessage(senderId: String, receiverId: String, message: String) {
-        val currentTime = System.currentTimeMillis()
-        val chat = hashMapOf(
-            "senderId" to senderId,
-            "receiverId" to receiverId,
-            "message" to message,
-            "timestamp" to currentTime,
-            "sentAt" to Date(currentTime)
-        )
 
-        dbChat.add(chat)
-            .addOnSuccessListener { documentReference ->
-                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w("TAG", "Error adding document", e)
-            }
+        FirebaseRepository().sendMessage(senderId, receiverId, message)
+
     }
 
     private fun readMessage(senderId: String, receiverId: String) {
