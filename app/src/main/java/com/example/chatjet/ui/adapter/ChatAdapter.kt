@@ -17,8 +17,8 @@ class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<C
         get() = fbAuth.currentUser?.uid
 
     companion object {
-        private val MESSAGE_TYPE_LEFT = 0
-        private val MESSAGE_TYPE_RIGHT = 1
+        private const val MESSAGE_TYPE_LEFT = 0
+        private const val MESSAGE_TYPE_RIGHT = 1
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -51,9 +51,9 @@ class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<C
 
     }
 
-    inner class MyViewHolder(private val v: View): RecyclerView.ViewHolder(v) {
+    inner class MyViewHolder(v: View): RecyclerView.ViewHolder(v) {
 
-        val message = v.findViewById<TextView>(R.id.messageTV)
+        private val message = v.findViewById<TextView>(R.id.messageTV)
 
         fun bindView(chat: Chat) {
             message.text = chat.message

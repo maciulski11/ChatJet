@@ -1,8 +1,10 @@
 package com.example.chatjet.ui.screen
 
+import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
+import android.os.Bundle
 import android.util.Log
-import android.widget.Toast
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
@@ -10,12 +12,12 @@ import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.ChatGroup
 import com.example.chatjet.data.model.User
+import com.example.chatjet.services.FirebaseRepository
 import com.example.chatjet.ui.adapter.ChatAdapter
+import com.example.chatjet.view_model.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.DocumentSnapshot
+import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.firestore.FirebaseFirestoreException
 import kotlinx.android.synthetic.main.fragment_chat.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -24,6 +26,7 @@ class ChatFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_chat
 
     private var chatList = ArrayList<Chat>()
+    private lateinit var adapter: ChatAdapter
 
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
@@ -34,6 +37,8 @@ class ChatFragment : BaseFragment() {
     private val dbUser = db.collection("users").document(currentUserUid!!)
     private val dbChat = db.collection("chat")
 
+    // Added object which registration listener in Firebase
+    private var chatListenerRegistration: ListenerRegistration? = null
 
     override fun subscribeUi() {
 
@@ -59,6 +64,9 @@ class ChatFragment : BaseFragment() {
             }
 
         returnBT.setOnClickListener {
+
+            // Exit from listener when you click button return
+            chatListenerRegistration!!.remove()
             findNavController().navigate(R.id.action_chatFragment_to_usersFragment)
         }
 
@@ -84,6 +92,7 @@ class ChatFragment : BaseFragment() {
                             val namee: String = user!!.full_name.toString()
 
                             sendMessage(currentUserUid!!, userUid, message)
+                            Log.d("REPOUSER", "$userUid, $message")
                             writeMessage.setText("")
 //                            topic = "/topics/${userUid}"
 //                            PushNotification(
@@ -97,6 +106,7 @@ class ChatFragment : BaseFragment() {
 //                                .collection("last_message")
 //                                .document(firebaseUser.uid)
 //                                .update("message", message)
+
                         } else {
                             Log.d("TAG", "Current data: null")
                         }
@@ -104,8 +114,9 @@ class ChatFragment : BaseFragment() {
                 })
             }
         }
-
         readMessage(currentUserUid!!, userUid)
+
+
     }
 
     private fun sendMessage(senderId: String, receiverId: String, message: String) {
@@ -129,7 +140,8 @@ class ChatFragment : BaseFragment() {
 
     private fun readMessage(senderId: String, receiverId: String) {
 
-        dbChat.addSnapshotListener { snapshot, error ->
+        // Implemented object listener which is listening change in Firebase
+        chatListenerRegistration = dbChat.addSnapshotListener { snapshot, error ->
             if (error != null) {
                 Log.w("TAG", "Listen failed.", error)
                 return@addSnapshotListener
@@ -169,14 +181,16 @@ class ChatFragment : BaseFragment() {
                     chatGroupList.add(ChatGroup(date.toString(), chats))
                 }
 
-                val adpter = ChatAdapter(chatList)
-                chatRecyclerView.adapter = adpter
+                adapter = ChatAdapter(chatList)
+                chatRecyclerView.adapter = adapter
+                Log.d("REPOADAPTER", "$adapter")
+
 
             } else {
 
                 // List is empty, load empty layout
                 chatList.clear()
-                val adapter = ChatAdapter(chatList)
+                adapter = ChatAdapter(chatList)
                 chatRecyclerView.adapter = adapter
 
             }
