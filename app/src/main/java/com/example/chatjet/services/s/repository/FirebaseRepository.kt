@@ -1,10 +1,9 @@
-package com.example.chatjet.services
+package com.example.chatjet.services.s.repository
 
 import android.util.Log
 import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import kotlinx.android.synthetic.main.fragment_chat.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -64,7 +63,7 @@ class FirebaseRepository {
 
     fun fetchFullNameUser(userUid: String, onComplete: (User?) -> Unit) {
         // Load full name user to you write
-        db.collection(FirebaseRepository.USERS).document(userUid)
+        db.collection(USERS).document(userUid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
@@ -95,5 +94,7 @@ class FirebaseRepository {
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error adding document", e)
             }
+
+
     }
 }

@@ -7,16 +7,18 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
-import com.example.chatjet.data.model.Chat
-import com.example.chatjet.data.model.ChatGroup
-import com.example.chatjet.services.FirebaseRepository
+import com.example.chatjet.data.model.*
+import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.ChatAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import kotlinx.android.synthetic.main.fragment_chat.*
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.random.Random.Default.nextInt
 
 class ChatFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_chat
@@ -28,9 +30,12 @@ class ChatFragment : BaseFragment() {
 
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
+    private val dbUser = db.collection("users").document(currentUserUid!!)
 
     private val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
+
+    var topic = ""
 
     private val dbChat = db.collection("chat")
 
@@ -49,7 +54,7 @@ class ChatFragment : BaseFragment() {
         chatRecyclerView.layoutManager = layoutManager
         chatRecyclerView.setHasFixedSize(true)
 
-        viewModel.fetchFullNameUser(userUid, requireView())
+        viewModel.fetchFullNameUser(userUid, requireView(), requireContext())
 
 //        chatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 //            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
@@ -75,6 +80,7 @@ class ChatFragment : BaseFragment() {
                 return@setOnClickListener
 
             } else {
+
                 sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
@@ -82,7 +88,6 @@ class ChatFragment : BaseFragment() {
             }
         }
         readMessage(currentUserUid!!, userUid)
-
 
     }
 
@@ -114,6 +119,7 @@ class ChatFragment : BaseFragment() {
                             chat.senderId == receiverId && chat.receiverId == senderId
                         ) {
                             chatList.add(chat)
+
                         }
                     }
 
@@ -138,7 +144,7 @@ class ChatFragment : BaseFragment() {
                         chatGroupList.add(ChatGroup(date.toString(), chats))
                     }
 
-                    adapter = ChatAdapter(chatList)
+                    adapter = ChatAdapter(chatList, requireContext())
                     chatRecyclerView.adapter = adapter
                     Log.d("REPOADAPTER", "$adapter")
 
@@ -146,7 +152,7 @@ class ChatFragment : BaseFragment() {
 
                     // List is empty, load empty layout
                     chatList.clear()
-                    adapter = ChatAdapter(chatList)
+                    adapter = ChatAdapter(chatList, requireContext())
                     chatRecyclerView.adapter = adapter
 
                 }

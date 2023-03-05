@@ -8,5 +8,5 @@ data class Chat (
     val receiverId:String? = null,
     val message:String? = null,
     val timestamp: Long? = null,
-    val sentAt: Date? = null
+    val sentAt: Date? = null,
         )

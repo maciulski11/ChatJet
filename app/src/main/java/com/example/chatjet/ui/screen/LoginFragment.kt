@@ -1,10 +1,10 @@
 package com.example.chatjet.ui.screen
 
 import android.util.Log
-import android.widget.Toast
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
+import com.example.chatjet.data.model.User
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
@@ -38,7 +38,11 @@ class LoginFragment: BaseFragment() {
                     password
                 )
                     .addOnSuccessListener { authRes ->
+
+                        val user = User()
+
                         if (authRes != null){
+
                             findNavController().navigate(R.id.action_loginFragment_to_usersFragment)
                         }
                     }
