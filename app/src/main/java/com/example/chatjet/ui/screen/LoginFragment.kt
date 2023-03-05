@@ -39,8 +39,6 @@ class LoginFragment: BaseFragment() {
                 )
                     .addOnSuccessListener { authRes ->
 
-                        val user = User()
-
                         if (authRes != null){
 
                             findNavController().navigate(R.id.action_loginFragment_to_usersFragment)
