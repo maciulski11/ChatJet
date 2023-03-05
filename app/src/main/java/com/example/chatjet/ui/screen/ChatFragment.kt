@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
+import com.example.chatjet.RetrofitInstance
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.*
 import com.example.chatjet.services.s.repository.FirebaseRepository
@@ -13,12 +14,13 @@ import com.example.chatjet.ui.adapter.ChatAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.RemoteMessage
+import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_chat.*
+import kotlinx.coroutines.CoroutineScope
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.random.Random.Default.nextInt
 
 class ChatFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_chat
@@ -43,11 +45,13 @@ class ChatFragment : BaseFragment() {
     private var chatListenerRegistration: ListenerRegistration? = null
 
     private val viewModel: MainViewModel by activityViewModels()
-    val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
+    private val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
     override fun subscribeUi() {
 
-        val userUid = requireArguments().getString("uid").toString()
+        val user = requireArguments().getParcelable<User>("user")
+        val userUid = user?.uid!!
+        val userName = user.full_name
 
         // Wczytanie elementów w recycler view od dołu:
         layoutManager.stackFromEnd = true
@@ -84,6 +88,12 @@ class ChatFragment : BaseFragment() {
                 sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
+//                topic = "/topics/${userUid}"
+//                PushNotification(NotificationData("$userName :", message),
+//                    topic).also {
+//                    sendNotification(it)
+//                }
+
 
             }
         }
@@ -163,6 +173,19 @@ class ChatFragment : BaseFragment() {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
         return dateFormat.format(date)
     }
+
+//    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+//        try {
+//            val response = RetrofitInstance.api.postNotification(notification)
+//            if(response.isSuccessful) {
+//                Log.d("TAG", "Response: ${Gson().toJson(response)}")
+//            } else {
+//                Log.e("TAG", response.errorBody()!!.string())
+//            }
+//        } catch(e: Exception) {
+//            Log.e("TAG", e.toString())
+//        }
+//    }
 
     override fun unsubscribeUi() {
 

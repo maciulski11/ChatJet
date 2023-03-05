@@ -26,9 +26,15 @@ class UsersAdapter(var usersList: ArrayList<User>, private val v: View): Recycle
 
         holder.chooseUser.setOnClickListener {
             val bundle = Bundle()
-            bundle.putString(
-                "uid",
-                user.uid
+            bundle.putParcelable(
+                "user",
+                User(
+                    "",
+                    user.uid,
+                    user.full_name,
+                    "",
+                    "",
+                )
             )
             v.findNavController().navigate(R.id.action_usersFragment_to_chatFragment, bundle)
         }
