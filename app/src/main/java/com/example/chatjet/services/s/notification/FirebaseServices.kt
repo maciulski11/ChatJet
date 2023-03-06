@@ -63,12 +63,22 @@ class FirebaseServices : FirebaseMessagingService() {
 
     private fun createNotificationChannel(notificationManager: NotificationManager){
 
-        val channelName = "ChannelFirebaseChat"
-        val channel = NotificationChannel(CHANNEL_ID,channelName,IMPORTANCE_HIGH).apply {
-            description="MY FIREBASE CHAT DESCRIPTION"
-            enableLights(true)
-            lightColor = Color.BLACK
+//        val channelName = "ChannelFirebaseChat"
+//        val channel = NotificationChannel(CHANNEL_ID,channelName,IMPORTANCE_HIGH).apply {
+//            description="MY FIREBASE CHAT DESCRIPTION"
+//            enableLights(true)
+//            lightColor = Color.BLACK
+//        }
+//        notificationManager.createNotificationChannel(channel)
+
+        val name = "Nazwa kanału"
+        val descriptionText = "Opis kanału"
+        val importance = NotificationManager.IMPORTANCE_DEFAULT
+        val channel = NotificationChannel("channel_id", name, importance).apply {
+            description = descriptionText
         }
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
 
     }

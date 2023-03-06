@@ -48,7 +48,7 @@ class ChatAdapter(private val chatList: ArrayList<Chat>, private val context: Co
     override fun getItemCount(): Int = chatList.size
 
     override fun getItemViewType(position: Int): Int {
-        return if (chatList[position].senderId == currentUserUid) {
+        return if (chatList[position].senderId == FirebaseAuth.getInstance().uid) {
             MESSAGE_TYPE_RIGHT
         } else {
             MESSAGE_TYPE_LEFT
