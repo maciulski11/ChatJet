@@ -88,11 +88,11 @@ class ChatFragment : BaseFragment() {
                 sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
-                topic = "/topics/${userUid}"
-                PushNotification(NotificationData("$userName :", message),
-                    topic).also {
-                    sendNotification(it)
-                }
+//                topic = "/topics/${userUid}"
+//                PushNotification(NotificationData("$userName :", message),
+//                    topic).also {
+//                    sendNotification(it)
+//                }
 
 
             }
@@ -174,18 +174,18 @@ class ChatFragment : BaseFragment() {
         return dateFormat.format(date)
     }
 
-    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
-        try {
-            val response = RetrofitInstance.api.postNotification(notification)
-            if(response.isSuccessful) {
-                Log.d("TAG", "Response: ${Gson().toJson(response)}")
-            } else {
-                Log.e("TAG", response.errorBody()!!.string())
-            }
-        } catch(e: Exception) {
-            Log.e("TAG", e.toString())
-        }
-    }
+//    private fun sendNotification(notification: PushNotification) = CoroutineScope(Dispatchers.IO).launch {
+//        try {
+//            val response = RetrofitInstance.api.postNotification(notification)
+//            if(response.isSuccessful) {
+//                Log.d("TAG", "Response: ${Gson().toJson(response)}")
+//            } else {
+//                Log.e("TAG", response.errorBody()!!.string())
+//            }
+//        } catch(e: Exception) {
+//            Log.e("TAG", e.toString())
+//        }
+//    }
 
     override fun unsubscribeUi() {
 

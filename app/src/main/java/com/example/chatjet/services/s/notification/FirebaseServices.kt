@@ -10,6 +10,7 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Build
+import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.chatjet.R
 import com.example.chatjet.ui.activity.MainActivity
@@ -37,6 +38,7 @@ class FirebaseServices : FirebaseMessagingService() {
         token = p0
     }
 
+    @RequiresApi(Build.VERSION_CODES.S)
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
@@ -63,22 +65,12 @@ class FirebaseServices : FirebaseMessagingService() {
 
     private fun createNotificationChannel(notificationManager: NotificationManager){
 
-//        val channelName = "ChannelFirebaseChat"
-//        val channel = NotificationChannel(CHANNEL_ID,channelName,IMPORTANCE_HIGH).apply {
-//            description="MY FIREBASE CHAT DESCRIPTION"
-//            enableLights(true)
-//            lightColor = Color.BLACK
-//        }
-//        notificationManager.createNotificationChannel(channel)
-
-        val name = "Nazwa kanału"
-        val descriptionText = "Opis kanału"
-        val importance = NotificationManager.IMPORTANCE_DEFAULT
-        val channel = NotificationChannel("channel_id", name, importance).apply {
-            description = descriptionText
+        val channelName = "ChannelFirebaseChat"
+        val channel = NotificationChannel(CHANNEL_ID,channelName,IMPORTANCE_HIGH).apply {
+            description="MY FIREBASE CHAT DESCRIPTION"
+            enableLights(true)
+            lightColor = Color.BLACK
         }
-        val notificationManager: NotificationManager =
-            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         notificationManager.createNotificationChannel(channel)
 
     }
