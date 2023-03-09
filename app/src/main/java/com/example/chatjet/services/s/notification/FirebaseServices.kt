@@ -10,11 +10,13 @@ import android.content.Intent
 import android.content.SharedPreferences
 import android.graphics.Color
 import android.os.Build
+import android.util.Log
 import androidx.core.app.NotificationCompat
 import com.example.chatjet.R
 import com.example.chatjet.ui.activity.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
+import kotlinx.coroutines.delay
 import kotlin.random.Random
 
 class FirebaseServices : FirebaseMessagingService() {
@@ -40,6 +42,9 @@ class FirebaseServices : FirebaseMessagingService() {
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
         super.onMessageReceived(remoteMessage)
 
+        Log.d("REPO_NOTIFICATION", "onMessageRecived kork 3")
+
+
         val intent = Intent(this, MainActivity::class.java)
         val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationId = Random.nextInt()
@@ -62,6 +67,8 @@ class FirebaseServices : FirebaseMessagingService() {
     }
 
     private fun createNotificationChannel(notificationManager: NotificationManager){
+
+        Log.d("REPO_NOTIFICATION", "createnotificationchannel kork 4")
 
         val channelName = "ChannelFirebaseChat"
         val channel = NotificationChannel(CHANNEL_ID,channelName,IMPORTANCE_HIGH).apply {
