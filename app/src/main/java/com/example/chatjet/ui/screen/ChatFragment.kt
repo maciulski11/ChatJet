@@ -1,7 +1,15 @@
 package com.example.chatjet.ui.screen
 
+import android.annotation.SuppressLint
+import android.app.NotificationChannel
+import android.app.NotificationManager
+import android.content.Context
 import android.icu.text.SimpleDateFormat
+import android.os.Build
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -9,16 +17,26 @@ import com.example.chatjet.R
 import com.example.chatjet.RetrofitInstance
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.*
+import com.example.chatjet.services.s.`interface`.NotificationApi
+import com.example.chatjet.services.s.notification.FirebaseServices.Companion.token
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.ChatAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.google.firebase.messaging.FirebaseMessaging
+import com.google.firebase.messaging.RemoteMessage
 import com.google.gson.Gson
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import okhttp3.Response
+import okhttp3.ResponseBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -29,6 +47,7 @@ class ChatFragment : BaseFragment() {
     private lateinit var adapter: ChatAdapter
 
 //    private var limit = 25
+
 
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
@@ -84,15 +103,21 @@ class ChatFragment : BaseFragment() {
                 return@setOnClickListener
 
             } else {
-
                 sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
-                topic = "/topics/${userUid}"
-                PushNotification(NotificationData("$userName :", message),
-                    topic).also {
-                    sendNotification(it)
-                }
+
+                        // Wysłanie powiadomienia do użytkownika Y
+                        topic = "/topics/${userUid}"
+                        PushNotification(
+                            NotificationData("$userName :", message),
+                            topic
+                        ).also {
+
+                            sendNotification(it)
+
+                        }
+
 
 
             }
@@ -109,6 +134,7 @@ class ChatFragment : BaseFragment() {
 
     private fun readMessage(senderId: String, receiverId: String, limit: Int = chatList.size) {
 
+
         // Implemented object listener which is listening change in Firebase
         chatListenerRegistration = dbChat
             .orderBy("timestamp", Query.Direction.DESCENDING)
@@ -120,7 +146,7 @@ class ChatFragment : BaseFragment() {
                 }
 
                 if (snapshot != null && !snapshot.isEmpty) {
-                        chatList.clear()
+                    chatList.clear()
 
                     for (document in snapshot.documents) {
                         val chat = document.toObject(Chat::class.java)
@@ -167,6 +193,7 @@ class ChatFragment : BaseFragment() {
 
                 }
             }
+
     }
 
     private fun getDateString(date: Date): String {
@@ -185,6 +212,8 @@ class ChatFragment : BaseFragment() {
         } catch(e: Exception) {
             Log.e("TAG", e.toString())
         }
+
+
     }
 
     override fun unsubscribeUi() {

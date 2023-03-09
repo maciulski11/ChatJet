@@ -1,5 +1,6 @@
 package com.example.chatjet.services.s.repository
 
+import android.content.ContentValues.TAG
 import android.util.Log
 import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
@@ -94,7 +95,5 @@ class FirebaseRepository {
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error adding document", e)
             }
-
-
     }
 }
