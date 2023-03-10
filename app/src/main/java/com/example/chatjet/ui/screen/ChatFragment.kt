@@ -1,7 +1,10 @@
 package com.example.chatjet.ui.screen
 
+import android.content.ContentValues.TAG
 import android.icu.text.SimpleDateFormat
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -15,6 +18,12 @@ import com.example.chatjet.view_model.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.gson.Gson
+import com.google.gson.GsonBuilder
+import com.google.gson.TypeAdapter
+import com.google.gson.TypeAdapterFactory
+import com.google.gson.reflect.TypeToken
+import com.google.gson.stream.JsonReader
+import com.google.gson.stream.JsonWriter
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
@@ -40,6 +49,8 @@ class ChatFragment : BaseFragment() {
         get() = fbAuth.currentUser?.uid
 
     var topic = ""
+    private val CHANNEL_ID = "my_notification_channel"
+
 
     private val dbChat = db.collection("chat")
 
@@ -86,6 +97,7 @@ class ChatFragment : BaseFragment() {
                 return@setOnClickListener
 
             } else {
+
                 sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
@@ -184,22 +196,21 @@ class ChatFragment : BaseFragment() {
         return dateFormat.format(date)
     }
 
+
     private fun sendNotification(notification: PushNotification) =
         CoroutineScope(Dispatchers.IO).launch {
             try {
                 val response = RetrofitInstance.api.postNotification(notification)
                 if (response.isSuccessful) {
                     Log.d("TAG", "Response: $response")
-
-                    Log.d("REPO_NOTIFICATION", "fun sendNotification kork 2")
+                    Log.d("REPO_NOTIFICATION", "fun sendNotification")
                 } else {
                     Log.e("TAG", response.errorBody()!!.string())
-                    Log.d("REPO_NOTIFICATION", "fun sendNotification lipaaa kork 2")
-
+                    Log.d("REPO_NOTIFICATION", "fun sendNotification error")
                 }
             } catch (e: Exception) {
                 Log.e("TAG", e.toString())
-                Log.d("REPO_NOTIFICATION", "fun sendNotification lipaaa kork 2")
+                Log.d("REPO_NOTIFICATION", "fun sendNotification exception")
             }
 
 
