@@ -13,7 +13,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.chatjet"
-        minSdk 32
+        minSdk 26
         targetSdk 33
         versionCode 1
         versionName "1.0"
@@ -53,14 +53,14 @@ dependencies {
     // Firebase
     implementation platform('com.google.firebase:firebase-bom:31.2.2')
     implementation 'com.google.firebase:firebase-analytics-ktx'
-    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.3'
+    implementation 'com.google.firebase:firebase-firestore-ktx:24.4.4'
     implementation 'com.google.firebase:firebase-auth-ktx:21.1.0'
     implementation 'com.google.firebase:firebase-database-ktx:20.1.0'
     implementation 'com.google.firebase:firebase-storage-ktx:20.1.0'
     implementation 'com.google.firebase:firebase-auth:21.1.0'
 
     // Firebase Cloud Messaging
-    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.1'
+    implementation 'com.google.firebase:firebase-messaging-ktx:23.1.2'
 
     // Coroutines
     implementation 'org.jetbrains.kotlinx:kotlinx-coroutines-core:1.6.4'
