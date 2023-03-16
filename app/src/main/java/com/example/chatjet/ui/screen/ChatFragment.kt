@@ -100,6 +100,8 @@ class ChatFragment : BaseFragment() {
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
 
+
+
 //                // Wysłanie powiadomienia do użytkownika Y
 //                PushNotification(
 //                    NotificationData("$userName :", message),

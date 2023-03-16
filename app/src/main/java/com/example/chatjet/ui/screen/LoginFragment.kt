@@ -8,6 +8,7 @@ import com.example.chatjet.data.model.User
 import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.fragment_login.*
 
 class LoginFragment: BaseFragment() {
@@ -16,6 +17,10 @@ class LoginFragment: BaseFragment() {
     private val fbAuth = FirebaseAuth.getInstance()
     private val fbUser = fbAuth.currentUser
     private val db = FirebaseFirestore.getInstance()
+
+    companion object {
+        private const val TAGG = "MyFirebaseMessagingService"
+    }
 
     override fun subscribeUi() {
 
@@ -40,6 +45,21 @@ class LoginFragment: BaseFragment() {
                     .addOnSuccessListener { authRes ->
 
                         if (authRes != null){
+
+                            FirebaseMessaging.getInstance().token
+                                .addOnCompleteListener { task ->
+                                    if (!task.isSuccessful) {
+                                        Log.w(TAGG, "Fetching FCM registration token failed", task.exception)
+                                        return@addOnCompleteListener
+                                    }
+
+                                    // Get new FCM registration token
+                                    val token = task.result
+
+                                    // Log the token
+                                    Log.d(TAGG, "FCM registration token: $token")
+                                }
+
 
                             findNavController().navigate(R.id.action_loginFragment_to_usersFragment)
                         }

@@ -1,47 +1,38 @@
 package com.example.chatjet.services.s.notification
 
-import android.app.NotificationChannel
-import android.app.NotificationManager
-import android.app.NotificationManager.IMPORTANCE_HIGH
-import android.app.PendingIntent
-import android.app.PendingIntent.FLAG_MUTABLE
-import android.content.Context
-import android.content.Intent
+
+
 import android.content.SharedPreferences
-import android.graphics.Color
-import android.os.Build
 import android.util.Log
-import androidx.annotation.RequiresApi
-import androidx.core.app.NotificationCompat
-import com.example.chatjet.R
-import com.example.chatjet.ui.activity.MainActivity
 import com.google.firebase.messaging.FirebaseMessagingService
-import com.google.firebase.messaging.RemoteMessage
-import kotlin.random.Random
+
 
 private const val CHANNEL_ID = "my_notification_channel"
 
 class FirebaseServices : FirebaseMessagingService() {
 
+    companion object {
+        private const val TAGG = "MyFirebaseMessagingService"
 
-    
+        var sharedPref: SharedPreferences? = null
 
-//    companion object{
-//        var sharedPref: SharedPreferences? = null
-//
-//        var token:String?
-//            get(){
-//                return sharedPref?.getString("token","")
-//            }
-//            set(value){
-//                sharedPref?.edit()?.putString("token",value)?.apply()
-//            }
-//    }
-//
-//    override fun onNewToken(newToken: String) {
-//        super.onNewToken(newToken)
-//        token = newToken
-//    }
+        var token:String?
+            get(){
+                return sharedPref?.getString("token","")
+            }
+            set(value){
+                sharedPref?.edit()?.putString("token",value)?.apply()
+            }
+    }
+
+
+
+    override fun onNewToken(newToken: String) {
+        super.onNewToken(newToken)
+        Log.d(TAGG, "Refreshed token: $newToken")
+
+        token = newToken
+    }
 //
 //    @RequiresApi(Build.VERSION_CODES.S)
 //    override fun onMessageReceived(remoteMessage: RemoteMessage) {
