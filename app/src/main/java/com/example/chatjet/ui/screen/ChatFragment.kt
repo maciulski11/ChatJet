@@ -1,15 +1,9 @@
 package com.example.chatjet.ui.screen
 
-import android.app.NotificationManager
-import android.app.PendingIntent
-import android.content.ContentValues.TAG
-import android.content.Context
-import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.util.Log
-import androidx.core.app.NotificationCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
@@ -17,23 +11,16 @@ import com.example.chatjet.RetrofitInstance
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.*
 import com.example.chatjet.services.s.repository.FirebaseRepository
-import com.example.chatjet.ui.activity.CHANNEL_ID
-import com.example.chatjet.ui.activity.MainActivity
 import com.example.chatjet.ui.adapter.ChatAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import com.google.firebase.firestore.ktx.firestore
-import com.google.firebase.ktx.Firebase
-import com.google.firebase.messaging.FirebaseMessaging
-import com.google.firebase.messaging.FirebaseMessagingService
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import java.util.*
 import kotlin.collections.ArrayList
-import kotlin.random.Random
 
 class ChatFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_chat
@@ -58,7 +45,9 @@ class ChatFragment : BaseFragment() {
     private val viewModel: MainViewModel by activityViewModels()
     private val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
+
     override fun subscribeUi() {
+
         val user = requireArguments().getParcelable<User>("user")
         val userUid = user?.uid!!
         val userName = user.full_name.toString()
@@ -99,8 +88,10 @@ class ChatFragment : BaseFragment() {
                 sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
-                sendNotification(token, userName, message)
 
+                FirebaseRepository().fetchFullNameUser(currentUserUid!!) { user ->
+                    sendNotification(token, "${user?.full_name.toString()}:", message)
+                }
 
             }
         }
@@ -182,32 +173,12 @@ class ChatFragment : BaseFragment() {
         return dateFormat.format(date)
     }
 
-    private fun sendNotification(token: String, title: String, messageContent: String) {
-
-        val data = HashMap<String, String>().apply {
-            put("title", title)
-            put("message", messageContent)
-        }
-
-        val message = HashMap<String, Any>().apply {
-            put("token", token)
-            put("data", data)
-        }
-
-//        val db = Firebase.firestore
-//        db.collection("notifications")
-//            .add(message)
-//            .addOnSuccessListener { documentReference ->
-//                Log.d(TAG, "Notification sent: ${documentReference.id}")
-//            }
-//            .addOnFailureListener { e ->
-//                Log.w(TAG, "Error sending notification", e)
-//            }
+    private fun sendNotification(token: String, userName: String, messageContent: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
 
             val not = PushNotification(
-                NotificationData("title", "$message"),
+                NotificationData(userName, messageContent),
                 token
             )
 
