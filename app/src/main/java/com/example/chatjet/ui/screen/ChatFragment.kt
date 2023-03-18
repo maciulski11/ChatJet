@@ -1,6 +1,7 @@
 package com.example.chatjet.ui.screen
 
 import android.icu.text.SimpleDateFormat
+import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.ViewModel
@@ -44,7 +45,6 @@ class ChatFragment : BaseFragment() {
 
     private val viewModel: MainViewModel by activityViewModels()
     private val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-
 
     override fun subscribeUi() {
 
@@ -91,6 +91,7 @@ class ChatFragment : BaseFragment() {
 
                 FirebaseRepository().fetchFullNameUser(currentUserUid!!) { user ->
                     sendNotification(token, "${user?.full_name.toString()}:", message)
+
                 }
 
             }

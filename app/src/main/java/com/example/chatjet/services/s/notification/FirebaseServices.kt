@@ -44,7 +44,8 @@ class FirebaseServices : FirebaseMessagingService() {
 
         Log.d(TAG, "onMessageReceived")
 
-        val notificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         val notificationId = Random.nextInt()
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
@@ -69,16 +70,18 @@ class FirebaseServices : FirebaseMessagingService() {
 
         notificationManager.notify(notificationId, notification)
     }
-
-    private fun createNotificationChannel(notificationManager: NotificationManager) {
-        Log.d(TAG, "createNotificationChannel")
-
-        val channelName = "ChannelFirebaseChat"
-        val channel = NotificationChannel(CHANNEL_ID, channelName, IMPORTANCE_HIGH).apply {
-            description = "My Firebase Chat Description"
-            enableLights(true)
-            lightColor = Color.BLACK
-        }
-        notificationManager.createNotificationChannel(channel)
-    }
 }
+
+
+private fun createNotificationChannel(notificationManager: NotificationManager) {
+    Log.d(TAG, "createNotificationChannel")
+
+    val channelName = "ChannelFirebaseChat"
+    val channel = NotificationChannel(CHANNEL_ID, channelName, IMPORTANCE_HIGH).apply {
+        description = "My Firebase Chat Description"
+        enableLights(true)
+        lightColor = Color.BLACK
+    }
+    notificationManager.createNotificationChannel(channel)
+}
+
