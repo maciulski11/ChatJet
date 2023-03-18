@@ -31,6 +31,7 @@ class UsersAdapter(var usersList: ArrayList<User>, private val v: View): Recycle
                 User(
                     "",
                     user.uid,
+                    user.token,
                     user.full_name,
                     "",
                     "",

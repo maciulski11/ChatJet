@@ -56,6 +56,8 @@ class LoginFragment: BaseFragment() {
                                     // Get new FCM registration token
                                     val token = task.result
 
+                                    db.collection("users").document(fbUser!!.uid).update("token", token)
+
                                     // Log the token
                                     Log.d(TAGG, "FCM registration token: $token")
                                 }

@@ -1,9 +1,14 @@
 package com.example.chatjet.ui.screen
 
+import android.app.NotificationManager
+import android.app.PendingIntent
 import android.content.ContentValues.TAG
 import android.content.Context
+import android.content.Intent
 import android.icu.text.SimpleDateFormat
 import android.util.Log
+import androidx.core.app.NotificationCompat
+import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -11,8 +16,9 @@ import com.example.chatjet.R
 import com.example.chatjet.RetrofitInstance
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.*
-import com.example.chatjet.services.s.notification.FirebaseServices
 import com.example.chatjet.services.s.repository.FirebaseRepository
+import com.example.chatjet.ui.activity.CHANNEL_ID
+import com.example.chatjet.ui.activity.MainActivity
 import com.example.chatjet.ui.adapter.ChatAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
@@ -20,15 +26,14 @@ import com.google.firebase.firestore.*
 import com.google.firebase.firestore.ktx.firestore
 import com.google.firebase.ktx.Firebase
 import com.google.firebase.messaging.FirebaseMessaging
-import com.google.gson.Gson
+import com.google.firebase.messaging.FirebaseMessagingService
 import kotlinx.android.synthetic.main.fragment_chat.*
-import kotlinx.android.synthetic.main.notification.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import okhttp3.OkHttpClient
 import java.util.*
 import kotlin.collections.ArrayList
+import kotlin.random.Random
 
 class ChatFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_chat
@@ -38,17 +43,12 @@ class ChatFragment : BaseFragment() {
 
 //    private var limit = 25
 
-
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
     private val dbUser = db.collection("users").document(currentUserUid!!)
 
     private val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
-
-    var topic = ""
-    private val CHANNEL_ID = "my_notification_channel"
-
 
     private val dbChat = db.collection("chat")
 
@@ -59,10 +59,10 @@ class ChatFragment : BaseFragment() {
     private val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
     override fun subscribeUi() {
-
         val user = requireArguments().getParcelable<User>("user")
         val userUid = user?.uid!!
-        val userName = user.full_name
+        val userName = user.full_name.toString()
+        val token = user.token.toString()
 
         // Wczytanie elementów w recycler view od dołu:
         layoutManager.stackFromEnd = true
@@ -99,21 +99,10 @@ class ChatFragment : BaseFragment() {
                 sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
+                sendNotification(token, userName, message)
 
 
-
-//                // Wysłanie powiadomienia do użytkownika Y
-//                PushNotification(
-//                    NotificationData("$userName :", message),
-//                    topic
-//                ).also {
-//
-//                    sendNotification(it)
-//                    Log.d("REPO_NOTIFICATION", "wyslanie wiadomosci kork 1")
-//
-//                }
             }
-
         }
         readMessage(currentUserUid!!, userUid)
 
@@ -126,7 +115,6 @@ class ChatFragment : BaseFragment() {
     }
 
     private fun readMessage(senderId: String, receiverId: String, limit: Int = chatList.size) {
-
 
         // Implemented object listener which is listening change in Firebase
         chatListenerRegistration = dbChat
@@ -194,52 +182,56 @@ class ChatFragment : BaseFragment() {
         return dateFormat.format(date)
     }
 
-    fun sendNotification(token: String, title: String, message: String) {
-        val data = hashMapOf(
-            "title" to title,
-            "message" to message
-        )
+    private fun sendNotification(token: String, title: String, messageContent: String) {
 
-        val message = hashMapOf(
-            "token" to token,
-            "data" to data
-        )
+        val data = HashMap<String, String>().apply {
+            put("title", title)
+            put("message", messageContent)
+        }
 
-        val db = Firebase.firestore
-        db.collection("notifications")
-            .add(message)
-            .addOnSuccessListener { documentReference ->
-                Log.d(TAG, "Notification sent: ${documentReference.id}")
+        val message = HashMap<String, Any>().apply {
+            put("token", token)
+            put("data", data)
+        }
+
+//        val db = Firebase.firestore
+//        db.collection("notifications")
+//            .add(message)
+//            .addOnSuccessListener { documentReference ->
+//                Log.d(TAG, "Notification sent: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.w(TAG, "Error sending notification", e)
+//            }
+
+        CoroutineScope(Dispatchers.IO).launch {
+
+            val not = PushNotification(
+                NotificationData("title", "$message"),
+                token
+            )
+
+            try {
+                val response = RetrofitInstance.api.postNotification(not)
+
+                if (response.isSuccessful) {
+                    Log.d("TAG", "Response: $response")
+                    Log.d("REPO_NOTIFICATION", "fun sendNotification")
+                } else {
+                    Log.e("TAG", response.errorBody()!!.string())
+                    Log.d("REPO_NOTIFICATION", "fun sendNotification error")
+                }
+            } catch (e: Exception) {
+                Log.e("TAG", e.toString())
+                Log.d("REPO_NOTIFICATION", "fun sendNotification exception")
             }
-            .addOnFailureListener { e ->
-                Log.w(TAG, "Error sending notification", e)
-            }
+
+
+        }
     }
-//
-//    private fun sendNotification(notification: PushNotification) =
-//        CoroutineScope(Dispatchers.IO).launch {
-//
-//                try {
-//                    val response = RetrofitInstance.api.postNotification(notification)
-//                    if (response.isSuccessful) {
-//                        Log.d("TAG", "Response: $response")
-//                        Log.d("REPO_NOTIFICATION", "fun sendNotification")
-//                    } else {
-//                        Log.e("TAG", response.errorBody()!!.string())
-//                        Log.d("REPO_NOTIFICATION", "fun sendNotification error")
-//                    }
-//                } catch (e: Exception) {
-//                    Log.e("TAG", e.toString())
-//                    Log.d("REPO_NOTIFICATION", "fun sendNotification exception")
-//                }
-//
-//
-//        }
-
 
     override fun unsubscribeUi() {
 
     }
-
 
 }
