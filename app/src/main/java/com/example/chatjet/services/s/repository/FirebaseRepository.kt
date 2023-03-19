@@ -4,6 +4,7 @@ import android.util.Log
 import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import java.lang.reflect.Field
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -77,13 +78,12 @@ class FirebaseRepository {
     }
 
     fun sendMessage(senderId: String, receiverId: String, message: String) {
-        val currentTime = System.currentTimeMillis()
+        val currentTime = FieldValue.serverTimestamp()
         val chat = hashMapOf(
             "senderId" to senderId,
             "receiverId" to receiverId,
             "message" to message,
-            "timestamp" to currentTime,
-            "sentAt" to Date(currentTime)
+            "sentAt" to FieldValue.serverTimestamp()
         )
 
         db.collection("chat")

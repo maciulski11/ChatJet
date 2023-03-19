@@ -106,12 +106,11 @@ class ChatFragment : BaseFragment() {
 
     }
 
-    private fun readMessage(senderId: String, receiverId: String, limit: Int = chatList.size) {
+    private fun readMessage(senderId: String, receiverId: String) {
 
         // Implemented object listener which is listening change in Firebase
         chatListenerRegistration = dbChat
-            .orderBy("timestamp", Query.Direction.DESCENDING)
-//            .limit(limit.toLong())
+            .orderBy("sentAt", Query.Direction.DESCENDING)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.w("TAG", "Listen failed.", error)
@@ -133,7 +132,7 @@ class ChatFragment : BaseFragment() {
                     }
 
                     // Sort the chatList by timestamp in descending order
-                    chatList.sortByDescending { it.timestamp }
+                    chatList.sortByDescending { it.sentAt }
 
                     // If database has more than 1 message
                     if (chatList.size > 1) {
@@ -153,7 +152,7 @@ class ChatFragment : BaseFragment() {
                         chatGroupList.add(ChatGroup(date.toString(), chats))
                     }
 
-                    adapter = ChatAdapter(chatList, requireContext())
+                    adapter = ChatAdapter(chatList)
                     chatRecyclerView.adapter = adapter
                     Log.d("REPOADAPTER", "$adapter")
 
@@ -161,12 +160,11 @@ class ChatFragment : BaseFragment() {
 
                     // List is empty, load empty layout
                     chatList.clear()
-                    adapter = ChatAdapter(chatList, requireContext())
+                    adapter = ChatAdapter(chatList)
                     chatRecyclerView.adapter = adapter
 
                 }
             }
-
     }
 
     private fun getDateString(date: Date): String {
