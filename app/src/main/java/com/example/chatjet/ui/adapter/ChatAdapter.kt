@@ -1,20 +1,16 @@
 package com.example.chatjet.ui.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Chat
-import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
-class ChatAdapter(private val chatList: ArrayList<Chat>, private val context: Context): RecyclerView.Adapter<ChatAdapter.MyViewHolder>() {
+class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<ChatAdapter.MyViewHolder>() {
 
     private val fbAuth = FirebaseAuth.getInstance()
 
@@ -41,7 +37,7 @@ class ChatAdapter(private val chatList: ArrayList<Chat>, private val context: Co
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val chat = chatList[position]
 
-        holder.bindView(chat, context)
+        holder.bindView(chat)
 
     }
 
@@ -62,7 +58,7 @@ class ChatAdapter(private val chatList: ArrayList<Chat>, private val context: Co
         private val image = v.findViewById<ImageView>(R.id.photo)
 
 
-        fun bindView(chat: Chat, context: Context) {
+        fun bindView(chat: Chat) {
             message.text = chat.message
 
 //            // Load receiver's image from Firestore and display it in ImageView

@@ -1,5 +1,6 @@
 package com.example.chatjet.ui.screen
 
+import android.annotation.SuppressLint
 import android.util.Log
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
@@ -22,19 +23,35 @@ class LoginFragment: BaseFragment() {
         private const val TAGG = "MyFirebaseMessagingService"
     }
 
+    @SuppressLint("SetTextI18n")
     override fun subscribeUi() {
 
-        loginClick()
+        macio.setOnClickListener {
+            emailET.setText("macio@wp.pl")
+            passwordET.setText("00000000")
+
+            loginClick()
+        }
+
+        stefan.setOnClickListener {
+            emailET.setText("stefan@wp.pl")
+            passwordET.setText("00000000")
+
+            loginClick()
+        }
+
+        loginBT.setOnClickListener {
+            loginClick()
+        }
 
     }
 
     private fun loginClick() {
-        loginBT.setOnClickListener {
             val email = emailET.text.toString()
             val password = passwordET.text.toString()
 
             if (email == "" || password == "") {
-                return@setOnClickListener
+                return
             } else {
 
                 //we check that this data is in our datebase
@@ -76,7 +93,7 @@ class LoginFragment: BaseFragment() {
                         Log.d("DEBUG", exception.message.toString())
                     }
             }
-        }
+
     }
 
     override fun unsubscribeUi() {

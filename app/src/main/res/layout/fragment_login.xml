@@ -31,7 +31,6 @@
 
         <EditText
             android:id="@+id/emailET"
-            android:text="stefan@wp.pl"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="e-mail"
@@ -54,7 +53,6 @@
 
         <EditText
             android:id="@+id/passwordET"
-            android:text="00000000"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="password"
@@ -74,5 +72,27 @@
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/passwordET1" />
+
+    <Button
+        android:id="@+id/macio"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="18dp"
+        android:text="macio"
+        android:backgroundTint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/loginBT" />
+
+    <Button
+        android:id="@+id/stefan"
+        android:layout_width="120dp"
+        android:layout_height="60dp"
+        android:layout_marginTop="18dp"
+        android:text="stefan"
+        android:backgroundTint="@color/black"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/macio" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
