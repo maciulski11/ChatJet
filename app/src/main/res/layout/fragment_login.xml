@@ -34,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="e-mail"
+            android:text="ania@wp.pl"
             android:background="@color/white"
             tools:layout_editor_absoluteX="16dp" />
 
@@ -56,6 +57,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:hint="password"
+            android:text="00000000"
             android:background="@color/white"
             android:inputType="textPassword"
             android:maxLines="1" />
@@ -79,6 +81,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="18dp"
         android:text="macio"
+        android:visibility="visible"
         android:backgroundTint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
@@ -90,6 +93,7 @@
         android:layout_height="60dp"
         android:layout_marginTop="18dp"
         android:text="stefan"
+        android:visibility="visible"
         android:backgroundTint="@color/black"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"

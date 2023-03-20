@@ -1,10 +1,8 @@
 package com.example.chatjet.ui.screen
 
 import android.icu.text.SimpleDateFormat
-import android.os.Bundle
 import android.util.Log
 import androidx.fragment.app.activityViewModels
-import androidx.lifecycle.ViewModel
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
