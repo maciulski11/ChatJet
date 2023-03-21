@@ -10,5 +10,4 @@ data class User (
     val token: String? = null,
     val full_name: String? = null,
     val photo: String? = null,
-    val message: String? = null
 ): Parcelable {}

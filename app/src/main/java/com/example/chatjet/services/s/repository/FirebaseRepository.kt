@@ -1,6 +1,7 @@
 package com.example.chatjet.services.s.repository
 
 import android.util.Log
+import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -21,6 +22,7 @@ class FirebaseRepository {
 
     companion object {
         const val USERS = "users"
+        const val FRIENDS = "friends"
     }
 
     fun updateUsersList(success: () -> Unit) {
@@ -83,7 +85,7 @@ class FirebaseRepository {
             "senderId" to senderId,
             "receiverId" to receiverId,
             "message" to message,
-            "sentAt" to FieldValue.serverTimestamp()
+            "sentAt" to currentTime
         )
 
         db.collection("chat")
