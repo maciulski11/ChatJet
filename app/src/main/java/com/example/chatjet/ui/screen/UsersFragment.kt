@@ -2,6 +2,8 @@ package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
+import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
@@ -13,12 +15,31 @@ import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_users.*
 import java.util.ArrayList
 
+class UsersViewModel(var userr: User? = null): ViewModel() {
+
+    private val repository = FirebaseRepository()
+
+    private var user: MutableLiveData<User?> = MutableLiveData()
+
+
+    private val friendss: ArrayList<Friend>
+        get() = user.value?.friends ?: arrayListOf()
+
+    fun fetchUsers() {
+        repository.fetchFriends {
+            user.postValue(it)
+        }
+    }
+
+}
+
     class UsersFragment: BaseFragment() {
         override val layout: Int = R.layout.fragment_users
 
-        private var usersList = ArrayList<User>()
+        private var friendsList = ArrayList<Friend>()
         private lateinit var adapter: UsersAdapter
-        private val viewModel: MainViewModel by activityViewModels()
+        val viewModel = UsersViewModel()
+        private val mainViewModel: MainViewModel by activityViewModels()
 
         @SuppressLint("NotifyDataSetChanged")
         override fun subscribeUi() {
@@ -27,19 +48,31 @@ import java.util.ArrayList
             usersRecyclerView.setHasFixedSize(true)
 
             // We initialize our user list:
-            usersList = arrayListOf()
+            friendsList = arrayListOf()
 
-            adapter = UsersAdapter(usersList, requireView())
-            usersRecyclerView.adapter = adapter
+            FirebaseRepository().fetchFriends { it ->
+                viewModel.userr = it ?: User()
 
-            viewModel.usersList.observe(this) {
-                adapter.usersList = it
+                viewModel.userr?.friends.let {
+
+                    adapter = UsersAdapter(friendsList, requireView())
+                    usersRecyclerView.adapter = adapter
+
+                }
+
+
+
+            }
+
+            mainViewModel.friendsList.observe(this) {
+                adapter.friendsList = it
                 adapter.notifyDataSetChanged()
             }
+//            viewModel.fetchUsers()
 
-            FirebaseRepository().updateUsersList {
-                viewModel.fetchUsers()
-            }
+//            FirebaseRepository().updateUsersList {
+//                viewModel.fetchUsers()
+//            }
         }
 
         override fun unsubscribeUi() {

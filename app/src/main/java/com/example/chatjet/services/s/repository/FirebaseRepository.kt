@@ -1,12 +1,9 @@
 package com.example.chatjet.services.s.repository
 
 import android.util.Log
-import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import java.lang.reflect.Field
-import java.util.*
 import kotlin.collections.ArrayList
 
 class FirebaseRepository {
@@ -61,6 +58,20 @@ class FirebaseRepository {
                     Log.e("Jest blad", task.exception?.message.toString())
                     onComplete.invoke(arrayListOf())
                 }
+            }
+    }
+
+    fun fetchFriends(onComplete: (User) -> Unit) {
+        db.collection(USERS).document(currentUserUid!!)
+            .get().addOnSuccessListener { snapshot ->
+                snapshot.toObject(User::class.java)?.let {
+                    Log.d("REPO FetchAdditions", it.toString())
+                    onComplete.invoke(it)
+
+                }
+            }
+            .addOnFailureListener {
+                Log.d("REPO", it.toString())
             }
     }
 
