@@ -78,6 +78,7 @@ class UsersAdapter(private val photo: String?, var friendsList: ArrayList<Friend
                     friend.token
                 )
             )
+            bundle.putInt("friendIndex", position) // <-- dodaj ten wiersz, aby przekazać indeks użytkownika
             v.findNavController().navigate(R.id.action_usersFragment_to_chatFragment, bundle)
         }
 

@@ -33,6 +33,7 @@ class ChatFragment : BaseFragment() {
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
     private val dbUser = db.collection("users").document(currentUserUid!!)
+    private lateinit var friendsList: ArrayList<Friend>
 
     private val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
@@ -51,6 +52,9 @@ class ChatFragment : BaseFragment() {
         val userUid = friend?.uid!!
 //        val userName = user.full_name.toString()
         val token = friend.token.toString()
+        val friendIndex = arguments?.getInt("friendIndex") ?: -1
+
+
 
         // Wczytanie elementów w recycler view od dołu:
         layoutManager.stackFromEnd = true
@@ -84,7 +88,7 @@ class ChatFragment : BaseFragment() {
 
             } else {
 
-                sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
+                sendMessage(FirebaseRepository().currentUserUid!!, userUid, message, friendIndex)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
 
@@ -97,9 +101,21 @@ class ChatFragment : BaseFragment() {
 
     }
 
-    private fun sendMessage(senderId: String, receiverId: String, message: String) {
+    private fun sendMessage(senderId: String, receiverId: String, message: String, friendIndex: Int) {
 
-        FirebaseRepository().sendMessage(senderId, receiverId, message)
+        FirebaseRepository().sendMessage(senderId, receiverId, message, friendIndex)
+
+
+//        // znajdź indeks przyjaciela, którego wiadomość chcesz zaktualizować
+//        val friend = friendsList.indexOfFirst { it.uid == receiverId }
+//
+//
+//        val lastMessage = hashMapOf(
+//            "lastMessage" to message,
+//        )
+//
+//        db.collection("users").document()
+//            .update("lastMessage", lastMessage)
 
     }
 

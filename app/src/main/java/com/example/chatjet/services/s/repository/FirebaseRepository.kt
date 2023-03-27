@@ -1,10 +1,14 @@
 package com.example.chatjet.services.s.repository
 
 import android.util.Log
+import android.view.View
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.User
+import com.example.chatjet.ui.adapter.UsersAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import java.util.Date
+import java.util.HashMap
 import kotlin.collections.ArrayList
 
 class FirebaseRepository {
@@ -91,7 +95,7 @@ class FirebaseRepository {
             }
     }
 
-    fun sendMessage(senderId: String, receiverId: String, message: String) {
+    fun sendMessage(senderId: String, receiverId: String, message: String, friendIndex: Int) {
         val currentTime = FieldValue.serverTimestamp()
         val chat = hashMapOf(
             "senderId" to senderId,
@@ -109,12 +113,24 @@ class FirebaseRepository {
                 Log.w("TAG", "Error adding document", e)
             }
 
-        val lastMessage = hashMapOf(
-            "message" to message,
-            "sentAt" to currentTime
+
+        val messageInfo = hashMapOf(
+            "lastMessage" to message,
+            "sentAt" to Date()
         )
-        db.collection(USERS).document(currentUserUid!!)
-            .collection(FRIENDS).document(receiverId)
-            .update(lastMessage)
+
+        // pobierz dokument użytkownika, który wysyła wiadomość
+        val senderDocRef = db.collection("users").document(receiverId)
+
+        senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
+            val senderFriends = senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+
+            // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
+            senderFriends?.get(friendIndex)?.let { friend ->
+                friend["messageInfo"] = messageInfo
+                senderDocRef.update("friends", senderFriends)
+            }
+
+        }
     }
 }
