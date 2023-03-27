@@ -2,6 +2,7 @@ package com.example.chatjet.ui.screen
 
 import android.icu.text.SimpleDateFormat
 import android.util.Log
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -46,10 +47,10 @@ class ChatFragment : BaseFragment() {
 
     override fun subscribeUi() {
 
-        val user = requireArguments().getParcelable<User>("user")
-        val userUid = user?.uid!!
-        val userName = user.full_name.toString()
-        val token = user.token.toString()
+        val friend = requireArguments().getParcelable<Friend>("friend")
+        val userUid = friend?.uid!!
+//        val userName = user.full_name.toString()
+        val token = friend.token.toString()
 
         // Wczytanie elementów w recycler view od dołu:
         layoutManager.stackFromEnd = true
@@ -88,10 +89,8 @@ class ChatFragment : BaseFragment() {
                 writeMessage.setText("")
 
                 FirebaseRepository().fetchFullNameUser(currentUserUid!!) { user ->
-                    sendNotification(token, "${user?.full_name.toString()}:", message)
-
-                }
-
+                        sendNotification(token, "${user?.full_name}:", message)
+                    }
             }
         }
         readMessage(currentUserUid!!, userUid)

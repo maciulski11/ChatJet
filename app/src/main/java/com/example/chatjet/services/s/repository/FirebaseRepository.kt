@@ -1,6 +1,7 @@
 package com.example.chatjet.services.s.repository
 
 import android.util.Log
+import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -75,9 +76,9 @@ class FirebaseRepository {
             }
     }
 
-    fun fetchFullNameUser(userUid: String, onComplete: (User?) -> Unit) {
+    fun fetchFullNameUser(uid: String, onComplete: (User?) -> Unit) {
         // Load full name user to you write
-        db.collection(USERS).document(userUid)
+        db.collection(USERS).document(uid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 if (documentSnapshot.exists()) {
@@ -107,5 +108,13 @@ class FirebaseRepository {
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error adding document", e)
             }
+
+        val lastMessage = hashMapOf(
+            "message" to message,
+            "sentAt" to currentTime
+        )
+        db.collection(USERS).document(currentUserUid!!)
+            .collection(FRIENDS).document(receiverId)
+            .update(lastMessage)
     }
 }
