@@ -113,12 +113,6 @@ class FirebaseRepository {
                 Log.w("TAG", "Error adding document", e)
             }
 
-
-        val messageInfo = hashMapOf(
-            "lastMessage" to message,
-            "sentAt" to Date()
-        )
-
         // pobierz dokument użytkownika, który wysyła wiadomość
         val senderDocRef = db.collection("users").document(receiverId)
 
@@ -127,7 +121,8 @@ class FirebaseRepository {
 
             // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
             senderFriends?.get(friendIndex)?.let { friend ->
-                friend["messageInfo"] = messageInfo
+                friend["lastMessage"] = message
+                friend["sentAt"] = Date()
                 senderDocRef.update("friends", senderFriends)
             }
 
