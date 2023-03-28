@@ -7,6 +7,7 @@ import com.example.chatjet.data.model.User
 import com.example.chatjet.ui.adapter.UsersAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import java.time.ZoneOffset
 import java.util.Date
 import java.util.HashMap
 import kotlin.collections.ArrayList
@@ -113,19 +114,46 @@ class FirebaseRepository {
                 Log.w("TAG", "Error adding document", e)
             }
 
+//        // pobierz dokument użytkownika, który wysyła wiadomość
+//        val senderDocRef = db.collection("users").document(receiverId)
+//
+//        senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
+//            val senderFriends = senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+//
+//            // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
+//            senderFriends?.let{ friend ->
+//                val friends = friend.find { it["uid"] == receiverId }
+//
+//                friends?.set("lastMessage", message)
+//                friends?.set("sentAt", Date())
+//                senderDocRef.update("friends", senderFriends)
+//            }
+//
+//        }
+
         // pobierz dokument użytkownika, który wysyła wiadomość
-        val senderDocRef = db.collection("users").document(receiverId)
+        val senderDocRef = db.collection("users").document(senderId)
 
         senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
             val senderFriends = senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
 
             // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
-            senderFriends?.get(friendIndex)?.let { friend ->
-                friend["lastMessage"] = message
-                friend["sentAt"] = Date()
-                senderDocRef.update("friends", senderFriends)
+            val updatedFriends = senderFriends?.map { friend ->
+                if (friend["uid"] == receiverId) {
+                    friend.apply {
+
+                        //TODO: Repair time
+                        set("lastMessage", message)
+                        set("sentAt", Date())
+                    }
+                } else {
+                    friend
+                }
             }
 
+            updatedFriends?.let {
+                senderDocRef.update("friends", it)
+            }
         }
     }
 }
