@@ -1,5 +1,7 @@
 package com.example.chatjet.ui.adapter
 
+import android.annotation.SuppressLint
+import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -91,9 +93,14 @@ class UsersAdapter(private val photo: String?, var friendsList: ArrayList<Friend
 
         val chooseUser = view.findViewById<ConstraintLayout>(R.id.chooseUser)!!
 
+        @SuppressLint("SimpleDateFormat")
         fun bind(friend: Friend) {
+            // SimpleDateFormat("dd.MM.yyyy HH:mm")
+            val dateFormat = SimpleDateFormat("HH:mm")
+
             view.fullName.text = friend.fullName
             view.lastMessage.text = friend.lastMessage
+            view.time.text = dateFormat.format(friend.sentAt).toString()
 
         }
     }
