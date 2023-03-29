@@ -3,22 +3,23 @@ package com.example.chatjet.ui.screen
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import androidx.fragment.app.activityViewModels
+import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.Friend
-import com.example.chatjet.data.model.FriendsGroup
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.UsersAdapter
 import com.example.chatjet.view_model.MainViewModel
-import com.google.firebase.auth.FirebaseAuth
 import kotlinx.android.synthetic.main.fragment_users.*
 import kotlinx.android.synthetic.main.item_user.*
 import java.util.*
 
 class UsersViewModel(var user: User? = null, var friend: Friend? = null) : ViewModel() {
+
+    var userrr: MutableLiveData<User?> = MutableLiveData(null)
 
 
 }
@@ -31,11 +32,6 @@ class UsersFragment : BaseFragment() {
     val viewModel = UsersViewModel()
     private val mainViewModel: MainViewModel by activityViewModels()
 
-    private val fbAuth = FirebaseAuth.getInstance()
-
-    val currentUserUid: String?
-        get() = fbAuth.currentUser?.uid
-
     @SuppressLint("NotifyDataSetChanged")
     override fun subscribeUi() {
 
@@ -46,7 +42,9 @@ class UsersFragment : BaseFragment() {
         // We initialize our user list:
         friendsList = arrayListOf()
 
-        FirebaseRepository().fetchFriends(currentUserUid!!) { user ->
+
+
+        FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid ?: "") { user ->
             viewModel.user = user ?: User()
 
             viewModel.user?.friends.let { friend ->
@@ -78,7 +76,6 @@ class UsersFragment : BaseFragment() {
 
 
         }
-
     }
 
     private fun getDateString(date: Date): String {

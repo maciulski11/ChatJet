@@ -137,7 +137,7 @@ class FirebaseRepository {
                                 set("uidLastMessage", docUid)
 
                                 //TODO: zrobic zeby false pojawial sie u uzytkownika ktory otrzymal wiadomosc
-                                set("readMessage", false)
+//                                set("readMessage", false)
 
                             }
                         } else {
