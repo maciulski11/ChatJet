@@ -23,6 +23,10 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    fun sendMessage(senderId: String, receiverId: String, message: String, success: () -> Unit) {
+        repository.sendMessage(senderId, receiverId, message)
+    }
+
     fun fetchFullNameUser(userUid: String, v: View, context: Context) {
         repository.fetchFullNameUser(userUid) {
             val fullName = v.findViewById<TextView>(R.id.nameUser)

@@ -137,7 +137,7 @@ class FirebaseRepository {
                                 set("uidLastMessage", docUid)
 
                                 //TODO: zrobic zeby false pojawial sie u uzytkownika ktory otrzymal wiadomosc
-//                                set("readMessage", false)
+                                //set("readMessage", false)
 
                             }
                         } else {
@@ -148,12 +148,40 @@ class FirebaseRepository {
                     updatedFriends?.let {
                         senderDocRef.update("friends", it)
                     }
-
-                    Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
                 }
-                    .addOnFailureListener { e ->
-                        Log.w("TAG", "Error adding document", e)
+
+                // pobierz dokument użytkownika, który odbiera wiadomość
+                val receiverDocRef = db.collection("users").document(receiverId)
+
+                receiverDocRef.get().addOnSuccessListener { receiverDocSnapshot ->
+                    val receiverFriends =
+                        receiverDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+
+                    // znajdź przyjaciela w liście przyjaciół użytkownika, który odbiera wiadomość i zaktualizuj jego "lastMessage"
+                    val updatedFriends = receiverFriends?.map { friend ->
+                        if (friend["uid"] == senderId) {
+                            friend.apply {
+
+                                set("uidLastMessage", docUid)
+                                set("readMessage", false)
+
+                            }
+                        } else {
+                            friend
+                        }
                     }
+
+                    updatedFriends?.let {
+                        receiverDocRef.update("friends", it)
+                    }
+
+                }
+
+                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
             }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error adding document", e)
+            }
+
     }
 }

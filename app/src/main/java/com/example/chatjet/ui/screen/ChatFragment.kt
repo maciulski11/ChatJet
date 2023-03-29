@@ -1,5 +1,6 @@
 package com.example.chatjet.ui.screen
 
+import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.util.Log
 import androidx.fragment.app.activityViewModels
@@ -15,6 +16,7 @@ import com.example.chatjet.view_model.MainViewModel
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.fragment_chat.*
+import kotlinx.android.synthetic.main.item_user.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -92,7 +94,8 @@ class ChatFragment : BaseFragment() {
 
                         sendNotification(friend.token!!, "${user?.full_name}:", message)
                     }
-                    }
+                }
+
             }
         }
         readMessage(currentUserUid!!, userUid)
@@ -102,19 +105,6 @@ class ChatFragment : BaseFragment() {
     private fun sendMessage(senderId: String, receiverId: String, message: String) {
 
         FirebaseRepository().sendMessage(senderId, receiverId, message)
-
-
-//        // znajdź indeks przyjaciela, którego wiadomość chcesz zaktualizować
-//        val friend = friendsList.indexOfFirst { it.uid == receiverId }
-//
-//
-//        val lastMessage = hashMapOf(
-//            "lastMessage" to message,
-//        )
-//
-//        db.collection("users").document()
-//            .update("lastMessage", lastMessage)
-
     }
 
     private fun readMessage(senderId: String, receiverId: String) {

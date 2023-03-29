@@ -1,11 +1,14 @@
 package com.example.chatjet.ui.adapter
 
+import android.graphics.Color
+import android.graphics.Typeface
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
@@ -13,11 +16,11 @@ import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.services.s.repository.FirebaseRepository
-import kotlinx.android.synthetic.main.item_user.view.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class UsersAdapter(var friendsList: ArrayList<Friend>, private val v: View): RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
+class UsersAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
+    RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView =
@@ -35,14 +38,14 @@ class UsersAdapter(var friendsList: ArrayList<Friend>, private val v: View): Rec
             bundle.putParcelable(
                 "friend",
                 Friend(
-                   friend.uid,
+                    friend.uid,
                     ""
                 )
             )
             v.findNavController().navigate(R.id.action_usersFragment_to_chatFragment, bundle)
         }
 
-        holder.bind(friend.uid ?: "", friend.uidLastMessage ?: "")
+        holder.bind(friend, friend.uid ?: "", friend.uidLastMessage ?: "")
     }
 
     override fun getItemCount(): Int = friendsList.size
@@ -51,15 +54,36 @@ class UsersAdapter(var friendsList: ArrayList<Friend>, private val v: View): Rec
 
         val chooseUser = view.findViewById<ConstraintLayout>(R.id.chooseUser)!!
         private val icon = view.findViewById<ImageView>(R.id.userPhoto)
+        private val message = view.findViewById<TextView>(R.id.lastMessage)
+        private val time = view.findViewById<TextView>(R.id.time)
+        private val name = view.findViewById<TextView>(R.id.fullName)
 
-        fun bind(uidFriend: String, uidMessage: String) {
+        fun bind(friend: Friend, uidFriend: String, uidMessage: String) {
 
             FirebaseRepository().fetchFriends(uidFriend) { f ->
-                view.fullName.text = f.full_name
+
+                if (friend.readMessage == false) {
+                    name.setTextColor(Color.BLACK)
+                    name.setTypeface(null, Typeface.BOLD)
+                    message.setTextColor(Color.BLACK)
+                    message.setTypeface(null, Typeface.BOLD)// pogrubienie czcionki
+                    time.setTextColor(Color.BLACK)
+                    time.setTypeface(null, Typeface.BOLD)
+
+                } else {
+                    name.setTextColor(Color.GRAY)
+                    name.setTypeface(null, Typeface.BOLD)
+                    message.setTextColor(Color.GRAY)
+                    message.setTypeface(null, Typeface.NORMAL)
+                    time.setTextColor(Color.GRAY)
+                    time.setTypeface(null, Typeface.NORMAL)
+                }
+
+                name.text = f.full_name
 
                 Glide.with(view)
                     .load(f.photo)
-                    .override(220,220)
+                    .override(220, 220)
                     .circleCrop()
                     .into(icon)
             }
@@ -67,8 +91,8 @@ class UsersAdapter(var friendsList: ArrayList<Friend>, private val v: View): Rec
             FirebaseRepository().fetchLastMessage(uidMessage) { m ->
                 // SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl")) add polish language
                 val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
-                view.time.text = dateFormat.format(m.sentAt)
-                view.lastMessage.text = m.message
+                time.text = dateFormat.format(m.sentAt)
+                message.text = m.message
             }
 
         }
