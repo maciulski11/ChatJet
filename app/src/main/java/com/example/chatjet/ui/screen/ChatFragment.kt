@@ -50,11 +50,6 @@ class ChatFragment : BaseFragment() {
 
         val friend = requireArguments().getParcelable<Friend>("friend")
         val userUid = friend?.uid!!
-//        val userName = user.full_name.toString()
-        val token = friend.token.toString()
-        val friendIndex = arguments?.getInt("friendIndex") ?: -1
-
-
 
         // Wczytanie elementów w recycler view od dołu:
         layoutManager.stackFromEnd = true
@@ -88,12 +83,16 @@ class ChatFragment : BaseFragment() {
 
             } else {
 
-                sendMessage(FirebaseRepository().currentUserUid!!, userUid, message, friendIndex)
+                sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
 
                 FirebaseRepository().fetchFullNameUser(currentUserUid!!) { user ->
-                        sendNotification(token, "${user?.full_name}:", message)
+
+                    FirebaseRepository().fetchFriends(userUid) { friend ->
+
+                        sendNotification(friend.token!!, "${user?.full_name}:", message)
+                    }
                     }
             }
         }
@@ -101,9 +100,9 @@ class ChatFragment : BaseFragment() {
 
     }
 
-    private fun sendMessage(senderId: String, receiverId: String, message: String, friendIndex: Int) {
+    private fun sendMessage(senderId: String, receiverId: String, message: String) {
 
-        FirebaseRepository().sendMessage(senderId, receiverId, message, friendIndex)
+        FirebaseRepository().sendMessage(senderId, receiverId, message)
 
 
 //        // znajdź indeks przyjaciela, którego wiadomość chcesz zaktualizować

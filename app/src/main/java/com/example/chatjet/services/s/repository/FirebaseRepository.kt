@@ -1,14 +1,10 @@
 package com.example.chatjet.services.s.repository
 
 import android.util.Log
-import android.view.View
-import com.example.chatjet.data.model.Friend
+import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.User
-import com.example.chatjet.ui.adapter.UsersAdapter
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import java.time.ZoneOffset
-import java.util.Date
 import java.util.HashMap
 import kotlin.collections.ArrayList
 
@@ -67,10 +63,24 @@ class FirebaseRepository {
             }
     }
 
-    fun fetchFriends(onComplete: (User) -> Unit) {
-        db.collection(USERS).document(currentUserUid!!)
+    fun fetchFriends(uid: String, onComplete: (User) -> Unit) {
+        db.collection(USERS).document(uid)
             .get().addOnSuccessListener { snapshot ->
                 snapshot.toObject(User::class.java)?.let {
+                    Log.d("REPO FetchAdditions", it.toString())
+                    onComplete.invoke(it)
+
+                }
+            }
+            .addOnFailureListener {
+                Log.d("REPO", it.toString())
+            }
+    }
+
+    fun fetchLastMessage(uid: String, onComplete: (Chat) -> Unit) {
+        db.collection("chat").document(uid)
+            .get().addOnSuccessListener { snapshot ->
+                snapshot.toObject(Chat::class.java)?.let {
                     Log.d("REPO FetchAdditions", it.toString())
                     onComplete.invoke(it)
 
@@ -96,64 +106,54 @@ class FirebaseRepository {
             }
     }
 
-    fun sendMessage(senderId: String, receiverId: String, message: String, friendIndex: Int) {
+    fun sendMessage(senderId: String, receiverId: String, message: String) {
         val currentTime = FieldValue.serverTimestamp()
         val chat = hashMapOf(
             "senderId" to senderId,
             "receiverId" to receiverId,
             "message" to message,
-            "sentAt" to currentTime
-        )
+            "sentAt" to currentTime,
+
+            )
+
 
         db.collection("chat")
             .add(chat)
             .addOnSuccessListener { documentReference ->
-                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-            }
-            .addOnFailureListener { e ->
-                Log.w("TAG", "Error adding document", e)
-            }
+                val docUid = documentReference.id
 
-//        // pobierz dokument użytkownika, który wysyła wiadomość
-//        val senderDocRef = db.collection("users").document(receiverId)
-//
-//        senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
-//            val senderFriends = senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
-//
-//            // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
-//            senderFriends?.let{ friend ->
-//                val friends = friend.find { it["uid"] == receiverId }
-//
-//                friends?.set("lastMessage", message)
-//                friends?.set("sentAt", Date())
-//                senderDocRef.update("friends", senderFriends)
-//            }
-//
-//        }
+                // pobierz dokument użytkownika, który wysyła wiadomość
+                val senderDocRef = db.collection("users").document(senderId)
 
-        // pobierz dokument użytkownika, który wysyła wiadomość
-        val senderDocRef = db.collection("users").document(senderId)
+                senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
+                    val senderFriends =
+                        senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
 
-        senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
-            val senderFriends = senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+                    // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
+                    val updatedFriends = senderFriends?.map { friend ->
+                        if (friend["uid"] == receiverId) {
+                            friend.apply {
 
-            // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
-            val updatedFriends = senderFriends?.map { friend ->
-                if (friend["uid"] == receiverId) {
-                    friend.apply {
+                                set("uidLastMessage", docUid)
 
-                        //TODO: Repair time
-                        set("lastMessage", message)
-                        set("sentAt", Date())
+                                //TODO: zrobic zeby false pojawial sie u uzytkownika ktory otrzymal wiadomosc
+                                set("readMessage", false)
+
+                            }
+                        } else {
+                            friend
+                        }
                     }
-                } else {
-                    friend
-                }
-            }
 
-            updatedFriends?.let {
-                senderDocRef.update("friends", it)
+                    updatedFriends?.let {
+                        senderDocRef.update("friends", it)
+                    }
+
+                    Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
+                }
+                    .addOnFailureListener { e ->
+                        Log.w("TAG", "Error adding document", e)
+                    }
             }
-        }
     }
 }

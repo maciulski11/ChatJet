@@ -61,6 +61,7 @@ class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<C
         fun bindView(chat: Chat) {
             message.text = chat.message
 
+
 //            // Load receiver's image from Firestore and display it in ImageView
 //            FirebaseFirestore.getInstance().collection("users").document(chat.receiverId!!).get()
 //                .addOnSuccessListener { document ->
