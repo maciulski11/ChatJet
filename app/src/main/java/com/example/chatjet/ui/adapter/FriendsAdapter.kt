@@ -19,8 +19,8 @@ import com.example.chatjet.services.s.repository.FirebaseRepository
 import java.util.*
 import kotlin.collections.ArrayList
 
-class UsersAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
-    RecyclerView.Adapter<UsersAdapter.MyViewHolder>() {
+class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
+    RecyclerView.Adapter<FriendsAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView =
@@ -42,6 +42,11 @@ class UsersAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
                     ""
                 )
             )
+
+            if (friend.readMessage == false) {
+               holder.readMessage(friend.uid!!)
+            }
+
             v.findNavController().navigate(R.id.action_usersFragment_to_chatFragment, bundle)
         }
 
@@ -57,6 +62,10 @@ class UsersAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
         private val message = view.findViewById<TextView>(R.id.lastMessage)
         private val time = view.findViewById<TextView>(R.id.time)
         private val name = view.findViewById<TextView>(R.id.fullName)
+
+        fun readMessage(uidFriend: String) {
+            FirebaseRepository().readMessage(uidFriend)
+        }
 
         fun bind(friend: Friend, uidFriend: String, uidMessage: String) {
 

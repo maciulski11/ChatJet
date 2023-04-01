@@ -5,19 +5,20 @@ import android.icu.text.SimpleDateFormat
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
-import com.example.chatjet.ui.adapter.UsersAdapter
+import com.example.chatjet.ui.adapter.FriendsAdapter
 import com.example.chatjet.view_model.MainViewModel
-import kotlinx.android.synthetic.main.fragment_users.*
+import kotlinx.android.synthetic.main.fragment_friends.*
 import kotlinx.android.synthetic.main.item_user.*
 import java.util.*
 
-class UsersViewModel(var user: User? = null, var friend: Friend? = null) : ViewModel() {
+class FriendsViewModel(var user: User? = null, var friend: Friend? = null) : ViewModel() {
 
     var userrr: MutableLiveData<User?> = MutableLiveData(null)
 
@@ -25,19 +26,19 @@ class UsersViewModel(var user: User? = null, var friend: Friend? = null) : ViewM
 }
 
 class UsersFragment : BaseFragment() {
-    override val layout: Int = R.layout.fragment_users
+    override val layout: Int = R.layout.fragment_friends
 
     private lateinit var friendsList: ArrayList<Friend>
-    private lateinit var adapter: UsersAdapter
-    val viewModel = UsersViewModel()
+    private lateinit var adapter: FriendsAdapter
+    val viewModel = FriendsViewModel()
     private val mainViewModel: MainViewModel by activityViewModels()
 
     @SuppressLint("NotifyDataSetChanged")
     override fun subscribeUi() {
 
-        usersRecyclerView.layoutManager =
+        friendsRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
-        usersRecyclerView.setHasFixedSize(true)
+        friendsRecyclerView.setHasFixedSize(true)
 
         // We initialize our user list:
         friendsList = arrayListOf()
@@ -66,15 +67,17 @@ class UsersFragment : BaseFragment() {
 //                    friendGroupList.add(FriendsGroup(date.toString(), friends))
 //                }
 
-                adapter = UsersAdapter(
+                adapter = FriendsAdapter(
                     friendsList,
                     requireView()
                 )
-                usersRecyclerView.adapter = adapter
+                friendsRecyclerView.adapter = adapter
 
             }
+        }
 
-
+        findUser.setOnClickListener {
+            findNavController().navigate(R.id.action_usersFragment_to_findUserFragment)
         }
     }
 

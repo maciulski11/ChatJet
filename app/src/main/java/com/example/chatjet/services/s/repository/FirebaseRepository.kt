@@ -106,6 +106,34 @@ class FirebaseRepository {
             }
     }
 
+    fun readMessage(uidFriend: String) {
+        // pobierz dokument użytkownika, który odbiera wiadomość
+        val receiverDocRef = db.collection(USERS).document(currentUserUid!!)
+
+        receiverDocRef.get().addOnSuccessListener { receiverDocSnapshot ->
+            val receiverFriends =
+                receiverDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+
+            // znajdź przyjaciela w liście przyjaciół użytkownika, który odbiera wiadomość i zaktualizuj jego "lastMessage"
+            val updatedFriends = receiverFriends?.map { friend ->
+                if (friend["uid"] == uidFriend) {
+                    friend.apply {
+
+                        set("readMessage", true)
+
+                    }
+                } else {
+                    friend
+                }
+            }
+
+            updatedFriends?.let {
+                receiverDocRef.update("friends", it)
+            }
+
+        }
+    }
+
     fun sendMessage(senderId: String, receiverId: String, message: String) {
         val currentTime = FieldValue.serverTimestamp()
         val chat = hashMapOf(

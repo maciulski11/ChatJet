@@ -32,5 +32,16 @@
         <action
             android:id="@+id/action_usersFragment_to_chatFragment"
             app:destination="@id/chatFragment" />
+        <action
+            android:id="@+id/action_usersFragment_to_findUserFragment"
+            app:destination="@id/findUserFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/findUserFragment"
+        android:name="com.example.chatjet.ui.screen.FindUserFragment"
+        android:label="FindUserFragment" >
+        <action
+            android:id="@+id/action_findUserFragment_to_usersFragment"
+            app:destination="@id/usersFragment" />
     </fragment>
 </navigation>
