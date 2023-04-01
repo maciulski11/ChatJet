@@ -1,5 +1,6 @@
 package com.example.chatjet.services.s.repository
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.User
@@ -42,25 +43,57 @@ class FirebaseRepository {
         }
     }
 
+//    fun fetchUsersList(onComplete: (ArrayList<User>) -> Unit) {
+//        db.collection(USERS)
+//            // Wykluczenie z wczytania użytkownika, którego uid jest równe zalogowanemu użytkownikwi
+//            .whereNotEqualTo("uid", currentUserUid)
+//            .limit(9)
+//            .get()
+//            .addOnCompleteListener { task ->
+//                if (task.isSuccessful) {
+//                    val list = arrayListOf<User>()
+//                    for (document in task.result!!) {
+//                        val user = document.toObject(User::class.java)
+//                        list.add(user)
+//                    }
+//                    onComplete.invoke(list)
+//                } else {
+//                    Log.e("Jest blad", task.exception?.message.toString())
+//                    onComplete.invoke(arrayListOf())
+//                }
+//            }
+//    }
+
     fun fetchUsersList(onComplete: (ArrayList<User>) -> Unit) {
         db.collection(USERS)
-            // Wykluczenie z wczytania użytkownika, którego uid jest równe zalogowanemu użytkownikwi
             .whereNotEqualTo("uid", currentUserUid)
             .limit(9)
-            .get()
-            .addOnCompleteListener { task ->
-                if (task.isSuccessful) {
-                    val list = arrayListOf<User>()
-                    for (document in task.result!!) {
-                        val user = document.toObject(User::class.java)
-                        list.add(user)
+            .addSnapshotListener(object : EventListener<QuerySnapshot> {
+
+                @SuppressLint("NotifyDataSetChanged")
+                override fun onEvent(
+                    value: QuerySnapshot?,
+                    error: FirebaseFirestoreException?
+                ) {
+
+                    if (error != null) {
+                        Log.e("Jest blad", error.message.toString())
+                        onComplete.invoke(arrayListOf())
+                        return
                     }
+
+                    val list = arrayListOf<User>()
+                    for (dc: DocumentChange in value!!.documentChanges) {
+                        //sprawdxzamy czy dokument zostal poprawnie dodany:
+                        if (dc.type == DocumentChange.Type.ADDED) {
+
+                            list.add(dc.document.toObject(User::class.java))
+                        }
+                    }
+
                     onComplete.invoke(list)
-                } else {
-                    Log.e("Jest blad", task.exception?.message.toString())
-                    onComplete.invoke(arrayListOf())
                 }
-            }
+            })
     }
 
     fun fetchFriends(uid: String, onComplete: (User) -> Unit) {

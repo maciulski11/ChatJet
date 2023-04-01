@@ -23,6 +23,12 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    fun fetchUsers1() {
+        repository.fetchUsersList {
+            usersList.postValue(it)
+        }
+    }
+
     fun sendMessage(senderId: String, receiverId: String, message: String, success: () -> Unit) {
         repository.sendMessage(senderId, receiverId, message)
     }
