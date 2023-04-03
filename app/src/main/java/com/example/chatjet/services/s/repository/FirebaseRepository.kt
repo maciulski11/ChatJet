@@ -11,22 +11,18 @@ import kotlin.collections.ArrayList
 
 class FirebaseRepository {
 
-    private val db = FirebaseFirestore.getInstance()
-    private val fbAuth = FirebaseAuth.getInstance()
+    val db = FirebaseFirestore.getInstance()
+    val fbAuth = FirebaseAuth.getInstance()
 
     val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
 
-    private val dbUser = db.collection("users").document(currentUserUid!!)
-    private val dbChat = db.collection("chat")
-
     companion object {
         const val USERS = "users"
-        const val FRIENDS = "friends"
     }
 
     fun updateUsersList(success: () -> Unit) {
-        val docRef = db.collection(USERS)
+        val docRef = db.collection(USERS).document(currentUserUid!!)
 
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -43,29 +39,9 @@ class FirebaseRepository {
         }
     }
 
-//    fun fetchUsersList(onComplete: (ArrayList<User>) -> Unit) {
-//        db.collection(USERS)
-//            // Wykluczenie z wczytania użytkownika, którego uid jest równe zalogowanemu użytkownikwi
-//            .whereNotEqualTo("uid", currentUserUid)
-//            .limit(9)
-//            .get()
-//            .addOnCompleteListener { task ->
-//                if (task.isSuccessful) {
-//                    val list = arrayListOf<User>()
-//                    for (document in task.result!!) {
-//                        val user = document.toObject(User::class.java)
-//                        list.add(user)
-//                    }
-//                    onComplete.invoke(list)
-//                } else {
-//                    Log.e("Jest blad", task.exception?.message.toString())
-//                    onComplete.invoke(arrayListOf())
-//                }
-//            }
-//    }
-
     fun fetchUsersList(onComplete: (ArrayList<User>) -> Unit) {
         db.collection(USERS)
+            // Wykluczenie z wczytania użytkownika, którego uid jest równe zalogowanemu użytkownikwi
             .whereNotEqualTo("uid", currentUserUid)
             .limit(9)
             .addSnapshotListener(object : EventListener<QuerySnapshot> {
@@ -96,18 +72,23 @@ class FirebaseRepository {
             })
     }
 
-    fun fetchFriends(uid: String, onComplete: (User) -> Unit) {
-        db.collection(USERS).document(uid)
-            .get().addOnSuccessListener { snapshot ->
-                snapshot.toObject(User::class.java)?.let {
-                    Log.d("REPO FetchAdditions", it.toString())
-                    onComplete.invoke(it)
+    fun fetchFriends(uid: String, onComplete: (User) -> Unit): DocumentReference {
+        val docRef = db.collection(USERS).document(uid)
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w("TAG", "Listen failed.", e)
+                return@addSnapshotListener
+            }
 
-                }
+            if (snapshot != null && snapshot.exists()) {
+                val user = snapshot.toObject(User::class.java)
+                Log.d("TAG", "Current data: $user")
+                onComplete.invoke(user!!)
+            } else {
+                Log.d("TAG", "Current data: null")
             }
-            .addOnFailureListener {
-                Log.d("REPO", it.toString())
-            }
+        }
+        return docRef
     }
 
     fun fetchLastMessage(uid: String, onComplete: (Chat) -> Unit) {
