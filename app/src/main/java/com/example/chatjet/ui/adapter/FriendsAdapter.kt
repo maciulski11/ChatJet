@@ -1,5 +1,6 @@
 package com.example.chatjet.ui.adapter
 
+import android.annotation.SuppressLint
 import android.graphics.Color
 import android.graphics.Typeface
 import android.icu.text.SimpleDateFormat
@@ -21,6 +22,16 @@ import kotlin.collections.ArrayList
 
 class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
     RecyclerView.Adapter<FriendsAdapter.MyViewHolder>() {
+
+    private var friends: ArrayList<Friend> = ArrayList()
+
+    @SuppressLint("NotifyDataSetChanged")
+    fun update(friends: ArrayList<Friend>) {
+
+        this.friends.addAll(friends)
+
+        notifyDataSetChanged()
+    }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView =
@@ -56,6 +67,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
     override fun getItemCount(): Int = friendsList.size
 
     inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
+
 
         val chooseUser = view.findViewById<ConstraintLayout>(R.id.chooseUser)!!
         private val icon = view.findViewById<ImageView>(R.id.userPhoto)

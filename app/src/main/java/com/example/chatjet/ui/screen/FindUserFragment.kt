@@ -1,5 +1,8 @@
 package com.example.chatjet.ui.screen
 
+import android.annotation.SuppressLint
+import android.widget.Toast
+import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
@@ -9,14 +12,17 @@ import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.FindUserAdapter
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
+import java.util.*
+import kotlin.collections.ArrayList
 
 class FindUserFragment: BaseFragment() {
     override val layout: Int = R.layout.fragment_find_user
 
     private var usersList = ArrayList<User>()
     private lateinit var adapter: FindUserAdapter
-    private val viewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun subscribeUi() {
 
         recyclerViewSearch.layoutManager =
@@ -28,17 +34,52 @@ class FindUserFragment: BaseFragment() {
         adapter = FindUserAdapter(usersList)
         recyclerViewSearch.adapter = adapter
 
-        viewModel.usersList.observe(this) {
+        mainViewModel.usersList.observe(this) {
             adapter.usersList = it
             adapter.notifyDataSetChanged()
+
+            searchView.setOnQueryTextListener(object : SearchView.OnQueryTextListener {
+                override fun onQueryTextSubmit(query: String?): Boolean {
+
+                    return false
+                }
+
+                override fun onQueryTextChange(newText: String?): Boolean {
+
+                    if (newText == "") {
+                        adapter.setFilteredList(it)
+                    }
+                    filterList(newText)
+
+                    return true
+                }
+
+            })
         }
 
         FirebaseRepository().updateUsersList {
-            viewModel.fetchUsers1()
+            mainViewModel.fetchUsers()
+        }
+    }
+
+    private fun filterList(query: String?) {
+        val filteredList = ArrayList<User>()
+        if (query != null) {
+            for (i in adapter.usersList) {
+                if (i.full_name?.lowercase(Locale.ROOT)!!.contains(query)) {
+                    filteredList.add(i)
+                }
+            }
+
+            if (filteredList.isEmpty()) {
+                Toast.makeText(requireContext(), "No Data found", Toast.LENGTH_SHORT).show()
+            } else {
+                adapter.setFilteredList(filteredList)
+            }
         }
     }
 
     override fun unsubscribeUi() {
-
+        mainViewModel.usersList.removeObservers(this)
     }
 }

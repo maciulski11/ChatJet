@@ -14,16 +14,19 @@ class MainViewModel: ViewModel() {
 
     private val repository = FirebaseRepository()
 
+    var users: MutableLiveData<User?> = MutableLiveData()
     var usersList = MutableLiveData<ArrayList<User>>()
-    var friendsList = MutableLiveData<ArrayList<Friend>>()
 
-    fun fetchUsers() {
-        repository.fetchUsersList{
-            usersList.postValue(it)
+    val friends : ArrayList<Friend>
+        get() = users.value?.friends ?: arrayListOf()
+
+    fun updateSom(success: () -> Unit) {
+        repository.updateUsersList {
+            success
         }
     }
 
-    fun fetchUsers1() {
+    fun fetchUsers() {
         repository.fetchUsersList {
             usersList.postValue(it)
         }

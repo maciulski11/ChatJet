@@ -7,5 +7,5 @@ import kotlinx.android.parcel.Parcelize
 data class Friend (
     val uid: String? = null,
     val uidLastMessage: String? = null,
-    val readMessage: Boolean? = null
+    val readMessage: Boolean? = null,
     ) : Parcelable
