@@ -3,6 +3,7 @@ package com.example.chatjet.ui.screen
 import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.util.Log
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -13,6 +14,7 @@ import com.example.chatjet.data.model.*
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.ChatAdapter
 import com.example.chatjet.view_model.MainViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.fragment_chat.*
@@ -48,6 +50,9 @@ class ChatFragment : BaseFragment() {
     private val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
     override fun subscribeUi() {
+
+        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNavigationView.visibility = View.GONE
 
         val friend = requireArguments().getParcelable<Friend>("friend")
         val userUid = friend?.uid!!

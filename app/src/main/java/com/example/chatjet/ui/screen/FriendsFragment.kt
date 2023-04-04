@@ -2,6 +2,8 @@ package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
+import android.view.View
+import android.widget.LinearLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -15,6 +17,7 @@ import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.FriendsAdapter
 import com.example.chatjet.view_model.MainViewModel
+import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.fragment_friends.*
 import kotlinx.android.synthetic.main.item_user.*
 import java.util.*
@@ -35,6 +38,9 @@ class UsersFragment : BaseFragment() {
 
     @SuppressLint("NotifyDataSetChanged")
     override fun subscribeUi() {
+
+        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNavigationView.visibility = View.VISIBLE
 
         friendsRecyclerView.layoutManager =
             LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
@@ -87,6 +93,13 @@ class UsersFragment : BaseFragment() {
             findNavController().navigate(R.id.action_usersFragment_to_findUserFragment)
         }
     }
+
+    // this function change option button on visible after login
+    override fun onResume() {
+        super.onResume()
+        requireActivity().invalidateOptionsMenu()
+    }
+
 
     private fun getDateString(date: Date): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

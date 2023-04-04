@@ -12,7 +12,7 @@
 
         <action
             android:id="@+id/action_loginFragment_to_usersFragment"
-            app:destination="@id/usersFragment" />
+            app:destination="@id/friendsFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -22,10 +22,10 @@
 
         <action
             android:id="@+id/action_chatFragment_to_usersFragment"
-            app:destination="@id/usersFragment" />
+            app:destination="@id/friendsFragment" />
     </fragment>
     <fragment
-        android:id="@+id/usersFragment"
+        android:id="@+id/friendsFragment"
         android:name="com.example.chatjet.ui.screen.UsersFragment"
         android:label="UsersFragment" >
 
@@ -42,6 +42,14 @@
         android:label="FindUserFragment" >
         <action
             android:id="@+id/action_findUserFragment_to_usersFragment"
-            app:destination="@id/usersFragment" />
+            app:destination="@id/friendsFragment" />
     </fragment>
+    <fragment
+        android:id="@+id/profileFragment"
+        android:name="com.example.chatjet.ui.screen.ProfileFragment"
+        android:label="ProfileFragment" />
+    <fragment
+        android:id="@+id/invitationFragment"
+        android:name="com.example.chatjet.ui.screen.InvitationFragment"
+        android:label="InvitationFragment" />
 </navigation>
