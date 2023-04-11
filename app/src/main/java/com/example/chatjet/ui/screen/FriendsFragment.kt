@@ -3,7 +3,6 @@ package com.example.chatjet.ui.screen
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.view.View
-import android.widget.LinearLayout
 import androidx.fragment.app.activityViewModels
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -11,10 +10,10 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
-import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
+import com.example.chatjet.ui.activity.OnBackPressedListener
 import com.example.chatjet.ui.adapter.FriendsAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -28,7 +27,7 @@ class FriendsViewModel(var user: User? = null) : ViewModel() {
 
 }
 
-class UsersFragment : BaseFragment() {
+class FriendsFragment : BaseFragment(), OnBackPressedListener {
     override val layout: Int = R.layout.fragment_friends
 
     private lateinit var friendsList: ArrayList<Friend>
@@ -36,7 +35,7 @@ class UsersFragment : BaseFragment() {
     private val viewModel = FriendsViewModel()
     private val mainViewModel: MainViewModel by activityViewModels()
 
-    @SuppressLint("NotifyDataSetChanged")
+    @SuppressLint("NotifyDataSetChanged", "SuspiciousIndentation")
     override fun subscribeUi() {
 
         val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
@@ -62,20 +61,20 @@ class UsersFragment : BaseFragment() {
 
 
 //
-////                // Sort the chatList by timestamp in descending order
-////                friendsList.sortByDescending { it.sentAt }
-////
-////                // Group the chatList by date
-////                val groupedFriendList =
-////                    friendsList.groupBy { it.sentAt?.let { it1 -> getDateString(it1) } }
-////
-////                // Create a new list to display chat groups
-////                val friendGroupList = mutableListOf<FriendsGroup>()
-////
-////                // Iterate through the groupedChatList and create ChatGroup objects
-////                for ((date, friends) in groupedFriendList) {
-////                    friendGroupList.add(FriendsGroup(date.toString(), friends))
-////                }
+//                // Sort the chatList by timestamp in descending order
+//                friendsList.sortByDescending { it.sentAt }
+//
+//                // Group the chatList by date
+//                val groupedFriendList =
+//                    friendsList.groupBy { it.sentAt?.let { it1 -> getDateString(it1) } }
+//
+//                // Create a new list to display chat groups
+//                val friendGroupList = mutableListOf<FriendsGroup>()
+//
+//                // Iterate through the groupedChatList and create ChatGroup objects
+//                for ((date, friends) in groupedFriendList) {
+//                    friendGroupList.add(FriendsGroup(date.toString(), friends))
+//                }
 
 
                         adapter = FriendsAdapter(
@@ -94,16 +93,25 @@ class UsersFragment : BaseFragment() {
         }
     }
 
+    private fun getDateString(date: Date): String {
+        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return dateFormat.format(date)
+    }
+
     // this function change option button on visible after login
     override fun onResume() {
         super.onResume()
         requireActivity().invalidateOptionsMenu()
     }
 
-
-    private fun getDateString(date: Date): String {
-        val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return dateFormat.format(date)
+    override fun onBackPressed(): Boolean {
+        val navController = findNavController()
+        return if (navController.currentDestination?.id == R.id.invitationFragment) {
+            navController.navigateUp()
+            true
+        } else {
+            false
+        }
     }
 
     override fun unsubscribeUi() {
