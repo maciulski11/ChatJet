@@ -6,11 +6,12 @@ import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
-import androidx.navigation.ui.setupWithNavController
 import com.example.chatjet.R
 import com.google.android.material.bottomnavigation.BottomNavigationView
 
 class MainActivity: AppCompatActivity() {
+
+    private var backPressedListener: OnBackPressedListener? = null
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -18,10 +19,37 @@ class MainActivity: AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
-//        bottomNavigationView.setBackgroundColor(Color.BLACK)
         val navController = findNavController(R.id.fragment)
 
-        bottomNavigationView.setupWithNavController(navController)
+        bottomNavigationView.setOnItemSelectedListener { menuItem ->
+            when (menuItem.itemId) {
+                R.id.friendsFragment -> {
+                    backPressedListener = null
+                    navController.navigate(R.id.friendsFragment)
+                    true
+                }
+                R.id.profileFragment -> {
+                    backPressedListener = null
+                    navController.navigate(R.id.profileFragment)
+                    true
+                }
+                R.id.findUserFragment -> {
+                    backPressedListener = null
+                    navController.navigate(R.id.findUserFragment)
+                    true
+                }
+                // itd. dla pozostałych pozycji w menu
+                else -> false
+            }
+        }
+    }
+
+    @Deprecated("Deprecated in Java")
+    override fun onBackPressed() {
+        if (backPressedListener != null && backPressedListener!!.onBackPressed()) {
+            return
+        }
+        super.onBackPressed()
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
@@ -42,6 +70,10 @@ class MainActivity: AppCompatActivity() {
                 return true
             }
         }
-        return false
+        return super.onOptionsItemSelected(item)
     }
+}
+
+interface OnBackPressedListener {
+    fun onBackPressed(): Boolean
 }

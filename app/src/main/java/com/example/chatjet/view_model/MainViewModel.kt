@@ -32,8 +32,10 @@ class MainViewModel: ViewModel() {
         }
     }
 
-    fun sendMessage(senderId: String, receiverId: String, message: String, success: () -> Unit) {
-        repository.sendMessage(senderId, receiverId, message)
+    fun sendMessage(senderId: String, receiverId: String, message: String) {
+        repository.sendMessage(senderId, receiverId, message) { docUid ->
+//            repository.updateL(senderId, receiverId, docUid)
+        }
     }
 
     fun fetchFullNameUser(userUid: String, v: View, context: Context) {

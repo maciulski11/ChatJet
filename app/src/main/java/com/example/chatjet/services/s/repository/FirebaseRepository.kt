@@ -11,14 +11,31 @@ import kotlin.collections.ArrayList
 
 class FirebaseRepository {
 
-    val db = FirebaseFirestore.getInstance()
-    val fbAuth = FirebaseAuth.getInstance()
+    private val db = FirebaseFirestore.getInstance()
+    private val fbAuth = FirebaseAuth.getInstance()
 
     val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
 
     companion object {
         const val USERS = "users"
+        const val FRIENDS = "friends"
+    }
+
+    fun getCurrentUserName(onSuccess: (String) -> Unit) {
+        db.collection(USERS).document(currentUserUid!!)
+            .get()
+            .addOnSuccessListener { documentSnapshot ->
+                val userName = documentSnapshot.getString("full_name")
+                userName?.let { onSuccess(it) }
+            }
+    }
+
+    fun fetchTokenUser(userUid: String, onTokenFetched: (token: String?) -> Unit) {
+        db.collection(USERS).document(userUid).get().addOnSuccessListener { documentSnapshot ->
+            val token = documentSnapshot.getString("token")
+            onTokenFetched(token)
+        }
     }
 
     fun updateUsersList(success: () -> Unit) {
@@ -148,7 +165,12 @@ class FirebaseRepository {
         }
     }
 
-    fun sendMessage(senderId: String, receiverId: String, message: String) {
+    fun sendMessage(
+        senderId: String,
+        receiverId: String,
+        message: String,
+        onSendMessageSuccess: (docUid: String) -> Unit
+    ) {
         val currentTime = FieldValue.serverTimestamp()
         val chat = hashMapOf(
             "senderId" to senderId,
@@ -158,66 +180,13 @@ class FirebaseRepository {
 
             )
 
-
         db.collection("chat")
             .add(chat)
             .addOnSuccessListener { documentReference ->
                 val docUid = documentReference.id
+                onSendMessageSuccess(docUid)
 
-                // pobierz dokument użytkownika, który wysyła wiadomość
-                val senderDocRef = db.collection("users").document(senderId)
-
-                senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
-                    val senderFriends =
-                        senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
-
-                    // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
-                    val updatedFriends = senderFriends?.map { friend ->
-                        if (friend["uid"] == receiverId) {
-                            friend.apply {
-
-                                set("uidLastMessage", docUid)
-
-                                //TODO: zrobic zeby false pojawial sie u uzytkownika ktory otrzymal wiadomosc
-                                //set("readMessage", false)
-
-                            }
-                        } else {
-                            friend
-                        }
-                    }
-
-                    updatedFriends?.let {
-                        senderDocRef.update("friends", it)
-                    }
-                }
-
-                // pobierz dokument użytkownika, który odbiera wiadomość
-                val receiverDocRef = db.collection("users").document(receiverId)
-
-                receiverDocRef.get().addOnSuccessListener { receiverDocSnapshot ->
-                    val receiverFriends =
-                        receiverDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
-
-                    // znajdź przyjaciela w liście przyjaciół użytkownika, który odbiera wiadomość i zaktualizuj jego "lastMessage"
-                    val updatedFriends = receiverFriends?.map { friend ->
-                        if (friend["uid"] == senderId) {
-                            friend.apply {
-
-                                set("uidLastMessage", docUid)
-                                set("readMessage", false)
-
-                            }
-                        } else {
-                            friend
-                        }
-                    }
-
-                    updatedFriends?.let {
-                        receiverDocRef.update("friends", it)
-                    }
-
-                }
+                updateLastMessage(senderId, receiverId, docUid)
 
                 Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
             }
@@ -226,4 +195,53 @@ class FirebaseRepository {
             }
 
     }
+
+    private fun updateLastMessage(senderId: String, receiverId: String, docUid: String) {
+        // pobierz dokument użytkownika, który wysyła wiadomość
+        val senderDocRef = db.collection("users").document(senderId)
+
+        senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
+            val senderFriends =
+                senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+
+            // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
+            val friendToUpdate = senderFriends?.find { it["uid"] == receiverId }
+            friendToUpdate?.apply {
+                set("uidLastMessage", docUid)
+
+            }
+
+            friendToUpdate?.let {
+                senderDocRef.update("friends", senderFriends)
+            }
+        }
+
+        // pobierz dokument użytkownika, który odbiera wiadomość
+        val receiverDocRef = db.collection("users").document(receiverId)
+
+        receiverDocRef.get().addOnSuccessListener { receiverDocSnapshot ->
+            val receiverFriends =
+                receiverDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+
+            // znajdź przyjaciela w liście przyjaciół użytkownika, który odbiera wiadomość i zaktualizuj jego "lastMessage"
+            val updatedFriends = receiverFriends?.map { friend ->
+                if (friend["uid"] == senderId) {
+                    friend.apply {
+
+                        set("uidLastMessage", docUid)
+                        set("readMessage", false)
+
+                    }
+                } else {
+                    friend
+                }
+            }
+
+            updatedFriends?.let {
+                receiverDocRef.update("friends", it)
+            }
+
+        }
+    }
 }
+

@@ -1,6 +1,5 @@
 package com.example.chatjet.ui.screen
 
-import android.graphics.Color
 import android.icu.text.SimpleDateFormat
 import android.util.Log
 import android.view.View
@@ -18,7 +17,6 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.fragment_chat.*
-import kotlinx.android.synthetic.main.item_user.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -34,13 +32,6 @@ class ChatFragment : BaseFragment() {
 //    private var limit = 25
 
     private val db = FirebaseFirestore.getInstance()
-    private val fbAuth = FirebaseAuth.getInstance()
-    private val dbUser = db.collection("users").document(currentUserUid!!)
-    private lateinit var friendsList: ArrayList<Friend>
-
-    private val currentUserUid: String?
-        get() = fbAuth.currentUser?.uid
-
     private val dbChat = db.collection("chat")
 
     // Added object which registration listener in Firebase
@@ -51,7 +42,8 @@ class ChatFragment : BaseFragment() {
 
     override fun subscribeUi() {
 
-        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        val bottomNavigationView =
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
         bottomNavigationView.visibility = View.GONE
 
         val friend = requireArguments().getParcelable<Friend>("friend")
@@ -93,23 +85,23 @@ class ChatFragment : BaseFragment() {
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
 
-                FirebaseRepository().fetchFullNameUser(currentUserUid!!) { user ->
+                FirebaseRepository().getCurrentUserName { userName ->
 
-                    FirebaseRepository().fetchFriends(userUid) { friend ->
+                    FirebaseRepository().fetchTokenUser(userUid) { token ->
 
-                        sendNotification(friend.token!!, "${user?.full_name}:", message)
+                        sendNotification(token ?: "", userName, message)
                     }
                 }
-
             }
         }
-        readMessage(currentUserUid!!, userUid)
+        readMessage(FirebaseRepository().currentUserUid!!, userUid)
 
     }
 
     private fun sendMessage(senderId: String, receiverId: String, message: String) {
 
-        FirebaseRepository().sendMessage(senderId, receiverId, message)
+        viewModel.sendMessage(senderId, receiverId, message)
+
     }
 
     private fun readMessage(senderId: String, receiverId: String) {
