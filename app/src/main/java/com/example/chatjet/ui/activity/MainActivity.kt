@@ -21,6 +21,9 @@ class MainActivity: AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         val navController = findNavController(R.id.fragment)
 
+        bottomNavigationView.selectedItemId = R.id.friendsFragment
+
+
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
                 R.id.friendsFragment -> {
@@ -38,10 +41,18 @@ class MainActivity: AppCompatActivity() {
                     navController.navigate(R.id.findUserFragment)
                     true
                 }
-                // itd. dla pozostałych pozycji w menu
                 else -> false
             }
         }
+
+//        // Zaznaczenie bottomNavigationView na odpowiednią pozycję w zależności od aktualnego fragmentu
+//        navController.addOnDestinationChangedListener { _, destination, _ ->
+//            when (destination.id) {
+//                R.id.friendsFragment -> bottomNavigationView.selectedItemId = R.id.friendsFragment
+//                R.id.profileFragment -> bottomNavigationView.selectedItemId = R.id.profileFragment
+//                R.id.findUserFragment -> bottomNavigationView.selectedItemId = R.id.findUserFragment
+//            }
+//        }
     }
 
     @Deprecated("Deprecated in Java")
