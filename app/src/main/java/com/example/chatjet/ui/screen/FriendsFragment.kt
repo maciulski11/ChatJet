@@ -87,10 +87,6 @@ class FriendsFragment : BaseFragment(), OnBackPressedListener {
                     adapter.notifyDataSetChanged()
                 }
         }
-
-        findUser.setOnClickListener {
-            findNavController().navigate(R.id.action_usersFragment_to_findUserFragment)
-        }
     }
 
     private fun getDateString(date: Date): String {
