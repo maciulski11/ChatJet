@@ -47,9 +47,21 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.chatjet.ui.screen.ProfileFragment"
-        android:label="ProfileFragment" />
+        android:label="ProfileFragment" >
+        <action
+            android:id="@+id/action_profileFragment_to_profileEditFragment"
+            app:destination="@id/profileEditFragment" />
+    </fragment>
     <fragment
         android:id="@+id/invitationFragment"
         android:name="com.example.chatjet.ui.screen.InvitationFragment"
         android:label="InvitationFragment" />
+    <fragment
+        android:id="@+id/profileEditFragment"
+        android:name="com.example.chatjet.ui.screen.ProfileEditFragment"
+        android:label="ProfileEditFragment" >
+        <action
+            android:id="@+id/action_profileEditFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
 </navigation>
