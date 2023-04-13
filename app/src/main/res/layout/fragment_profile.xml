@@ -15,6 +15,7 @@
         app:layout_constraintTop_toTopOf="parent">
 
         <ImageView
+            android:id="@+id/photoProfile"
             android:layout_width="160dp"
             android:layout_height="160dp"
             android:layout_gravity="center"
@@ -38,6 +39,7 @@
                 android:src="@drawable/ic_baseline_person_24" />
 
             <TextView
+                android:id="@+id/fullNameTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -63,6 +65,7 @@
             android:orientation="horizontal">
 
             <ImageView
+                android:id="@+id/locationTV"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -108,6 +111,7 @@
                 android:src="@drawable/ic_phone" />
 
             <TextView
+                android:id="@+id/phoneNumberTV"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -169,6 +173,7 @@
                 android:textSize="22sp" />
 
             <TextView
+                android:id="@+id/statusText"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -181,6 +186,7 @@
                 android:textStyle="bold" />
 
             <ImageView
+                android:id="@+id/statusColor"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -202,6 +208,7 @@
             android:background="@color/gray_dark" />
 
         <Button
+            android:id="@+id/editProfileButton"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"
