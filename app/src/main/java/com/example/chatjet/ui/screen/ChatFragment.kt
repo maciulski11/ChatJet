@@ -14,7 +14,6 @@ import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.ChatAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.CoroutineScope
@@ -54,7 +53,9 @@ class ChatFragment : BaseFragment() {
         chatRecyclerView.layoutManager = layoutManager
         chatRecyclerView.setHasFixedSize(true)
 
-        viewModel.fetchFullNameUser(userUid, requireView(), requireContext())
+        viewModel.fetchUserOrFriend(userUid){
+            nameUser.text = it?.full_name
+        }
 
 //        chatRecyclerView.addOnScrollListener(object : RecyclerView.OnScrollListener() {
 //            override fun onScrolled(recyclerView: RecyclerView, dx: Int, dy: Int) {
