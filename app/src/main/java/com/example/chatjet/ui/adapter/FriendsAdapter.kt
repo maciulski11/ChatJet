@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.services.s.repository.FirebaseRepository
+import kotlinx.android.synthetic.main.fragment_profile.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -63,6 +64,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
         private val message = view.findViewById<TextView>(R.id.lastMessage)
         private val time = view.findViewById<TextView>(R.id.time)
         private val name = view.findViewById<TextView>(R.id.fullName)
+        private val status = view.findViewById<ImageView>(R.id.statusColor)
 
         fun readMessage(uidFriend: String) {
             FirebaseRepository().readMessage(uidFriend)
@@ -103,6 +105,14 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
                 val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
                 time.text = dateFormat.format(m.sentAt)
                 message.text = m.message
+            }
+
+            FirebaseRepository().fetchUserOrFriend(uidFriend) { user ->
+                if (user?.status == true) {
+                    status.setColorFilter(Color.GREEN)
+                } else {
+                    status.setColorFilter(Color.RED)
+                }
             }
 
         }

@@ -122,7 +122,7 @@ class FirebaseRepository {
             }
     }
 
-    fun fetchFullNameUser(uid: String, onComplete: (User?) -> Unit) {
+    fun fetchUserOrFriend(uid: String, onComplete: (User?) -> Unit) {
         // Load full name user to you write
         db.collection(USERS).document(uid)
             .get()

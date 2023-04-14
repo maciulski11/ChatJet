@@ -6,6 +6,7 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
+import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
@@ -52,11 +53,15 @@ class FindUserAdapter(var usersList: ArrayList<User>): RecyclerView.Adapter<Find
     inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
 
         private val photo = view.findViewById<ImageView>(R.id.photo)
+        private val nameUser = view.findViewById<TextView>(R.id.nameUser)
+        private val location = view.findViewById<TextView>(R.id.locationTV)
         private val inviteButton = view.findViewById<ImageButton>(R.id.inviteButton)
         private val removeButton = view.findViewById<ImageButton>(R.id.removeButton)
 
+
         fun bind(user: User) {
-            view.nameUser.text = user.full_name
+            nameUser.text = user.full_name
+            location.text = user.location
 
             Glide.with(view)
                 .load(user.photo)
