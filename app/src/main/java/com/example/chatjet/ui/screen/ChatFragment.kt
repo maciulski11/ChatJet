@@ -126,7 +126,6 @@ class ChatFragment : BaseFragment() {
                             chat.senderId == receiverId && chat.receiverId == senderId
                         ) {
                             chatList.add(chat)
-
                         }
                     }
 
@@ -194,13 +193,10 @@ class ChatFragment : BaseFragment() {
                 Log.e("TAG", e.toString())
                 Log.d("REPO_NOTIFICATION", "fun sendNotification exception")
             }
-
-
         }
     }
 
     override fun unsubscribeUi() {
 
     }
-
 }

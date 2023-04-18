@@ -10,18 +10,21 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
+import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.Friend
+import com.example.chatjet.data.model.FriendsGroup
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.activity.OnBackPressedListener
 import com.example.chatjet.ui.adapter.FriendsAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_friends.*
-import kotlinx.android.synthetic.main.item_user.*
 import java.util.*
 
-class FriendsViewModel(var user: User? = null) : ViewModel() {
+class FriendsViewModel(var user: User? = null, val date: Chat? = null) : ViewModel() {
 
     var userrr: MutableLiveData<User?> = MutableLiveData(null)
 
@@ -38,7 +41,8 @@ class FriendsFragment : BaseFragment(), OnBackPressedListener {
     @SuppressLint("NotifyDataSetChanged", "SuspiciousIndentation")
     override fun subscribeUi() {
 
-        val bottomNavigationView = requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        val bottomNavigationView =
+            requireActivity().findViewById<BottomNavigationView>(R.id.bottomNavigation)
         bottomNavigationView.visibility = View.VISIBLE
 
         friendsRecyclerView.layoutManager =
@@ -48,44 +52,38 @@ class FriendsFragment : BaseFragment(), OnBackPressedListener {
         // We initialize our user list:
         friendsList = arrayListOf()
 
-            FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid!!) { user ->
-                viewModel.user = user ?: User()
+        FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid!!) { user ->
+            viewModel.user = user ?: User()
 
-                viewModel.userrr.observe(this) {
+            viewModel.userrr.observe(this) {
 
-                    friendsList.clear()
+                friendsList.clear()
 
-                    viewModel.user?.friends.let { friend ->
+                viewModel.user?.friends.let { friend ->
 
-                        friendsList.addAll(friend!!)
+                    friendsList.addAll(friend!!)
 
-
+                    
+//                    friendsList.sortByDescending { it.sentAt }
 //
-//                // Sort the chatList by timestamp in descending order
-//                friendsList.sortByDescending { it.sentAt }
 //
-//                // Group the chatList by date
-//                val groupedFriendList =
-//                    friendsList.groupBy { it.sentAt?.let { it1 -> getDateString(it1) } }
+//                    val groupedFriendList = friendsList.groupBy { getDateString(it.sentAt!!) }
 //
-//                // Create a new list to display chat groups
-//                val friendGroupList = mutableListOf<FriendsGroup>()
+//                    val friendGroupList = mutableListOf<FriendsGroup>()
 //
-//                // Iterate through the groupedChatList and create ChatGroup objects
-//                for ((date, friends) in groupedFriendList) {
-//                    friendGroupList.add(FriendsGroup(date.toString(), friends))
-//                }
+//                    for ((date, friends) in groupedFriendList) {
+//                        friendGroupList.add(FriendsGroup(date, friends))
+//                    }
 
+                    adapter = FriendsAdapter(
+                        friendsList,
+                        requireView()
+                    )
 
-                        adapter = FriendsAdapter(
-                            friendsList,
-                            requireView()
-                        )
-
-                        friendsRecyclerView.adapter = adapter
-                    }
-                    adapter.notifyDataSetChanged()
+                    friendsRecyclerView.adapter = adapter
                 }
+                adapter.notifyDataSetChanged()
+            }
         }
     }
 

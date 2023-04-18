@@ -6,6 +6,7 @@ import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import java.sql.Date
 import java.util.HashMap
 import kotlin.collections.ArrayList
 
