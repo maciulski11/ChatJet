@@ -4,16 +4,18 @@ import android.annotation.SuppressLint
 import android.util.Log
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.User
+import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import java.sql.Date
-import java.util.HashMap
+import com.google.firebase.firestore.EventListener
+import java.util.*
 import kotlin.collections.ArrayList
 
 class FirebaseRepository {
 
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
+
 
     val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
@@ -207,8 +209,11 @@ class FirebaseRepository {
 
             // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
             val friendToUpdate = senderFriends?.find { it["uid"] == receiverId }
+
             friendToUpdate?.apply {
+
                 set("uidLastMessage", docUid)
+                set("sentAt", Timestamp.now())
 
             }
 
@@ -224,7 +229,6 @@ class FirebaseRepository {
             val receiverFriends =
                 receiverDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
 
-            // znajdź przyjaciela w liście przyjaciół użytkownika, który odbiera wiadomość i zaktualizuj jego "lastMessage"
             val updatedFriends = receiverFriends?.map { friend ->
                 if (friend["uid"] == senderId) {
                     friend.apply {

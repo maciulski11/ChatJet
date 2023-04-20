@@ -22,6 +22,10 @@ import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_friends.*
+import java.sql.Timestamp
+import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZoneOffset
 import java.util.*
 
 class FriendsViewModel(var user: User? = null, val date: Chat? = null) : ViewModel() {
@@ -63,11 +67,11 @@ class FriendsFragment : BaseFragment(), OnBackPressedListener {
 
                     friendsList.addAll(friend!!)
 
-                    
-//                    friendsList.sortByDescending { it.sentAt }
+
+//                    friendsList.sortByDescending { it.sentAt?.toDate() }
 //
 //
-//                    val groupedFriendList = friendsList.groupBy { getDateString(it.sentAt!!) }
+//                    val groupedFriendList = friendsList.groupBy { getDateString(it.sentAt?.toDate()!!) }
 //
 //                    val friendGroupList = mutableListOf<FriendsGroup>()
 //
@@ -86,6 +90,7 @@ class FriendsFragment : BaseFragment(), OnBackPressedListener {
             }
         }
     }
+
 
     private fun getDateString(date: Date): String {
         val dateFormat = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())

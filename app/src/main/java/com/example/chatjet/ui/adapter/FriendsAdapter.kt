@@ -15,8 +15,10 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
+import com.example.chatjet.data.model.FriendsGroup
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import kotlinx.android.synthetic.main.fragment_profile.*
+import java.sql.Timestamp
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -41,6 +43,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
                 Friend(
                     friend.uid,
                     ""
+
                 )
             )
 
@@ -55,6 +58,12 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
     }
 
     override fun getItemCount(): Int = friendsList.size
+
+    // Funkcja zwracająca datę w postaci łańcucha znaków
+    private fun getDateString(date: Date): String {
+        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
+        return formatter.format(date)
+    }
 
     inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
 
@@ -105,6 +114,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
                 val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
                 time.text = dateFormat.format(m.sentAt)
                 message.text = m.message
+
             }
 
             FirebaseRepository().fetchUserOrFriend(uidFriend) { user ->
