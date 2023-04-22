@@ -68,16 +68,16 @@ class FriendsFragment : BaseFragment(), OnBackPressedListener {
                     friendsList.addAll(friend!!)
 
 
-//                    friendsList.sortByDescending { it.sentAt?.toDate() }
-//
-//
-//                    val groupedFriendList = friendsList.groupBy { getDateString(it.sentAt?.toDate()!!) }
-//
-//                    val friendGroupList = mutableListOf<FriendsGroup>()
-//
-//                    for ((date, friends) in groupedFriendList) {
-//                        friendGroupList.add(FriendsGroup(date, friends))
-//                    }
+                    friendsList.sortByDescending { it.sentAt }
+
+
+                    val groupedFriendList = friendsList.groupBy { getDateString(it.sentAt!!) }
+
+                    val friendGroupList = mutableListOf<FriendsGroup>()
+
+                    for ((date, friends) in groupedFriendList) {
+                        friendGroupList.add(FriendsGroup(date, friends))
+                    }
 
                     adapter = FriendsAdapter(
                         friendsList,

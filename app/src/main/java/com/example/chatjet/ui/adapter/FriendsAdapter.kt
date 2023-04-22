@@ -107,6 +107,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
                     .override(220, 220)
                     .circleCrop()
                     .into(icon)
+
             }
 
             FirebaseRepository().fetchLastMessage(uidMessage) { m ->

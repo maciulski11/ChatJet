@@ -11,5 +11,5 @@ data class Friend (
     val uid: String? = null,
     var uidLastMessage: String? = null,
     val readMessage: Boolean? = null,
-    var lastMessageSentAt: Date? = null
+    var sentAt: Date? = null
 ) : Parcelable
