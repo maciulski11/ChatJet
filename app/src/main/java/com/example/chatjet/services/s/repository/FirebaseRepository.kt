@@ -1,13 +1,11 @@
 package com.example.chatjet.services.s.repository
 
-import android.annotation.SuppressLint
 import android.util.Log
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.User
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
-import com.google.firebase.firestore.EventListener
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -23,6 +21,8 @@ class FirebaseRepository {
     companion object {
         const val USERS = "users"
         const val FRIENDS = "friends"
+        const val INVITATIONS_SENT = "invitations_sent"
+        const val INVITATIONS_RECEIVED = "invitations_received"
     }
 
     fun getCurrentUserName(onSuccess: (String) -> Unit) {
@@ -60,39 +60,40 @@ class FirebaseRepository {
     }
 
     fun fetchUsersList(onComplete: (ArrayList<User>) -> Unit) {
+        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
+
+        // Pobranie listy użytkowników oraz zaproszeń użytkownika zalogowanego
         db.collection(USERS)
-            // Wykluczenie z wczytania użytkownika, którego uid jest równe zalogowanemu użytkownikwi
             .whereNotEqualTo("uid", currentUserUid)
-            .limit(9)
-            .addSnapshotListener(object : EventListener<QuerySnapshot> {
+            .get()
+            .addOnSuccessListener { usersResult ->
+                db.collection(USERS)
+                    .document(currentUserUid!!)
+                    .collection(INVITATIONS_SENT)
+                    .get()
+                    .addOnSuccessListener { invitationResult ->
+                        val users = usersResult.toObjects(User::class.java)
+                        val invitations = invitationResult.toObjects(User::class.java)
+                        val invitedUids = invitations.map { it.uid }
 
-                @SuppressLint("NotifyDataSetChanged")
-                override fun onEvent(
-                    value: QuerySnapshot?,
-                    error: FirebaseFirestoreException?
-                ) {
-
-                    if (error != null) {
-                        Log.e("Jest blad", error.message.toString())
-                        onComplete.invoke(arrayListOf())
-                        return
-                    }
-
-                    val list = arrayListOf<User>()
-                    for (dc: DocumentChange in value!!.documentChanges) {
-                        //sprawdxzamy czy dokument zostal poprawnie dodany:
-                        if (dc.type == DocumentChange.Type.ADDED) {
-
-                            list.add(dc.document.toObject(User::class.java))
+                        // Utworzenie listy użytkowników, którzy nie otrzymali zaproszeń
+                        val list = arrayListOf<User>()
+                        for (user in users) {
+                            if (!invitedUids.contains(user.uid)) {
+                                list.add(user)
+                            }
                         }
-                    }
 
-                    onComplete.invoke(list)
-                }
-            })
+                        onComplete.invoke(list)
+                    }
+                    .addOnFailureListener { exception ->
+                        Log.e("Jest blad", exception.message.toString())
+                        onComplete.invoke(arrayListOf())
+                    }
+            }
     }
 
-    fun fetchFriends(uid: String, onComplete: (User) -> Unit): DocumentReference {
+        fun fetchFriends(uid: String, onComplete: (User) -> Unit): DocumentReference {
         val docRef = db.collection(USERS).document(uid)
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {

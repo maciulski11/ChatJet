@@ -11,6 +11,7 @@ import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.FindUserAdapter
 import com.example.chatjet.view_model.MainViewModel
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_find_user.*
 import java.util.*
 import kotlin.collections.ArrayList
