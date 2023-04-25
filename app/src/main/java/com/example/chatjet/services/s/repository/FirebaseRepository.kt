@@ -1,11 +1,14 @@
 package com.example.chatjet.services.s.repository
 
+import android.annotation.SuppressLint
 import android.util.Log
 import com.example.chatjet.data.model.Chat
+import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
+import com.google.firebase.firestore.EventListener
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -64,6 +67,7 @@ class FirebaseRepository {
 
         // Pobranie listy użytkowników oraz zaproszeń użytkownika zalogowanego
         db.collection(USERS)
+            .limit(12)
             .whereNotEqualTo("uid", currentUserUid)
             .get()
             .addOnSuccessListener { usersResult ->
@@ -93,7 +97,54 @@ class FirebaseRepository {
             }
     }
 
-        fun fetchFriends(uid: String, onComplete: (User) -> Unit): DocumentReference {
+    fun updateInvitationsList(success: () -> Unit) {
+        val docRef = db.collection(USERS).document(currentUserUid!!)
+            .collection(INVITATIONS_RECEIVED)
+
+        docRef.addSnapshotListener { snapshot, e ->
+            if (e != null) {
+                Log.w("TAG", "Listen failed.", e)
+                return@addSnapshotListener
+            }
+
+            if (snapshot != null) {
+                // Update your UI with the new data here
+                success()
+            } else {
+                Log.d("TAG", "Current data: null")
+            }
+        }
+    }
+
+    fun fetchInvitationsList(onComplete: (ArrayList<InvitationReceived>) -> Unit) {
+        db.collection(USERS).document(currentUserUid!!)
+            .collection(INVITATIONS_RECEIVED)
+            .addSnapshotListener(object : EventListener<QuerySnapshot> {
+
+                @SuppressLint("NotifyDataSetChanged")
+                override fun onEvent(
+                    value: QuerySnapshot?,
+                    error: FirebaseFirestoreException?
+                ) {
+                    if (error != null) {
+                        Log.e("Jest blad", error.message.toString())
+                        onComplete.invoke(arrayListOf())
+                        return
+                    }
+
+                    val list = arrayListOf<InvitationReceived>()
+                    for (dc: DocumentChange in value!!.documentChanges) {
+                        //sprawdxzamy czy dokument zostal poprawnie dodany:
+                        if (dc.type == DocumentChange.Type.ADDED) {
+                            list.add(dc.document.toObject(InvitationReceived::class.java))
+                        }
+                    }
+                    onComplete.invoke(list)
+                }
+            })
+    }
+
+    fun fetchFriends(uid: String, onComplete: (User) -> Unit): DocumentReference {
         val docRef = db.collection(USERS).document(uid)
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {

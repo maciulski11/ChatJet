@@ -1,6 +1,7 @@
 package com.example.chatjet.ui.adapter
 
 import android.annotation.SuppressLint
+import android.content.Context
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -8,27 +9,17 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
-import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.item_find_user.view.*
 
-class FindUserAdapter(var usersList: ArrayList<User>):
+class FindUserAdapter(var usersList: ArrayList<User>, val context: Context):
     RecyclerView.Adapter<FindUserAdapter.MyViewHolder>() {
-
-    private var friends: ArrayList<Friend> = ArrayList()
-
-    @SuppressLint("NotifyDataSetChanged")
-    fun update(friends: ArrayList<Friend>) {
-
-        this.friends.addAll(friends)
-
-        notifyDataSetChanged()
-    }
 
     @SuppressLint("NotifyDataSetChanged")
     fun setFilteredList(usersList: ArrayList<User>) {
@@ -72,6 +63,8 @@ class FindUserAdapter(var usersList: ArrayList<User>):
                 .into(photo)
 
             inviteButton.setOnClickListener{
+
+                Toast.makeText(context, "Invited!", Toast.LENGTH_SHORT).show()
 
                 val dataReceived = hashMapOf(
                     "uid" to FirebaseRepository().currentUserUid!!,

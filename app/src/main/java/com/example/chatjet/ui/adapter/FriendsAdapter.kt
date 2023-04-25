@@ -65,7 +65,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View) :
         return formatter.format(date)
     }
 
-    inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
+    inner class MyViewHolder(private var view: View): RecyclerView.ViewHolder(view) {
 
 
         val chooseUser = view.findViewById<ConstraintLayout>(R.id.chooseUser)!!
