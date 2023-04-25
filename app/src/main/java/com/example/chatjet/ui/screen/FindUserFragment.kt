@@ -53,7 +53,6 @@ class FindUserFragment: BaseFragment() {
 
                     return true
                 }
-
             })
         }
 

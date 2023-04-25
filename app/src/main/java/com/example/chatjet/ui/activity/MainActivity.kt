@@ -7,7 +7,9 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.example.chatjet.R
+import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.firestore.FirebaseFirestore
 
 class MainActivity : AppCompatActivity() {
 
@@ -61,6 +63,32 @@ class MainActivity : AppCompatActivity() {
             return true
         }
         return false
+    }
+
+    override fun onPrepareOptionsMenu(menu: Menu): Boolean {
+        val menuItem = menu.findItem(R.id.invitation)
+
+        val db = FirebaseFirestore.getInstance()
+
+        // Pobierz informacje z Firestore dotyczące powiadomień
+        db.collection(FirebaseRepository.USERS).document(FirebaseRepository().currentUserUid!!)
+            .collection(FirebaseRepository.INVITATIONS_RECEIVED)
+            .whereEqualTo("status", "new")
+            .get()
+            .addOnSuccessListener { queryDocumentSnapshots ->
+                val hasNewNotifications = !queryDocumentSnapshots.isEmpty
+
+                // Zaktualizuj ikonę na podstawie informacji
+                if (menuItem != null) {
+                    if (hasNewNotifications) {
+                        menuItem.setIcon(R.drawable.new_notification)
+                    } else {
+                        menuItem.setIcon(R.drawable.notification)
+                    }
+                }
+            }
+
+        return super.onPrepareOptionsMenu(menu)
     }
 
     @Deprecated("Deprecated in Java")
