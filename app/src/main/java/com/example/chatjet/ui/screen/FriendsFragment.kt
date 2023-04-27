@@ -19,13 +19,7 @@ import com.example.chatjet.ui.activity.OnBackPressedListener
 import com.example.chatjet.ui.adapter.FriendsAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_friends.*
-import java.sql.Timestamp
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZoneOffset
 import java.util.*
 
 class FriendsViewModel(var user: User? = null, val date: Chat? = null) : ViewModel() {

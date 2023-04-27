@@ -2,7 +2,6 @@ package com.example.chatjet.ui.adapter
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,11 +13,13 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.User
-import com.example.chatjet.services.s.repository.FirebaseRepository
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.item_find_user.view.*
 
-class FindUserAdapter(var usersList: ArrayList<User>, val context: Context):
+class FindUserAdapter(
+    var usersList: ArrayList<User>,
+    val context: Context,
+    val onSend: (String) -> Unit
+) :
     RecyclerView.Adapter<FindUserAdapter.MyViewHolder>() {
 
     @SuppressLint("NotifyDataSetChanged")
@@ -37,8 +38,6 @@ class FindUserAdapter(var usersList: ArrayList<User>, val context: Context):
 
     override fun onBindViewHolder(holder: MyViewHolder, position: Int) {
         val user = usersList[position]
-
-
 
         holder.bind(user)
     }
@@ -62,41 +61,11 @@ class FindUserAdapter(var usersList: ArrayList<User>, val context: Context):
                 .circleCrop()
                 .into(photo)
 
-            inviteButton.setOnClickListener{
+            inviteButton.setOnClickListener {
 
                 Toast.makeText(context, "Invited!", Toast.LENGTH_SHORT).show()
 
-                val dataReceived = hashMapOf(
-                    "uid" to FirebaseRepository().currentUserUid!!,
-                    "accept" to false,
-                    "status" to "new"
-                )
-
-                val db = FirebaseFirestore.getInstance()
-                db.collection(FirebaseRepository.USERS).document(user.uid ?: "")
-                    .collection(FirebaseRepository.INVITATIONS_RECEIVED).document(FirebaseRepository().currentUserUid!!)
-                    .set(dataReceived)
-                    .addOnSuccessListener {
-                        Log.d("TAG", "DocumentSnapshot successfully written!")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w("TAG", "Error writing document", e)
-                    }
-
-                val dataSent = hashMapOf(
-                    "uid" to user.uid,
-                    "accept" to false
-                )
-
-                db.collection(FirebaseRepository.USERS).document(FirebaseRepository().currentUserUid!!)
-                    .collection(FirebaseRepository.INVITATIONS_SENT).document(user.uid ?: "")
-                    .set(dataSent)
-                    .addOnSuccessListener {
-                        Log.d("TAG", "DocumentSnapshot successfully written!")
-                    }
-                    .addOnFailureListener { e ->
-                        Log.w("TAG", "Error writing document", e)
-                    }
+                onSend(user.uid ?: "")
             }
         }
     }

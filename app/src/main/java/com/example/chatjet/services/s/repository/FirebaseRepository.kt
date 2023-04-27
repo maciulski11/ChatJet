@@ -302,6 +302,41 @@ class FirebaseRepository {
         }
     }
 
+    fun sendInvitation(uid: String) {
+
+        val dataReceived = hashMapOf(
+            "uid" to currentUserUid,
+            "accept" to false,
+            "status" to "new"
+        )
+
+        val db = FirebaseFirestore.getInstance()
+        db.collection(USERS).document(uid)
+            .collection(INVITATIONS_RECEIVED).document(currentUserUid ?: "")
+            .set(dataReceived)
+            .addOnSuccessListener {
+                Log.d("TAG", "DocumentSnapshot successfully written!")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error writing document", e)
+            }
+
+        val dataSent = hashMapOf(
+            "uid" to uid,
+            "accept" to false
+        )
+
+        db.collection(USERS).document(currentUserUid ?: "")
+            .collection(INVITATIONS_SENT).document(uid)
+            .set(dataSent)
+            .addOnSuccessListener {
+                Log.d("TAG", "DocumentSnapshot successfully written!")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error writing document", e)
+            }
+    }
+
     fun acceptInvitation(uid: String) {
 
         val friend = hashMapOf(

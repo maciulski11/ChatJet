@@ -15,7 +15,7 @@ import kotlinx.android.synthetic.main.fragment_find_user.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FindUserFragment: BaseFragment() {
+class FindUserFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_find_user
 
     private var usersList = ArrayList<User>()
@@ -32,6 +32,9 @@ class FindUserFragment: BaseFragment() {
         usersList = arrayListOf()
 
         adapter = FindUserAdapter(usersList, requireContext())
+        {
+            mainViewModel.sendInvitation(it)
+        }
         recyclerViewSearch.adapter = adapter
 
         mainViewModel.usersList.observe(this) {

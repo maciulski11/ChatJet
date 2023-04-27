@@ -53,7 +53,7 @@ class InvitationAdapter(
 
             val uid = invitation.uid ?: ""
 
-            FirebaseRepository().fetchFriends(invitation.uid ?: "") { user ->
+            FirebaseRepository().fetchFriends(uid) { user ->
                 nameUser.text = user.full_name
                 location.text = user.location
 
@@ -70,7 +70,7 @@ class InvitationAdapter(
                 }
 
                 unacceptedButton.setOnClickListener {
-                    Toast.makeText(context, "Invitation unaccepted!", Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, "Invitation not accepted!", Toast.LENGTH_SHORT).show()
 
                     onDelete(uid)
                 }

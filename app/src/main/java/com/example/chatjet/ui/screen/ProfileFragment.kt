@@ -7,7 +7,6 @@ import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.view_model.MainViewModel
-import com.google.firebase.database.collection.LLRBNode.Color
 import kotlinx.android.synthetic.main.fragment_profile.*
 
 class ProfileFragment: BaseFragment() {
@@ -34,7 +33,7 @@ class ProfileFragment: BaseFragment() {
                 statusText.text = "Active"
                 statusColor.setColorFilter(android.graphics.Color.GREEN)
             } else {
-                statusText.text = "Inactive"
+                statusText.text = "Not active"
                 statusColor.setColorFilter(android.graphics.Color.RED)
             }
 
