@@ -1,6 +1,7 @@
 package com.example.chatjet.ui.adapter
 
 import android.content.Context
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,8 +14,15 @@ import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.services.s.repository.FirebaseRepository
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
-class InvitationAdapter(var invitationsList: ArrayList<InvitationReceived>, val context: Context):
+class InvitationAdapter(
+    var invitationsList: ArrayList<InvitationReceived>,
+    val context: Context,
+    val onAccept: (String) -> Unit,
+    val onDelete: (String) -> Unit
+) :
     RecyclerView.Adapter<InvitationAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
@@ -33,7 +41,7 @@ class InvitationAdapter(var invitationsList: ArrayList<InvitationReceived>, val 
 
     override fun getItemCount(): Int = invitationsList.size
 
-    inner class MyViewHolder(private val view: View): RecyclerView.ViewHolder(view)  {
+    inner class MyViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         private val photo = view.findViewById<ImageView>(R.id.photo)
         private val nameUser = view.findViewById<TextView>(R.id.nameUser)
@@ -42,7 +50,10 @@ class InvitationAdapter(var invitationsList: ArrayList<InvitationReceived>, val 
         private val unacceptedButton = view.findViewById<ImageButton>(R.id.unacceptedButton)
 
         fun bind(invitation: InvitationReceived) {
-            FirebaseRepository().fetchFriends(invitation.uid ?: ""){ user ->
+
+            val uid = invitation.uid ?: ""
+
+            FirebaseRepository().fetchFriends(invitation.uid ?: "") { user ->
                 nameUser.text = user.full_name
                 location.text = user.location
 
@@ -51,13 +62,17 @@ class InvitationAdapter(var invitationsList: ArrayList<InvitationReceived>, val 
                     .circleCrop()
                     .into(photo)
 
-                acceptButton.setOnClickListener{
+                acceptButton.setOnClickListener {
                     Toast.makeText(context, "Invitation accepted!", Toast.LENGTH_SHORT).show()
+
+                    onAccept(uid)
+                    onDelete(uid)
                 }
 
                 unacceptedButton.setOnClickListener {
                     Toast.makeText(context, "Invitation unaccepted!", Toast.LENGTH_SHORT).show()
 
+                    onDelete(uid)
                 }
 
             }

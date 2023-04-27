@@ -6,12 +6,9 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Chat
-import com.example.chatjet.data.model.User
 import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 
 class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<ChatAdapter.MyViewHolder>() {
 

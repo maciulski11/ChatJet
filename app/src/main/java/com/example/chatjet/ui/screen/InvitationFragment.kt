@@ -12,7 +12,7 @@ import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
 import kotlinx.android.synthetic.main.fragment_invitation.*
 
-class InvitationFragment: BaseFragment() {
+class InvitationFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_invitation
 
     private var invitationsList = ArrayList<InvitationReceived>()
@@ -28,7 +28,13 @@ class InvitationFragment: BaseFragment() {
 
         invitationsList = arrayListOf()
 
-        adapter = InvitationAdapter(invitationsList, requireContext())
+        adapter = InvitationAdapter(invitationsList, requireContext(),
+            {
+                mainViewModel.acceptInvitation(it)
+            },
+            {
+                mainViewModel.deleteInvitation(it)
+            })
         recyclerViewInvitations.adapter = adapter
 
         mainViewModel.invitationsList.observe(this) {

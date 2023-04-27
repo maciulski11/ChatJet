@@ -68,7 +68,8 @@ class FindUserAdapter(var usersList: ArrayList<User>, val context: Context):
 
                 val dataReceived = hashMapOf(
                     "uid" to FirebaseRepository().currentUserUid!!,
-                    "accept" to false
+                    "accept" to false,
+                    "status" to "new"
                 )
 
                 val db = FirebaseFirestore.getInstance()
@@ -97,7 +98,6 @@ class FindUserAdapter(var usersList: ArrayList<User>, val context: Context):
                         Log.w("TAG", "Error writing document", e)
                     }
             }
-
         }
     }
 }

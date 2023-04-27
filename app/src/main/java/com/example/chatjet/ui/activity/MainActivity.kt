@@ -14,6 +14,8 @@ import com.google.firebase.firestore.FirebaseFirestore
 class MainActivity : AppCompatActivity() {
 
     private var backPressedListener: OnBackPressedListener? = null
+    private val db = FirebaseFirestore.getInstance()
+
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -67,8 +69,6 @@ class MainActivity : AppCompatActivity() {
 
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.findItem(R.id.invitation)
-
-        val db = FirebaseFirestore.getInstance()
 
         // Pobierz informacje z Firestore dotyczące powiadomień
         db.collection(FirebaseRepository.USERS).document(FirebaseRepository().currentUserUid!!)

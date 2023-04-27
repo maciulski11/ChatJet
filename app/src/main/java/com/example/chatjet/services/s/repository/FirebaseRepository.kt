@@ -2,6 +2,7 @@ package com.example.chatjet.services.s.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
@@ -299,6 +300,62 @@ class FirebaseRepository {
             }
 
         }
+    }
+
+    fun acceptInvitation(uid: String) {
+
+        val friend = hashMapOf(
+            "uid" to uid
+        )
+
+        db.collection(USERS).document(currentUserUid ?: "")
+        .update("friends", FieldValue.arrayUnion(friend))
+            .addOnSuccessListener {
+                // Dodanie do listy zakończone sukcesem
+                Log.d( "TAG", "Dodano do listy!")
+            }
+            .addOnFailureListener {
+                // Błąd podczas dodawania do listy
+                Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
+            }
+
+        val friendd = hashMapOf(
+            "uid" to currentUserUid
+        )
+
+        db.collection(USERS).document(uid)
+            .update("friends", FieldValue.arrayUnion(friendd))
+            .addOnSuccessListener {
+                // Dodanie do listy zakończone sukcesem
+                Log.d( "TAG", "Dodano do listy!")
+            }
+            .addOnFailureListener {
+                // Błąd podczas dodawania do listy
+                Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
+            }
+
+    }
+
+    fun deleteInvitation(uid: String) {
+        db.collection(USERS).document(FirebaseRepository().currentUserUid!!)
+            .collection(INVITATIONS_RECEIVED).document(uid)
+            .delete()
+            .addOnSuccessListener {
+                Log.d("TAG", "DocumentSnapshot successfully deleted!")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error deleting document", e)
+            }
+
+        db.collection(USERS).document(uid)
+            .collection(INVITATIONS_SENT).document(currentUserUid!!)
+            .delete()
+            .addOnSuccessListener {
+                Log.d("TAG", "DocumentSnapshot successfully deleted!")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error deleting document", e)
+            }
     }
 }
 

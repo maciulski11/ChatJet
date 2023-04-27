@@ -25,6 +25,14 @@ class MainViewModel: ViewModel() {
         }
     }
 
+    fun acceptInvitation(uid: String) {
+        repository.acceptInvitation(uid)
+    }
+
+    fun deleteInvitation(uid: String) {
+        repository.deleteInvitation(uid)
+    }
+
     fun fetchInvitations() {
         repository.fetchInvitationsList {
             invitationsList.postValue(it)
