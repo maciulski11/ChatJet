@@ -2,7 +2,6 @@ package com.example.chatjet.services.s.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.widget.Toast
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
@@ -66,34 +65,43 @@ class FirebaseRepository {
     fun fetchUsersList(onComplete: (ArrayList<User>) -> Unit) {
         val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
 
-        // Pobranie listy użytkowników oraz zaproszeń użytkownika zalogowanego
+        // Pobranie listy znajomych użytkownika
         db.collection(USERS)
-            .limit(12)
-            .whereNotEqualTo("uid", currentUserUid)
+            .document(currentUserUid!!)
             .get()
-            .addOnSuccessListener { usersResult ->
+            .addOnSuccessListener { userResult ->
+                val currentUser = userResult.toObject(User::class.java)
+                val friendsUid = currentUser?.friends?.map { it.uid } ?: arrayListOf()
+
                 db.collection(USERS)
-                    .document(currentUserUid!!)
-                    .collection(INVITATIONS_SENT)
+                    .limit(12)
+                    .whereNotIn("uid", friendsUid)
+//                    .whereNotEqualTo("uid", currentUserUid)
                     .get()
-                    .addOnSuccessListener { invitationResult ->
-                        val users = usersResult.toObjects(User::class.java)
-                        val invitations = invitationResult.toObjects(User::class.java)
-                        val invitedUids = invitations.map { it.uid }
+                    .addOnSuccessListener { usersResult ->
+                        db.collection(USERS)
+                            .document(currentUserUid)
+                            .collection(INVITATIONS_SENT)
+                            .get()
+                            .addOnSuccessListener { invitationResult ->
+                                val users = usersResult.toObjects(User::class.java)
+                                val invitations = invitationResult.toObjects(User::class.java)
+                                val invitedUid = invitations.map { it.uid }
 
-                        // Utworzenie listy użytkowników, którzy nie otrzymali zaproszeń
-                        val list = arrayListOf<User>()
-                        for (user in users) {
-                            if (!invitedUids.contains(user.uid)) {
-                                list.add(user)
+                                // Utworzenie listy użytkowników, którzy nie otrzymali zaproszeń
+                                val list = arrayListOf<User>()
+                                for (user in users) {
+                                    if (user.uid != currentUserUid && !invitedUid.contains(user.uid)) {
+                                        list.add(user)
+                                    }
+                                }
+
+                                onComplete.invoke(list)
                             }
-                        }
-
-                        onComplete.invoke(list)
-                    }
-                    .addOnFailureListener { exception ->
-                        Log.e("Jest blad", exception.message.toString())
-                        onComplete.invoke(arrayListOf())
+                            .addOnFailureListener { exception ->
+                                Log.e("Jest blad", exception.message.toString())
+                                onComplete.invoke(arrayListOf())
+                            }
                     }
             }
     }
@@ -337,38 +345,53 @@ class FirebaseRepository {
             }
     }
 
+    private fun transferDocUid(docUid: String) {
+        Log.d("TAG", "transfer docUid: $docUid")
+    }
+
     fun acceptInvitation(uid: String) {
 
-        val friend = hashMapOf(
-            "uid" to uid
-        )
+        val message = "Hello, we are friends right now and we can chat."
 
-        db.collection(USERS).document(currentUserUid ?: "")
-        .update("friends", FieldValue.arrayUnion(friend))
-            .addOnSuccessListener {
-                // Dodanie do listy zakończone sukcesem
-                Log.d( "TAG", "Dodano do listy!")
-            }
-            .addOnFailureListener {
-                // Błąd podczas dodawania do listy
-                Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
-            }
+        sendMessage(currentUserUid ?: "", uid, message) { docUid ->
+            transferDocUid(docUid)
 
-        val friendd = hashMapOf(
-            "uid" to currentUserUid
-        )
+            val sender = hashMapOf(
+                "uid" to uid,
+                "uidLastMessage" to docUid,
+                "readMessage" to true,
+                "sentAt" to Timestamp.now()
+            )
 
-        db.collection(USERS).document(uid)
-            .update("friends", FieldValue.arrayUnion(friendd))
-            .addOnSuccessListener {
-                // Dodanie do listy zakończone sukcesem
-                Log.d( "TAG", "Dodano do listy!")
-            }
-            .addOnFailureListener {
-                // Błąd podczas dodawania do listy
-                Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
-            }
+            db.collection(USERS).document(currentUserUid ?: "")
+                .update("friends", FieldValue.arrayUnion(sender))
+                .addOnSuccessListener {
+                    // Dodanie do listy zakończone sukcesem
+                    Log.d("TAG", "Dodano do listy!")
+                }
+                .addOnFailureListener {
+                    // Błąd podczas dodawania do listy
+                    Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
+                }
 
+            val receiver = hashMapOf(
+                "uid" to currentUserUid,
+                "uidLastMessage" to docUid,
+                "readMessage" to false,
+                "sentAt" to Timestamp.now()
+            )
+
+            db.collection(USERS).document(uid)
+                .update("friends", FieldValue.arrayUnion(receiver))
+                .addOnSuccessListener {
+                    // Dodanie do listy zakończone sukcesem
+                    Log.d("TAG", "Dodano do listy!")
+                }
+                .addOnFailureListener {
+                    // Błąd podczas dodawania do listy
+                    Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
+                }
+        }
     }
 
     fun deleteInvitation(uid: String) {
