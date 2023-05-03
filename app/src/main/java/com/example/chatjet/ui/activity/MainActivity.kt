@@ -25,13 +25,13 @@ class MainActivity : AppCompatActivity() {
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
         val navController = findNavController(R.id.fragment)
 
-        bottomNavigationView.selectedItemId = R.id.friendsFragment
+        bottomNavigationView.selectedItemId = R.id.messageFragment
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
             when (menuItem.itemId) {
-                R.id.friendsFragment -> {
+                R.id.messageFragment -> {
                     backPressedListener = null
-                    navController.navigate(R.id.friendsFragment)
+                    navController.navigate(R.id.messageFragment)
                     true
                 }
                 R.id.profileFragment -> {
@@ -60,7 +60,7 @@ class MainActivity : AppCompatActivity() {
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         val navController = findNavController(R.id.fragment)
 
-        if (navController.currentDestination?.id == R.id.friendsFragment) {
+        if (navController.currentDestination?.id == R.id.messageFragment) {
             menuInflater.inflate(R.menu.invitation_menu, menu)
             return true
         }
