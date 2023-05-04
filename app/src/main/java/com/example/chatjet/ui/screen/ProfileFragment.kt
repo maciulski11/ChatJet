@@ -17,8 +17,9 @@ class ProfileFragment: BaseFragment() {
 
     override fun subscribeUi() {
 
-        friendsListButton.setOnClickListener {
+        friendsList.setOnClickListener {
             Toast.makeText(requireContext(), "click", Toast.LENGTH_SHORT).show()
+            findNavController().navigate(R.id.action_profileFragment_to_friendsFragment)
         }
 
         editProfileButton.setOnClickListener {

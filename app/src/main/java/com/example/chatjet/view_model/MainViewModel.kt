@@ -6,11 +6,11 @@ import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
 
-class MainViewModel: ViewModel() {
+class MainViewModel(var user: User? = null): ViewModel() {
 
     private val repository = FirebaseRepository()
 
-    var users: MutableLiveData<User?> = MutableLiveData()
+    var users: MutableLiveData<User?> = MutableLiveData(null)
     var usersList = MutableLiveData<ArrayList<User>>()
     var invitationsList = MutableLiveData<ArrayList<InvitationReceived>>()
 

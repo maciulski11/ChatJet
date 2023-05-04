@@ -11,7 +11,7 @@
 
         <action
             android:id="@+id/action_loginFragment_to_usersFragment"
-            app:destination="@id/friendsFragment" />
+            app:destination="@id/messageFragment" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -21,11 +21,11 @@
 
         <action
             android:id="@+id/action_chatFragment_to_usersFragment"
-            app:destination="@id/friendsFragment" />
+            app:destination="@id/messageFragment" />
     </fragment>
     <fragment
-        android:id="@+id/friendsFragment"
-        android:name="com.example.chatjet.ui.screen.FriendsFragment"
+        android:id="@+id/messageFragment"
+        android:name="com.example.chatjet.ui.screen.MessageFragment"
         android:label="UsersFragment" >
 
         <action
@@ -41,7 +41,7 @@
         android:label="FindUserFragment" >
         <action
             android:id="@+id/action_findUserFragment_to_usersFragment"
-            app:destination="@id/friendsFragment" />
+            app:destination="@id/messageFragment" />
     </fragment>
     <fragment
         android:id="@+id/profileFragment"
@@ -50,6 +50,9 @@
         <action
             android:id="@+id/action_profileFragment_to_profileEditFragment"
             app:destination="@id/profileEditFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_friendsFragment"
+            app:destination="@id/friendsFragment" />
     </fragment>
     <fragment
         android:id="@+id/invitationFragment"
@@ -61,6 +64,14 @@
         android:label="ProfileEditFragment" >
         <action
             android:id="@+id/action_profileEditFragment_to_profileFragment"
+            app:destination="@id/profileFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/friendsFragment"
+        android:name="com.example.chatjet.ui.screen.FriendsFragment"
+        android:label="FriendsFragment" >
+        <action
+            android:id="@+id/action_friendsFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
     </fragment>
 </navigation>
