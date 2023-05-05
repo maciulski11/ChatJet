@@ -1,10 +1,14 @@
 package com.example.chatjet.ui.activity
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.services.s.repository.FirebaseRepository
@@ -15,7 +19,6 @@ class MainActivity : AppCompatActivity() {
 
     private var backPressedListener: OnBackPressedListener? = null
     private val db = FirebaseFirestore.getInstance()
-
 
     @SuppressLint("MissingInflatedId")
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -70,23 +73,26 @@ class MainActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.findItem(R.id.invitation)
 
-        // Pobierz informacje z Firestore dotyczące powiadomień
-        db.collection(FirebaseRepository.USERS).document(FirebaseRepository().currentUserUid!!)
-            .collection(FirebaseRepository.INVITATIONS_RECEIVED)
-            .whereEqualTo("status", "new")
-            .get()
-            .addOnSuccessListener { queryDocumentSnapshots ->
-                val hasNewNotifications = !queryDocumentSnapshots.isEmpty
+        if (FirebaseRepository().currentUserUid != null && FirebaseRepository().currentUserUid!!.isNotEmpty()) {
+            // Pobierz informacje z Firestore dotyczące powiadomień
+            db.collection(FirebaseRepository.USERS)
+                .document(FirebaseRepository().currentUserUid ?: "")
+                .collection(FirebaseRepository.INVITATIONS_RECEIVED)
+                .whereEqualTo("status", "new")
+                .get()
+                .addOnSuccessListener { queryDocumentSnapshots ->
+                    val hasNewNotifications = queryDocumentSnapshots.isEmpty.not()
 
-                // Zaktualizuj ikonę na podstawie informacji
-                if (menuItem != null) {
-                    if (hasNewNotifications) {
-                        menuItem.setIcon(R.drawable.new_notification)
-                    } else {
-                        menuItem.setIcon(R.drawable.notification)
+                    // Zaktualizuj ikonę na podstawie informacji
+                    if (menuItem != null) {
+                        if (hasNewNotifications) {
+                            menuItem.setIcon(R.drawable.new_notification)
+                        } else {
+                            menuItem.setIcon(R.drawable.notification)
+                        }
                     }
                 }
-            }
+        }
 
         return super.onPrepareOptionsMenu(menu)
     }
