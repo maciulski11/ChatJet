@@ -1,10 +1,12 @@
 package com.example.chatjet.ui.adapter
 
 import android.Manifest
+import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -17,6 +19,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.services.s.repository.FirebaseRepository
+import com.google.firebase.firestore.FieldValue
+import com.google.firebase.firestore.FirebaseFirestore
 
 class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View, private val context: Context) :
     RecyclerView.Adapter<FriendsAdapter.MyViewHolder>() {
@@ -42,6 +46,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View, pr
 
         private val name = view.findViewById<TextView>(R.id.nameUser)
         private val callButton = view.findViewById<ImageButton>(R.id.callButton)
+        private val deleteButton = view.findViewById<ImageButton>(R.id.deleteButton)
 
         fun bind(friend: Friend) {
 
@@ -60,6 +65,55 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View, pr
                     }
                     context.startActivity(callIntent)
                 }
+
+                deleteButton.setOnClickListener {
+
+                    val alertDialog = AlertDialog.Builder(context)
+                        .setTitle("Delete friend")
+                        .setMessage("Are you sure you want to delete this friend?")
+                        .setPositiveButton("Yes") { _, _ ->
+                            // usunięcie przyjaciela
+                            val db = FirebaseFirestore.getInstance()
+                            db.collection(FirebaseRepository.USERS).document(FirebaseRepository().currentUserUid!!)
+                                .update(FirebaseRepository.FRIENDS, FieldValue.arrayRemove(friend))
+                                .addOnSuccessListener {
+                                    Log.d("TAG", "Friend successfully deleted!")
+                                }
+                                .addOnFailureListener { e ->
+                                    Log.w("TAG", "Error deleting friend", e)
+                                }
+                        }
+                        .setNegativeButton("No") { _, _ ->
+
+                        }
+                        .create()
+
+                    alertDialog.show()
+
+//                    // usunięcie aktualnie zalogowanego użytkownika z listy przyjaciół usuniętego użytkownika
+//                    db.collection(FirebaseRepository.USERS).document(friend.uid!!)
+//                        .get()
+//                        .addOnSuccessListener { document ->
+//                            if (document != null) {
+//                                val friends = document.get("friends") as ArrayList<String>
+//                                friends.remove(FirebaseRepository().currentUserUid!!)
+//                                db.collection(FirebaseRepository.USERS).document(friend.uid)
+//                                    .update("friends", friends)
+//                                    .addOnSuccessListener {
+//                                        Log.d("TAG", "Current user successfully removed from friend's list!")
+//                                    }
+//                                    .addOnFailureListener { e ->
+//                                        Log.e("TAG", "Error removing current user from friend's list", e)
+//                                    }
+//                            } else {
+//                                Log.d("TAG", "No such document")
+//                            }
+//                        }
+//                        .addOnFailureListener { e ->
+//                            Log.e("TAG", "Error getting document", e)
+//                        }
+                }
+
             }
         }
     }
