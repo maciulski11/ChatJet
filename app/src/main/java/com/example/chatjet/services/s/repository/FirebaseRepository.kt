@@ -17,7 +17,6 @@ class FirebaseRepository {
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
 
-
     val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
 
@@ -392,6 +391,17 @@ class FirebaseRepository {
                     Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
                 }
         }
+    }
+
+    fun deleteFriend(uid: String) {
+        db.collection(USERS).document(currentUserUid!!)
+            .delete()
+            .addOnSuccessListener {
+                Log.d("TAG", "DocumentSnapshot successfully deleted!")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error deleting document", e)
+            }
     }
 
     fun deleteInvitation(uid: String) {
