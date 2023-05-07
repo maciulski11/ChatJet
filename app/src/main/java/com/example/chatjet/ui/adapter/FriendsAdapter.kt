@@ -18,9 +18,11 @@ import androidx.core.content.ContextCompat.startActivity
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
+import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
+import kotlinx.coroutines.tasks.await
 
 class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View, private val context: Context) :
     RecyclerView.Adapter<FriendsAdapter.MyViewHolder>() {
@@ -82,6 +84,11 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val v: View, pr
                                 .addOnFailureListener { e ->
                                     Log.w("TAG", "Error deleting friend", e)
                                 }
+
+                            // TODO:
+                            // usunac przyjaciela z listy znajomych usunietgo przyjaciela
+
+
                         }
                         .setNegativeButton("No") { _, _ ->
 
