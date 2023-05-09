@@ -9,8 +9,11 @@ import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
+import kotlinx.android.synthetic.main.fragment_profile.editProfileButton
+import kotlinx.android.synthetic.main.fragment_profile.statusColor
+import kotlinx.android.synthetic.main.fragment_profile.statusText
 
-class ProfileFragment: BaseFragment() {
+class ProfileFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_profile
 
     private val mainViewModel: MainViewModel by activityViewModels()
@@ -43,11 +46,17 @@ class ProfileFragment: BaseFragment() {
                 statusColor.setColorFilter(android.graphics.Color.RED)
             }
 
-            Glide.with(requireView())
-                .load(user?.photo)
-                .override(440, 440)
-                .circleCrop()
-                .into(photoProfile)
+            if (user?.photo!!.isEmpty()) {
+                photoProfile.setImageResource(R.drawable.ic_baseline_account_circle_200)
+
+            } else {
+
+                Glide.with(requireView())
+                    .load(user.photo)
+                    .override(450, 450)
+                    .circleCrop()
+                    .into(photoProfile)
+            }
         }
     }
 

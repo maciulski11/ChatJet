@@ -84,7 +84,6 @@ class LoginFragment : BaseFragment() {
         }
     }
 
-
     private fun loginClick() {
         val email = emailET.text.toString()
         val password = passwordET.text.toString()
