@@ -10,12 +10,8 @@ import com.example.chatjet.R
 import com.example.chatjet.data.model.Chat
 import com.google.firebase.auth.FirebaseAuth
 
-class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<ChatAdapter.MyViewHolder>() {
-
-    private val fbAuth = FirebaseAuth.getInstance()
-
-    private val currentUserUid: String?
-        get() = fbAuth.currentUser?.uid
+class ChatAdapter(private val chatList: ArrayList<Chat>) :
+    RecyclerView.Adapter<ChatAdapter.MyViewHolder>() {
 
     companion object {
         private const val MESSAGE_TYPE_LEFT = 0
@@ -25,11 +21,13 @@ class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<C
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         return if (viewType == MESSAGE_TYPE_RIGHT) {
             val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.item_sent_message, parent, false)
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_sent_message, parent, false)
             MyViewHolder(view)
         } else {
             val view =
-                LayoutInflater.from(parent.context).inflate(R.layout.item_receive_message, parent, false)
+                LayoutInflater.from(parent.context)
+                    .inflate(R.layout.item_receive_message, parent, false)
             MyViewHolder(view)
         }
     }
@@ -52,7 +50,7 @@ class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<C
 
     }
 
-    inner class MyViewHolder(private var view: View): RecyclerView.ViewHolder(view) {
+    inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
 
         private val message = view.findViewById<TextView>(R.id.messageTV)
         private val image = view.findViewById<ImageView>(R.id.photo)
@@ -62,7 +60,7 @@ class ChatAdapter(private val chatList: ArrayList<Chat>): RecyclerView.Adapter<C
             message.text = chat.message
 
 
-                // Load current user's image from Firestore and display it in ImageView
+            // Load current user's image from Firestore and display it in ImageView
 //                FirebaseFirestore.getInstance().collection("users").document("RxT9gnqCC2ZHcNYLtRVqgbpND113").get()
 //                    .addOnSuccessListener { document ->
 //                        if (document != null && document.exists()) {
