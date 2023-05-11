@@ -40,7 +40,7 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
         // We initialize our user list:
         messageList = arrayListOf()
 
-        FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid!!) { user ->
+        FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid) { user ->
             mainViewModel.user = user
 
             mainViewModel.users.observe(this) {

@@ -1,14 +1,10 @@
 package com.example.chatjet.ui.activity
 
-import android.Manifest
 import android.annotation.SuppressLint
-import android.content.pm.PackageManager
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
-import androidx.core.content.ContextCompat
 import androidx.navigation.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.services.s.repository.FirebaseRepository
@@ -73,10 +69,10 @@ class MainActivity : AppCompatActivity() {
     override fun onPrepareOptionsMenu(menu: Menu): Boolean {
         val menuItem = menu.findItem(R.id.invitation)
 
-        if (FirebaseRepository().currentUserUid != null && FirebaseRepository().currentUserUid!!.isNotEmpty()) {
+        if (FirebaseRepository().currentUserUid.isNotEmpty()) {
             // Pobierz informacje z Firestore dotyczące powiadomień
             db.collection(FirebaseRepository.USERS)
-                .document(FirebaseRepository().currentUserUid ?: "")
+                .document(FirebaseRepository().currentUserUid)
                 .collection(FirebaseRepository.INVITATIONS_RECEIVED)
                 .whereEqualTo("status", "new")
                 .get()

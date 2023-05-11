@@ -6,11 +6,8 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.Friend
-import com.example.chatjet.data.model.FriendsGroup
-import com.example.chatjet.data.model.User
 import com.example.chatjet.services.s.repository.FirebaseRepository
 import com.example.chatjet.ui.adapter.FriendsAdapter
-import com.example.chatjet.ui.adapter.MessageAdapter
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_friends.*
 import kotlinx.android.synthetic.main.fragment_message.*
@@ -33,7 +30,7 @@ class FriendsFragment: BaseFragment() {
         // We initialize our user list:
         friendsList = arrayListOf()
 
-        FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid!!) { user ->
+        FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid) { user ->
             mainViewModel.user = user
 
             mainViewModel.users.observe(this) {
@@ -46,7 +43,6 @@ class FriendsFragment: BaseFragment() {
 
                     adapter = FriendsAdapter(
                         friendsList,
-                        requireView(),
                         requireContext()
                     )
 

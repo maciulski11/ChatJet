@@ -82,7 +82,7 @@ class ChatFragment : BaseFragment() {
 
             } else {
 
-                sendMessage(FirebaseRepository().currentUserUid!!, userUid, message)
+                sendMessage(FirebaseRepository().currentUserUid, userUid, message)
                 Log.d("REPOUSER", "$userUid, $message")
                 writeMessage.setText("")
 
@@ -95,7 +95,7 @@ class ChatFragment : BaseFragment() {
                 }
             }
         }
-        readMessage(FirebaseRepository().currentUserUid!!, userUid)
+        readMessage(FirebaseRepository().currentUserUid, userUid)
 
     }
 

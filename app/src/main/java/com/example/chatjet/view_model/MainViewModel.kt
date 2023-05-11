@@ -24,9 +24,13 @@ class MainViewModel(var user: User? = null): ViewModel() {
         }
     }
 
-    fun updateDataOfUser(name: String, number: Int, location: String, navController: NavController) {
+    fun updateDataOfUser(name: String, number: String?, location: String, navController: NavController) {
         repository.updateDataOfUser(name, number, location)
         navController.navigate(R.id.action_profileEditFragment_to_profileFragment)
+    }
+
+    fun uploadUserPhoto(bytes: ByteArray) {
+        FirebaseRepository().uploadUserPhoto(bytes)
     }
 
     fun sendMessage(senderId: String, receiverId: String, message: String) {
