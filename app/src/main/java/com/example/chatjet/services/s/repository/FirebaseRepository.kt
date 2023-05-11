@@ -1,7 +1,11 @@
 package com.example.chatjet.services.s.repository
 
 import android.annotation.SuppressLint
+import android.app.Activity
 import android.util.Log
+import androidx.navigation.findNavController
+import androidx.navigation.fragment.findNavController
+import com.example.chatjet.R
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
@@ -9,6 +13,7 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
+import kotlinx.android.synthetic.main.fragment_profile_edit.*
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -16,6 +21,7 @@ class FirebaseRepository {
 
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
+    private val user = User()
 
     val currentUserUid: String?
         get() = fbAuth.currentUser?.uid
@@ -169,6 +175,28 @@ class FirebaseRepository {
             }
         }
         return docRef
+    }
+
+    fun updateDataOfUser(name: String, number: Int, location: String) {
+
+        // Tworzenie mapy z danymi do zaktualizowania
+        val updates = hashMapOf<String, Any>()
+
+        // Dodawanie tylko tych pól, które zostały zmienione
+        if (name.isNotEmpty()) {
+            updates["full_name"] = name
+            updates["number"] = number
+            updates["location"] = location
+        }
+
+        db.collection(USERS).document(FirebaseRepository().currentUserUid!!)
+            .update(updates)
+            .addOnSuccessListener {
+                Log.d("TAG", "Użytkownik został zaktualizowany pomyślnie")
+            }
+            .addOnFailureListener { e ->
+                Log.e("TAG", "Błąd podczas aktualizowania użytkownika", e)
+            }
     }
 
     fun fetchLastMessage(uid: String, onComplete: (Chat) -> Unit) {
