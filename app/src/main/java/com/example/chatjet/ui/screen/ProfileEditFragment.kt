@@ -1,11 +1,14 @@
 package com.example.chatjet.ui.screen
 
 import android.app.Activity
+import android.app.AlertDialog
+import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.provider.MediaStore
 import android.util.Log
+import android.view.Gravity
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -19,12 +22,15 @@ import kotlinx.android.synthetic.main.fragment_profile_edit.*
 import kotlinx.android.synthetic.main.fragment_profile_edit.statusColor
 import kotlinx.android.synthetic.main.fragment_profile_edit.statusText
 import java.io.ByteArrayOutputStream
+import java.io.File
+import java.io.FileInputStream
 
 class ProfileEditFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_profile_edit
 
     private val PROFILE_DEBUG = "TAKE PHOTO"
-    private val REQUEST_IMAGE_CAPTURE = 1
+    private val REQUEST_IMAGE_CAPTURE = 11
+    private val REQUEST_IMAGE_PICK = 22
 
     private val mainViewModel: MainViewModel by activityViewModels()
 
@@ -73,76 +79,132 @@ class ProfileEditFragment : BaseFragment() {
         }
 
         saveButton.setOnClickListener {
-
-            // We check that user enters 9 digits of phone number or the field is empty
-            if (phoneNumberET.text.isEmpty() || phoneNumberET.text.matches(Regex("^\\d{9}$"))) {
-                val name = fullNameET.text.toString()
-                val number = phoneNumberET.text.toString()
-                val location = locationET.text.toString()
-
-                mainViewModel.updateDataOfUser(name, number, location, findNavController())
-
-                Utilities.customToast(
-                    requireContext(),
-                    "Success!",
-                    R.drawable.ic_baseline_check_circle_outline_24,
-                    R.color.white,
-                    R.color.green,
-                    Toast.LENGTH_SHORT
-                )
-
-                fullNameET.setText("")
-                phoneNumberET.setText("")
-                locationET.setText("")
-
-            } else {
-
-                Utilities.customToast(
-                    requireContext(),
-                    "Your phone number should have 9 digits!",
-                    R.drawable.ic_baseline_remove_circle_outline_24,
-                    R.color.white,
-                    R.color.red,
-                    Toast.LENGTH_SHORT
-                )
-
-            }
+            changeUserPhoneNumber()
         }
 
         setupTakePictureClick()
     }
 
-    @Deprecated("Deprecated in Java")
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        if (requestCode == REQUEST_IMAGE_CAPTURE && resultCode == Activity.RESULT_OK) {
-            val imageBitmap = data?.extras?.get("data") as Bitmap
+    private fun setupTakePictureClick() {
+        photoProfileButton.setOnClickListener {
+            val options = arrayOf<CharSequence>("Take Photo", "Choose from Gallery")
+            val icons = arrayOf(R.drawable.ic_baseline_camera_24, R.drawable.ic_baseline_image_24)
+            val builder = AlertDialog.Builder(requireContext())
+            builder.setTitle("Choose your profile picture:")
+            
+            builder.setItems(options) { dialog, item ->
+                when {
+                    options[item] == "Take Photo" -> {
+                        val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE)
+                        try {
+                            startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
+                        } catch (exc: Exception) {
+                            Log.d(PROFILE_DEBUG, exc.message.toString())
+                        }
+                    }
+                    options[item] == "Choose from Gallery" -> {
+                        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        startActivityForResult(intent, REQUEST_IMAGE_PICK)
+                    }
+                }
+            }
 
-            Log.d(PROFILE_DEBUG, "BITMAP: " + imageBitmap.byteCount.toString())
-
-            Glide.with(this)
-                .load(imageBitmap)
-                .circleCrop()
-                .override(450, 450)
-                .into(photoProfileButton)
-
-            val stream = ByteArrayOutputStream()
-            val result = imageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
-            val byteArray = stream.toByteArray()
-
-            if (result) mainViewModel.uploadUserPhoto(byteArray)
+            val alertDialog = builder.create()
+            val window = alertDialog.window
+            val layoutParams = window?.attributes
+            layoutParams?.gravity = Gravity.BOTTOM
+            window?.attributes = layoutParams
+            alertDialog.show()
         }
     }
 
-    private fun setupTakePictureClick() {
-        //funkcja ktora odpowiada za zrobienie zdjecia po klikniecu w nasz imagebutton
-        photoProfileButton.setOnClickListener {
+    @Deprecated("Deprecated in Java")
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        when (requestCode) {
+            REQUEST_IMAGE_CAPTURE -> {
+                if (resultCode == Activity.RESULT_OK) {
+                    val imageBitmap = data?.extras?.get("data") as Bitmap
 
-            val intent = Intent(MediaStore.ACTION_IMAGE_CAPTURE_SECURE)
-            try {
-                startActivityForResult(intent, REQUEST_IMAGE_CAPTURE)
-            } catch (exc: Exception) {
-                Log.d(PROFILE_DEBUG, exc.message.toString())
+                    Log.d(PROFILE_DEBUG, "BITMAP: " + imageBitmap.byteCount.toString())
+
+                    Glide.with(this)
+                        .load(imageBitmap)
+                        .circleCrop()
+                        .override(450, 450)
+                        .into(photoProfileButton)
+
+                    val stream = ByteArrayOutputStream()
+                    val result = imageBitmap.compress(Bitmap.CompressFormat.JPEG, 90, stream)
+                    val byteArray = stream.toByteArray()
+
+                    if (result) mainViewModel.uploadUserPhoto(byteArray)
+                }
             }
+            REQUEST_IMAGE_PICK -> {
+                if (resultCode == Activity.RESULT_OK && data != null) {
+                    val selectedImage = data.data
+                    selectedImage?.let {
+                        val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
+                        val cursor = requireActivity().contentResolver.query(it, filePathColumn, null, null, null)
+                        cursor?.moveToFirst()
+                        val columnIndex = cursor?.getColumnIndex(filePathColumn[0])
+                        val imagePath = cursor?.getString(columnIndex!!)
+                        cursor?.close()
+
+                        Glide.with(this)
+                            .load(imagePath)
+                            .circleCrop()
+                            .override(450, 450)
+                            .into(photoProfileButton)
+
+                        val file = File(imagePath ?: "")
+                        val fileInputStream = FileInputStream(file)
+                        val byteArray = fileInputStream.readBytes()
+
+                        mainViewModel.uploadUserPhoto(byteArray)
+                    }
+                }
+            }
+            else -> {
+                Log.d(PROFILE_DEBUG, "Unknown request code: $requestCode")
+            }
+        }
+    }
+
+    private fun changeUserPhoneNumber() {
+        // We check that user enters 9 digits of phone number or the field is empty
+        if (phoneNumberET.text.isEmpty() || phoneNumberET.text.matches(Regex("^\\d{9}$"))) {
+            val name = fullNameET.text.toString()
+            val number = phoneNumberET.text.toString()
+            val location = locationET.text.toString()
+
+            mainViewModel.updateDataOfUser(name, number, location, findNavController())
+
+            Utilities.customToast(
+                requireContext(),
+                "Success!",
+                R.drawable.ic_baseline_check_circle_outline_24,
+                R.color.white,
+                R.color.green,
+                Toast.LENGTH_SHORT
+            )
+
+            fullNameET.setText("")
+            phoneNumberET.setText("")
+            locationET.setText("")
+
+        } else {
+
+            Utilities.customToast(
+                requireContext(),
+                "Your phone number should have 9 digits!",
+                R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.white,
+                R.color.red,
+                Toast.LENGTH_SHORT
+            )
+
         }
     }
 
