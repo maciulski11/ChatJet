@@ -1,11 +1,7 @@
 package com.example.chatjet.services.s.repository
 
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.util.Log
-import androidx.navigation.findNavController
-import androidx.navigation.fragment.findNavController
-import com.example.chatjet.R
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
@@ -13,6 +9,8 @@ import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
+import com.google.firebase.storage.FirebaseStorage
+import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -21,10 +19,10 @@ class FirebaseRepository {
 
     private val db = FirebaseFirestore.getInstance()
     private val fbAuth = FirebaseAuth.getInstance()
-    private val user = User()
+    private val storage = FirebaseStorage.getInstance()
 
-    val currentUserUid: String?
-        get() = fbAuth.currentUser?.uid
+    val currentUserUid: String
+        get() = fbAuth.currentUser?.uid ?: ""
 
     companion object {
         const val USERS = "users"
@@ -34,7 +32,7 @@ class FirebaseRepository {
     }
 
     fun getCurrentUserName(onSuccess: (String) -> Unit) {
-        db.collection(USERS).document(currentUserUid!!)
+        db.collection(USERS).document(currentUserUid)
             .get()
             .addOnSuccessListener { documentSnapshot ->
                 val userName = documentSnapshot.getString("full_name")
@@ -50,7 +48,7 @@ class FirebaseRepository {
     }
 
     fun updateUsersList(success: () -> Unit) {
-        val docRef = db.collection(USERS).document(currentUserUid!!)
+        val docRef = db.collection(USERS).document(currentUserUid)
 
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -68,11 +66,10 @@ class FirebaseRepository {
     }
 
     fun fetchUsersList(onComplete: (ArrayList<User>) -> Unit) {
-        val currentUserUid = FirebaseAuth.getInstance().currentUser?.uid
 
         // Pobranie listy znajomych użytkownika
         db.collection(USERS)
-            .document(currentUserUid!!)
+            .document(currentUserUid)
             .get()
             .addOnSuccessListener { userResult ->
                 val currentUser = userResult.toObject(User::class.java)
@@ -112,7 +109,7 @@ class FirebaseRepository {
     }
 
     fun updateInvitationsList(success: () -> Unit) {
-        val docRef = db.collection(USERS).document(currentUserUid!!)
+        val docRef = db.collection(USERS).document(currentUserUid ?: "")
             .collection(INVITATIONS_RECEIVED)
 
         docRef.addSnapshotListener { snapshot, e ->
@@ -131,7 +128,7 @@ class FirebaseRepository {
     }
 
     fun fetchInvitationsList(onComplete: (ArrayList<InvitationReceived>) -> Unit) {
-        db.collection(USERS).document(currentUserUid!!)
+        db.collection(USERS).document(currentUserUid)
             .collection(INVITATIONS_RECEIVED)
             .addSnapshotListener(object : EventListener<QuerySnapshot> {
 
@@ -177,7 +174,7 @@ class FirebaseRepository {
         return docRef
     }
 
-    fun updateDataOfUser(name: String, number: Int, location: String) {
+    fun updateDataOfUser(name: String, number: String?, location: String) {
 
         // Tworzenie mapy z danymi do zaktualizowania
         val updates = hashMapOf<String, Any>()
@@ -185,17 +182,63 @@ class FirebaseRepository {
         // Dodawanie tylko tych pól, które zostały zmienione
         if (name.isNotEmpty()) {
             updates["full_name"] = name
-            updates["number"] = number
+        }
+
+        if (number!!.isNotBlank()) {
+            updates["number"] = number.toIntOrNull() ?: 0
+        }
+
+        if (location.isNotEmpty()) {
             updates["location"] = location
         }
 
-        db.collection(USERS).document(FirebaseRepository().currentUserUid!!)
+
+        db.collection(USERS).document(FirebaseRepository().currentUserUid)
             .update(updates)
             .addOnSuccessListener {
                 Log.d("TAG", "Użytkownik został zaktualizowany pomyślnie")
             }
             .addOnFailureListener { e ->
                 Log.e("TAG", "Błąd podczas aktualizowania użytkownika", e)
+            }
+    }
+
+    //wczytanie zdjecia
+    fun uploadUserPhoto(bytes: ByteArray) {
+        storage.getReference("users")
+            .child("${currentUserUid}.jpg")
+            .putBytes(bytes)
+            .addOnCompleteListener {
+                Log.d("REPO_DEBUG", "COMPLETE UPLOAD PHOTO")
+            }
+            .addOnSuccessListener {
+                getPhotoDownloadUrl(it.storage)
+
+            }
+            .addOnFailureListener {
+                Log.d("REPO_DEBUG", it.message.toString())
+            }
+    }
+
+    private fun getPhotoDownloadUrl(storage: StorageReference) {
+        storage.downloadUrl
+            .addOnSuccessListener {
+                updateUserPhoto(it.toString())
+            }
+            .addOnFailureListener {
+                Log.d("REPO_DEBUG", it.message.toString())
+            }
+    }
+
+    private fun updateUserPhoto(url: String?) {
+        db.collection(USERS)
+            .document(currentUserUid)
+            .update("photo", url)
+            .addOnSuccessListener {
+                Log.d("REPO_DEBUG", "UPDATE USER PHOTO!")
+            }
+            .addOnFailureListener {
+                Log.d("REPO_DEBUG", it.message.toString())
             }
     }
 
@@ -230,7 +273,7 @@ class FirebaseRepository {
 
     fun readMessage(uidFriend: String) {
         // pobierz dokument użytkownika, który odbiera wiadomość
-        val receiverDocRef = db.collection(USERS).document(currentUserUid!!)
+        val receiverDocRef = db.collection(USERS).document(currentUserUid)
 
         receiverDocRef.get().addOnSuccessListener { receiverDocSnapshot ->
             val receiverFriends =
@@ -347,7 +390,7 @@ class FirebaseRepository {
 
         val db = FirebaseFirestore.getInstance()
         db.collection(USERS).document(uid)
-            .collection(INVITATIONS_RECEIVED).document(currentUserUid ?: "")
+            .collection(INVITATIONS_RECEIVED).document(currentUserUid)
             .set(dataReceived)
             .addOnSuccessListener {
                 Log.d("TAG", "DocumentSnapshot successfully written!")
@@ -361,7 +404,7 @@ class FirebaseRepository {
             "accept" to false
         )
 
-        db.collection(USERS).document(currentUserUid ?: "")
+        db.collection(USERS).document(currentUserUid)
             .collection(INVITATIONS_SENT).document(uid)
             .set(dataSent)
             .addOnSuccessListener {
@@ -380,7 +423,7 @@ class FirebaseRepository {
 
         val message = "Hello, we are friends right now and we can chat."
 
-        sendMessage(currentUserUid ?: "", uid, message) { docUid ->
+        sendMessage(currentUserUid, uid, message) { docUid ->
             transferDocUid(docUid)
 
             val sender = hashMapOf(
@@ -390,7 +433,7 @@ class FirebaseRepository {
                 "sentAt" to Timestamp.now()
             )
 
-            db.collection(USERS).document(currentUserUid ?: "")
+            db.collection(USERS).document(currentUserUid)
                 .update("friends", FieldValue.arrayUnion(sender))
                 .addOnSuccessListener {
                     // Dodanie do listy zakończone sukcesem
@@ -422,7 +465,7 @@ class FirebaseRepository {
     }
 
     fun deleteFriend(uid: String) {
-        db.collection(USERS).document(currentUserUid!!)
+        db.collection(USERS).document(currentUserUid)
             .delete()
             .addOnSuccessListener {
                 Log.d("TAG", "DocumentSnapshot successfully deleted!")
@@ -433,7 +476,7 @@ class FirebaseRepository {
     }
 
     fun deleteInvitation(uid: String) {
-        db.collection(USERS).document(FirebaseRepository().currentUserUid!!)
+        db.collection(USERS).document(FirebaseRepository().currentUserUid)
             .collection(INVITATIONS_RECEIVED).document(uid)
             .delete()
             .addOnSuccessListener {
@@ -444,7 +487,7 @@ class FirebaseRepository {
             }
 
         db.collection(USERS).document(uid)
-            .collection(INVITATIONS_SENT).document(currentUserUid!!)
+            .collection(INVITATIONS_SENT).document(currentUserUid)
             .delete()
             .addOnSuccessListener {
                 Log.d("TAG", "DocumentSnapshot successfully deleted!")
