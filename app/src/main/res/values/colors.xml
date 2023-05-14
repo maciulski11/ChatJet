@@ -9,5 +9,7 @@
     <color name="powderBlue">#0000CD</color>
     <color name="grey">#6E6D6D</color>
     <color name="gray_dark">#8a8a8a</color>
+    <color name="red">#DE0909</color>
+    <color name="green">#22A128</color>
 
 </resources>

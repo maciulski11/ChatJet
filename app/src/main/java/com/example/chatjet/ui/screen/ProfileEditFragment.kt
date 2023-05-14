@@ -1,17 +1,12 @@
 package com.example.chatjet.ui.screen
 
 import android.app.Activity
-import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.provider.MediaStore
 import android.util.Log
-import android.view.LayoutInflater
-import android.widget.ImageView
-import android.widget.TextView
 import android.widget.Toast
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -87,17 +82,30 @@ class ProfileEditFragment : BaseFragment() {
 
                 mainViewModel.updateDataOfUser(name, number, location, findNavController())
 
+                Utilities.customToast(
+                    requireContext(),
+                    "Success!",
+                    R.drawable.ic_baseline_check_circle_outline_24,
+                    R.color.white,
+                    R.color.green,
+                    Toast.LENGTH_SHORT
+                )
+
                 fullNameET.setText("")
                 phoneNumberET.setText("")
                 locationET.setText("")
+
             } else {
 
                 Utilities.customToast(
                     requireContext(),
                     "Your phone number should have 9 digits!",
                     R.drawable.ic_baseline_remove_circle_outline_24,
+                    R.color.white,
+                    R.color.red,
                     Toast.LENGTH_SHORT
                 )
+
             }
         }
 
