@@ -1,6 +1,7 @@
 package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
+import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -60,6 +61,14 @@ class InvitationFragment : BaseFragment() {
         mainViewModel.invitationsList.observe(this) {
             adapter.invitationsList = it
             adapter.notifyDataSetChanged()
+
+            if (it.isEmpty()) {
+                recyclerViewInvitations.visibility = View.GONE
+                emptyTextView.visibility = View.VISIBLE
+            } else {
+                recyclerViewInvitations.visibility = View.VISIBLE
+                emptyTextView.visibility = View.GONE
+            }
         }
 
         FirebaseRepository().updateInvitationsList {
