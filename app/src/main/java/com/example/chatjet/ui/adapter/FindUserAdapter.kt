@@ -63,8 +63,6 @@ class FindUserAdapter(
 
             inviteButton.setOnClickListener {
 
-                Toast.makeText(context, "Invited!", Toast.LENGTH_SHORT).show()
-
                 onSend(user.uid ?: "")
             }
         }

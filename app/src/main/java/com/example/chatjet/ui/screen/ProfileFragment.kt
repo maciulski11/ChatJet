@@ -1,6 +1,5 @@
 package com.example.chatjet.ui.screen
 
-import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -21,7 +20,6 @@ class ProfileFragment : BaseFragment() {
     override fun subscribeUi() {
 
         friendsList.setOnClickListener {
-            Toast.makeText(requireContext(), "click", Toast.LENGTH_SHORT).show()
             findNavController().navigate(R.id.action_profileFragment_to_friendsFragment)
         }
 

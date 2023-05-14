@@ -1,12 +1,14 @@
 package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
+import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.Utilities
 import com.example.chatjet.ui.adapter.InvitationAdapter
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
@@ -31,9 +33,27 @@ class InvitationFragment : BaseFragment() {
         adapter = InvitationAdapter(invitationsList, requireContext(),
             {
                 mainViewModel.acceptInvitation(it)
+
+                Utilities.customToast(
+                    requireContext(),
+                    "Invitation accepted!",
+                    R.drawable.ic_baseline_check_circle_outline_24,
+                    R.color.white,
+                    R.color.green,
+                    Toast.LENGTH_SHORT
+                )
             },
             {
                 mainViewModel.deleteInvitation(it)
+
+                Utilities.customToast(
+                    requireContext(),
+                    "Invitation declined!",
+                    R.drawable.ic_baseline_remove_circle_outline_24,
+                    R.color.white,
+                    R.color.red,
+                    Toast.LENGTH_SHORT
+                )
             })
         recyclerViewInvitations.adapter = adapter
 

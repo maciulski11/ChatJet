@@ -9,6 +9,7 @@ import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.Utilities
 import com.example.chatjet.ui.adapter.FindUserAdapter
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
@@ -34,6 +35,15 @@ class FindUserFragment : BaseFragment() {
         adapter = FindUserAdapter(usersList, requireContext())
         {
             mainViewModel.sendInvitation(it)
+
+            Utilities.customToast(
+                requireContext(),
+                "Invitation sent!",
+                R.drawable.ic_baseline_check_circle_outline_24,
+                R.color.white,
+                R.color.green,
+                Toast.LENGTH_SHORT
+            )
         }
         recyclerViewSearch.adapter = adapter
 
@@ -62,6 +72,7 @@ class FindUserFragment : BaseFragment() {
         FirebaseRepository().updateUsersList {
             mainViewModel.fetchUsers()
         }
+
     }
 
     private fun filterList(query: String?) {
