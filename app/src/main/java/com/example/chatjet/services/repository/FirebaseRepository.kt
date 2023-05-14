@@ -1,4 +1,4 @@
-package com.example.chatjet.services.s.repository
+package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
 import android.util.Log

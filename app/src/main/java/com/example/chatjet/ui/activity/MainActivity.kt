@@ -7,7 +7,7 @@ import android.view.MenuItem
 import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.example.chatjet.R
-import com.example.chatjet.services.s.repository.FirebaseRepository
+import com.example.chatjet.services.repository.FirebaseRepository
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
 

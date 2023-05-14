@@ -1,7 +1,6 @@
 package com.example.chatjet.ui.adapter
 
 import android.content.Context
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -13,9 +12,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.InvitationReceived
-import com.example.chatjet.services.s.repository.FirebaseRepository
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
+import com.example.chatjet.services.repository.FirebaseRepository
 
 class InvitationAdapter(
     var invitationsList: ArrayList<InvitationReceived>,

@@ -10,8 +10,7 @@ import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.FriendsGroup
-import com.example.chatjet.data.model.User
-import com.example.chatjet.services.s.repository.FirebaseRepository
+import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.ui.activity.OnBackPressedListener
 import com.example.chatjet.ui.adapter.MessageAdapter
 import com.example.chatjet.view_model.MainViewModel

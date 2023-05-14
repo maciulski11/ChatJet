@@ -1,4 +1,4 @@
-package com.example.chatjet.services.s.constants
+package com.example.chatjet.services.constants
 
 class Constants {
     companion object{

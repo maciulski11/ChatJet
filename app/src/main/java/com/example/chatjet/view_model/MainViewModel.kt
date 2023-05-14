@@ -1,14 +1,12 @@
 package com.example.chatjet.view_model
 
-import android.view.View
-import android.widget.EditText
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.chatjet.R
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
-import com.example.chatjet.services.s.repository.FirebaseRepository
+import com.example.chatjet.services.repository.FirebaseRepository
 
 class MainViewModel(var user: User? = null): ViewModel() {
 

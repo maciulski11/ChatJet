@@ -1,8 +1,8 @@
-package com.example.chatjet.services.s.`interface`
+package com.example.chatjet.services.interfaces
 
 import com.example.chatjet.data.model.PushNotification
-import com.example.chatjet.services.s.constants.Constants.Companion.CONTENT_TYPE
-import com.example.chatjet.services.s.constants.Constants.Companion.SERVER_KEY
+import com.example.chatjet.services.constants.Constants.Companion.CONTENT_TYPE
+import com.example.chatjet.services.constants.Constants.Companion.SERVER_KEY
 import okhttp3.ResponseBody
 import retrofit2.Response
 import retrofit2.http.Body

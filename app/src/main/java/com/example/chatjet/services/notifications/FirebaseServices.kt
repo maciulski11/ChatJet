@@ -1,4 +1,4 @@
-package com.example.chatjet.services.s.notification
+package com.example.chatjet.services.notifications
 
 import android.app.NotificationChannel
 import android.app.NotificationManager

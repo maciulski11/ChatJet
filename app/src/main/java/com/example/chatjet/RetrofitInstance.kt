@@ -1,7 +1,7 @@
 package com.example.chatjet
 
-import com.example.chatjet.services.s.`interface`.NotificationApi
-import com.example.chatjet.services.s.constants.Constants
+import com.example.chatjet.services.interfaces.NotificationApi
+import com.example.chatjet.services.constants.Constants
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
