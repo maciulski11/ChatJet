@@ -49,7 +49,7 @@ class InvitationFragment : BaseFragment() {
 
                 Utilities.customToast(
                     requireContext(),
-                    "Invitation declined!",
+                    "Invitation not accepted!!",
                     R.drawable.ic_baseline_remove_circle_outline_24,
                     R.color.white,
                     R.color.red,

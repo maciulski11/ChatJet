@@ -60,14 +60,12 @@ class InvitationAdapter(
                     .into(photo)
 
                 acceptButton.setOnClickListener {
-                    Toast.makeText(context, "Invitation accepted!", Toast.LENGTH_SHORT).show()
 
                     onAccept(uid)
                     onDelete(uid)
                 }
 
                 unacceptedButton.setOnClickListener {
-                    Toast.makeText(context, "Invitation not accepted!", Toast.LENGTH_SHORT).show()
 
                     onDelete(uid)
                 }

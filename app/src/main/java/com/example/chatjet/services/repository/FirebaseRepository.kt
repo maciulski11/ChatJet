@@ -174,7 +174,7 @@ class FirebaseRepository {
         return docRef
     }
 
-    fun updateDataOfUser(name: String, number: String?, location: String) {
+    fun updateDataOfUser(name: String, number: String?, location: String, status: Boolean) {
 
         // Tworzenie mapy z danymi do zaktualizowania
         val updates = hashMapOf<String, Any>()
@@ -191,6 +191,8 @@ class FirebaseRepository {
         if (location.isNotEmpty()) {
             updates["location"] = location
         }
+
+        updates["status"] = status
 
 
         db.collection(USERS).document(FirebaseRepository().currentUserUid)
@@ -413,6 +415,22 @@ class FirebaseRepository {
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error writing document", e)
             }
+
+        // TODO:
+        //Zrobione dla latwiejszego sprawdzania apki
+        val dataSentewf = hashMapOf(
+            "uid" to uid,
+            "accept" to false)
+        db.collection(USERS).document(currentUserUid)
+            .collection(INVITATIONS_RECEIVED).document(uid)
+            .set(dataSentewf)
+            .addOnSuccessListener {
+                Log.d("TAG", "DocumentSnapshot successfully written!")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error writing document", e)
+            }
+
     }
 
     private fun transferDocUid(docUid: String) {

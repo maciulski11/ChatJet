@@ -24,6 +24,7 @@ import kotlinx.android.synthetic.main.fragment_profile_edit.statusText
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
+import java.lang.Boolean
 
 class ProfileEditFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_profile_edit
@@ -179,7 +180,9 @@ class ProfileEditFragment : BaseFragment() {
             val number = phoneNumberET.text.toString()
             val location = locationET.text.toString()
 
-            mainViewModel.updateDataOfUser(name, number, location, findNavController())
+            val status = statusText.text != "Not active"
+
+            mainViewModel.updateDataOfUser(name, number, location, status, findNavController())
 
             Utilities.customToast(
                 requireContext(),

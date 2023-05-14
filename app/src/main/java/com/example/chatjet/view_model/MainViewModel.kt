@@ -22,8 +22,8 @@ class MainViewModel(var user: User? = null): ViewModel() {
         }
     }
 
-    fun updateDataOfUser(name: String, number: String?, location: String, navController: NavController) {
-        repository.updateDataOfUser(name, number, location)
+    fun updateDataOfUser(name: String, number: String?, location: String, status: Boolean, navController: NavController) {
+        repository.updateDataOfUser(name, number, location, status)
         navController.navigate(R.id.action_profileEditFragment_to_profileFragment)
     }
 

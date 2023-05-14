@@ -31,10 +31,11 @@ class ProfileFragment : BaseFragment() {
     }
 
     private fun fetchProfileData() {
-        mainViewModel.fetchUserOrFriend(FirebaseRepository().currentUserUid ?: "") { user ->
+        mainViewModel.fetchUserOrFriend(FirebaseRepository().currentUserUid) { user ->
             fullNameTV.text = user?.full_name
             phoneNumberTV.text = user?.number.toString()
             locationTV.text = user?.location
+            amountFriendsTV.text = user?.friends?.size.toString()
 
             if (user?.status == true) {
                 statusText.text = "Active"
