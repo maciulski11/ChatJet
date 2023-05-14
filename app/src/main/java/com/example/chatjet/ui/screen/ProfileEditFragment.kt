@@ -1,21 +1,25 @@
 package com.example.chatjet.ui.screen
 
 import android.app.Activity
+import android.content.Context
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.provider.MediaStore
 import android.util.Log
-import android.widget.EditText
+import android.view.LayoutInflater
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
-import com.example.chatjet.services.s.repository.FirebaseRepository
+import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.Utilities
 import com.example.chatjet.view_model.MainViewModel
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
 import kotlinx.android.synthetic.main.fragment_profile_edit.statusColor
 import kotlinx.android.synthetic.main.fragment_profile_edit.statusText
@@ -75,9 +79,8 @@ class ProfileEditFragment : BaseFragment() {
 
         saveButton.setOnClickListener {
 
-            // We check that user enter 9 digits of phone number
-            if (phoneNumberET.text.isEmpty() || !phoneNumberET.text.matches(Regex("^\\d{9}$"))) {
-
+            // We check that user enters 9 digits of phone number or the field is empty
+            if (phoneNumberET.text.isEmpty() || phoneNumberET.text.matches(Regex("^\\d{9}$"))) {
                 val name = fullNameET.text.toString()
                 val number = phoneNumberET.text.toString()
                 val location = locationET.text.toString()
@@ -87,15 +90,14 @@ class ProfileEditFragment : BaseFragment() {
                 fullNameET.setText("")
                 phoneNumberET.setText("")
                 locationET.setText("")
-
             } else {
 
-                Toast.makeText(
+                Utilities.customToast(
                     requireContext(),
-                    "Your phone number is to short, it has to be 9 digits!",
+                    "Your phone number should have 9 digits!",
+                    R.drawable.ic_baseline_remove_circle_outline_24,
                     Toast.LENGTH_SHORT
-                ).show()
-
+                )
             }
         }
 
