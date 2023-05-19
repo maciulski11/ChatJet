@@ -13,6 +13,9 @@ import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.fragment_login.*
+import kotlinx.android.synthetic.main.fragment_login.emailET
+import kotlinx.android.synthetic.main.fragment_login.passwordET
+import kotlinx.android.synthetic.main.fragment_register.*
 
 class LoginFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_login
@@ -47,6 +50,10 @@ class LoginFragment : BaseFragment() {
 
         loginBT.setOnClickListener {
             loginClick()
+        }
+
+        registerBT.setOnClickListener {
+            findNavController().navigate(R.id.action_loginFragment_to_registrationFragment)
         }
 
     }

@@ -4,9 +4,9 @@ import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
 // Stworzenie test class -> klkiamy w class i generate i zmieniamy na unity4
-class RegistrationFragmentTest() {
+class RegisterFragmentTest() {
 
-    private val registrationFragment = RegistrationFragment()
+    private val registrationFragment = RegisterFragment()
 
     @Test
     fun `empty full name return false`() {
@@ -14,26 +14,32 @@ class RegistrationFragmentTest() {
             "",
             "123",
             "123",
+            "",
+            ""
         )
         assertThat(result).isFalse()
     }
 
     @Test
-    fun `valid username and correctly repeated password returns true`() {
+    fun `not valid password and correctly repeated password returns false`() {
         val result = registrationFragment.validateRegistrationInput(
-            "Philip",
-            "12345678AS",
-            "12345678AS",
+            "",
+            "12345A12",
+            "1234ds5A12",
+            "",
+            ""
         )
-        assertThat(result).isTrue()
+        assertThat(result).isFalse()
     }
 
     @Test
-    fun `username already exists returns false`() {
+    fun `e-mail is not valid returns false`() {
         val result = registrationFragment.validateRegistrationInput(
             "Carl",
             "123",
             "123",
+            "",
+            "macio@ewfew"
         )
         assertThat(result).isFalse()
     }
@@ -43,7 +49,9 @@ class RegistrationFragmentTest() {
         val result = registrationFragment.validateRegistrationInput(
             "Philipp",
             "123456",
-            "abcdefg"
+            "abcdefg",
+            "",
+            ""
         )
         assertThat(result).isFalse()
     }
@@ -54,6 +62,8 @@ class RegistrationFragmentTest() {
             "Philipp",
             "",
             "",
+            "",
+            ""
         )
         assertThat(result).isFalse()
     }
@@ -64,6 +74,8 @@ class RegistrationFragmentTest() {
             "Philipp",
             "abcdefg",
             "abcdefg",
+            "",
+            ""
         )
         assertThat(result).isFalse()
     }
@@ -74,6 +86,8 @@ class RegistrationFragmentTest() {
             "Philipp",
             "abcdefg",
             "abcdefg",
+            "",
+            ""
         )
         assertThat(result).isFalse()
     }
@@ -84,6 +98,20 @@ class RegistrationFragmentTest() {
             "Philipp",
             "abcde",
             "abcde",
+            "",
+            ""
+        )
+        assertThat(result).isFalse()
+    }
+
+    @Test
+    fun `less than 9 password length returns false`() {
+        val result = registrationFragment.validateRegistrationInput(
+            "Philipp",
+            "abcde",
+            "abcde",
+            "432332",
+            ""
         )
         assertThat(result).isFalse()
     }
