@@ -2,6 +2,7 @@ package com.example.chatjet.services.utils
 
 import android.content.Context
 import android.graphics.PorterDuff
+import android.view.Gravity
 import android.view.LayoutInflater
 import android.widget.ImageView
 import android.widget.TextView
@@ -40,6 +41,7 @@ object Utilities {
         }
         view.background = backgroundDrawable
         textView.text = message
+        textView.gravity = Gravity.CENTER
         textView.setTextColor(ContextCompat.getColor(appContext!!, textColor))
 
         toast.duration = duration

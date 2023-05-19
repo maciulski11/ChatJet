@@ -3,7 +3,7 @@ package com.example.chatjet.ui.screen
 import com.google.common.truth.Truth.assertThat
 import org.junit.Test
 
-// Stworzenie test class -> klkiamy w class i generate i zmieniamy na unity4
+// Create test class -> click in class and click in generate and we have to change on unity4
 class RegisterFragmentTest() {
 
     private val registrationFragment = RegisterFragment()

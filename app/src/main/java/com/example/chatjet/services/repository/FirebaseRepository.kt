@@ -2,9 +2,11 @@ package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
+import android.widget.Toast
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
+import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -30,6 +32,44 @@ class FirebaseRepository {
         const val INVITATIONS_SENT = "invitations_sent"
         const val INVITATIONS_RECEIVED = "invitations_received"
     }
+
+    fun registerUser(
+        email: String,
+        fullName: String,
+        number: Int,
+        password: String,
+        onNavigate: () -> Unit
+    ) {
+        fbAuth.createUserWithEmailAndPassword(email, password)
+            .addOnSuccessListener { authResults ->
+                if (authResults.user != null) {
+                    val user = User(
+                        authResults.user!!.email,
+                        authResults.user!!.uid,
+                        "",
+                        fullName,
+                        "",
+                        number
+                    )
+                    db.collection(USERS)
+                        .document(currentUserUid)
+                        .set(user)
+
+                    //send verification email to your account
+                    fbAuth.currentUser?.sendEmailVerification()
+                        ?.addOnCompleteListener {
+                            Log.d("Email verify", "Everything is ok, email sent!")
+                        }
+
+                    onNavigate()
+                }
+            }
+            .addOnFailureListener { exception ->
+
+                Log.e("Something went wrong", exception.message.toString())
+            }
+    }
+
 
     fun getCurrentUserName(onSuccess: (String) -> Unit) {
         db.collection(USERS).document(currentUserUid)
@@ -420,7 +460,8 @@ class FirebaseRepository {
         //Zrobione dla latwiejszego sprawdzania apki
         val dataSentewf = hashMapOf(
             "uid" to uid,
-            "accept" to false)
+            "accept" to false
+        )
         db.collection(USERS).document(currentUserUid)
             .collection(INVITATIONS_RECEIVED).document(uid)
             .set(dataSentewf)

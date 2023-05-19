@@ -14,7 +14,8 @@
             app:destination="@id/messageFragment" />
         <action
             android:id="@+id/action_loginFragment_to_registrationFragment"
-            app:destination="@id/registerFragment" />
+            app:destination="@id/registerFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -83,6 +84,7 @@
         android:label="RegisterFragment">
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
-            app:destination="@id/loginFragment" />
+            app:destination="@id/loginFragment"
+            app:enterAnim="@anim/nav_default_exit_anim" />
     </fragment>
 </navigation>
