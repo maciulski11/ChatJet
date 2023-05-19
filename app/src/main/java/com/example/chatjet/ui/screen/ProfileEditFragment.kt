@@ -185,7 +185,6 @@ class ProfileEditFragment : BaseFragment() {
             mainViewModel.updateDataOfUser(name, number, location, status, findNavController())
 
             Utilities.customToast(
-                requireContext(),
                 "Success!",
                 R.drawable.ic_baseline_check_circle_outline_24,
                 R.color.white,
@@ -200,7 +199,6 @@ class ProfileEditFragment : BaseFragment() {
         } else {
 
             Utilities.customToast(
-                requireContext(),
                 "Your phone number should have 9 digits!",
                 R.drawable.ic_baseline_remove_circle_outline_24,
                 R.color.white,

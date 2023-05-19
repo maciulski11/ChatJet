@@ -37,7 +37,6 @@ class FindUserFragment : BaseFragment() {
             mainViewModel.sendInvitation(it)
 
             Utilities.customToast(
-                requireContext(),
                 "Invitation sent!",
                 R.drawable.ic_baseline_check_circle_outline_24,
                 R.color.white,
