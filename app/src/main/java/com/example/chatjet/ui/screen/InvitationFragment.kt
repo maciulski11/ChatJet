@@ -47,7 +47,7 @@ class InvitationFragment : BaseFragment() {
                 mainViewModel.deleteInvitation(it)
 
                 Utilities.customToast(
-                    "Invitation not accepted!!",
+                    "Invitation not accepted!",
                     R.drawable.ic_baseline_remove_circle_outline_24,
                     R.color.white,
                     R.color.red,

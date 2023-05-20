@@ -17,7 +17,7 @@
         android:id="@+id/emptyTextView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="notifications is empty"
+        android:text="notifications are empty"
         android:textColor="@color/grey"
         android:textSize="18sp"
         app:layout_constraintBottom_toBottomOf="parent"
