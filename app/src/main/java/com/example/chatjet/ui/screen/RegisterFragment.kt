@@ -30,7 +30,12 @@ class RegisterFragment : BaseFragment() {
         }
     }
 
-    private fun showToast(message: String, backgroundToastColor: Int, iconResId: Int, duration: Int) {
+    private fun showToast(
+        message: String,
+        backgroundToastColor: Int,
+        iconResId: Int,
+        duration: Int
+    ) {
         context?.let {
             Utilities.customToast(
                 message,
@@ -57,7 +62,7 @@ class RegisterFragment : BaseFragment() {
         email: String
     ): Boolean {
 
-        if (fullName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || password.isEmpty()) {
+        if (fullName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
 
             showToast(
                 "All fields must be completed!",
@@ -142,9 +147,9 @@ class RegisterFragment : BaseFragment() {
             Toast.LENGTH_LONG
         )
 
-        mainViewModel.registerUser(email, fullName, phoneNumber.toInt(), password) {
-            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
-        }
+        findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+
+        mainViewModel.registerUser(email, fullName, phoneNumber.toInt(), password)
 
         return true
     }

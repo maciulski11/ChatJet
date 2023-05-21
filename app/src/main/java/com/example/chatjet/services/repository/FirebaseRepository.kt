@@ -2,15 +2,14 @@ package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
-import android.widget.Toast
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
-import com.google.android.material.snackbar.Snackbar
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
+import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
@@ -29,6 +28,7 @@ class FirebaseRepository {
     companion object {
         const val USERS = "users"
         const val FRIENDS = "friends"
+        const val TOKEN = "token"
         const val INVITATIONS_SENT = "invitations_sent"
         const val INVITATIONS_RECEIVED = "invitations_received"
     }
@@ -38,7 +38,6 @@ class FirebaseRepository {
         fullName: String,
         number: Int,
         password: String,
-        onNavigate: () -> Unit
     ) {
         fbAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { authResults ->
@@ -60,8 +59,6 @@ class FirebaseRepository {
                         ?.addOnCompleteListener {
                             Log.d("Email verify", "Everything is ok, email sent!")
                         }
-
-                    onNavigate()
                 }
             }
             .addOnFailureListener { exception ->
@@ -70,6 +67,60 @@ class FirebaseRepository {
             }
     }
 
+    fun loginUser(
+        email: String,
+        password: String,
+        onNavigate: () -> Unit,
+        onVerifyEmail: () -> Unit,
+        onNotExistUser: () -> Unit
+    ) {
+        //we check that this data is in our datebase
+        fbAuth.signInWithEmailAndPassword(
+            email,
+            password
+        )
+            .addOnSuccessListener { authRes ->
+
+                if (authRes != null) {
+
+                    // Check verified your email
+                    if (fbAuth.currentUser!!.isEmailVerified) {
+
+                        FirebaseMessaging.getInstance().token
+                            .addOnCompleteListener { task ->
+                                if (!task.isSuccessful) {
+                                    Log.w(
+                                        "LoginFragment",
+                                        "Fetching FCM registration token failed",
+                                        task.exception
+                                    )
+                                    return@addOnCompleteListener
+                                }
+
+                                // Get new FCM registration token
+                                val token = task.result
+
+                                db.collection(USERS).document(currentUserUid)
+                                    .update(TOKEN, token)
+
+                                // Log the token
+                                Log.d("LoginFragment", "FCM registration token: $token")
+                            }
+
+                        onNavigate()
+
+                    } else {
+
+                        onVerifyEmail()
+                    }
+                }
+            }
+            .addOnFailureListener { exception ->
+
+                onNotExistUser()
+                Log.d("DEBUG", exception.message.toString())
+            }
+    }
 
     fun getCurrentUserName(onSuccess: (String) -> Unit) {
         db.collection(USERS).document(currentUserUid)

@@ -3,15 +3,15 @@ package com.example.chatjet.ui.screen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.util.Log
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
-import com.google.android.material.snackbar.Snackbar
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
-import com.google.firebase.messaging.FirebaseMessaging
+import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.Utilities
+import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.emailET
 import kotlinx.android.synthetic.main.fragment_login.passwordET
@@ -20,16 +20,10 @@ import kotlinx.android.synthetic.main.fragment_register.*
 class LoginFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_login
 
-    private val fbAuth = FirebaseAuth.getInstance()
-    private val fbUser = fbAuth.currentUser
-    private val db = FirebaseFirestore.getInstance()
-
     private val REQUEST_PHONE_CALL = 1
     private val REQUEST_RECEIVE_NOTIFICATIONS = 2
 
-    companion object {
-        private const val TAGG = "MyFirebaseMessagingService"
-    }
+    private val mainViewModel: MainViewModel by activityViewModels()
 
     @SuppressLint("SetTextI18n")
     override fun subscribeUi() {
@@ -37,19 +31,17 @@ class LoginFragment : BaseFragment() {
         macio.setOnClickListener {
             emailET.setText("macio@wp.pl")
             passwordET.setText("00000000")
-
-            loginClick()
+            validateOnLogin(emailET.text.toString(), passwordET.text.toString())
         }
 
         stefan.setOnClickListener {
             emailET.setText("stefan@wp.pl")
             passwordET.setText("00000000")
-
-            loginClick()
+            validateOnLogin(emailET.text.toString(), passwordET.text.toString())
         }
 
         loginBT.setOnClickListener {
-            loginClick()
+            validateOnLogin(emailET.text.toString(), passwordET.text.toString())
         }
 
         registerBT.setOnClickListener {
@@ -91,60 +83,48 @@ class LoginFragment : BaseFragment() {
         }
     }
 
-    private fun loginClick() {
-        val email = emailET.text.toString()
-        val password = passwordET.text.toString()
-
-        if (email == "" || password == "") {
-            return
-        } else {
-
-            //we check that this data is in our datebase
-            fbAuth.signInWithEmailAndPassword(
-                email,
-                password
+    private fun showToast(
+        message: String,
+        backgroundToastColor: Int,
+        iconResId: Int,
+        duration: Int
+    ) {
+        context?.let {
+            Utilities.customToast(
+                message,
+                iconResId,
+                R.color.white,
+                backgroundToastColor,
+                duration
             )
-                .addOnSuccessListener { authRes ->
+        }
+    }
 
-                    if (authRes != null) {
+    /**
+     * the input is not valid if...
+     * ...the username/password is empty
+     * ...the username is already taken
+     * ...the confirmed password is not the same as the real password
+     * ...the password contains less than 2 digits
+     */
+    fun validateOnLogin(
+        email: String,
+        password: String
+    ): Boolean {
 
-                        FirebaseMessaging.getInstance().token
-                            .addOnCompleteListener { task ->
-                                if (!task.isSuccessful) {
-                                    Log.w(
-                                        TAGG,
-                                        "Fetching FCM registration token failed",
-                                        task.exception
-                                    )
-                                    return@addOnCompleteListener
-                                }
-
-                                // Get new FCM registration token
-                                val token = task.result
-
-                                db.collection("users").document(fbUser?.uid ?: "")
-                                    .update("token", token)
-
-                                // Log the token
-                                Log.d(TAGG, "FCM registration token: $token")
-                            }
-
-
-                        findNavController().navigate(R.id.action_loginFragment_to_usersFragment)
-                    }
-                }
-                .addOnFailureListener { exception ->
-                    Snackbar.make(
-                        requireView(),
-                        "Your account is not exist.",
-                        Snackbar.LENGTH_SHORT
-                    )
-                        .show()
-                    Log.d("DEBUG", exception.message.toString())
-                }
+        if (email.isEmpty() || password.isEmpty()) {
+            showToast(
+                "All fields must be completed!",
+                R.color.red,
+                R.drawable.ic_baseline_remove_circle_outline_24,
+                Toast.LENGTH_SHORT
+            )
+            return false
         }
 
+        mainViewModel.loginUser(email, password, findNavController())
 
+        return true
     }
 
     override fun unsubscribeUi() {
