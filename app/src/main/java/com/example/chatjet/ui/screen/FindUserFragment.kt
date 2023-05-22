@@ -71,7 +71,6 @@ class FindUserFragment : BaseFragment() {
         FirebaseRepository().updateUsersList {
             mainViewModel.fetchUsers()
         }
-
     }
 
     private fun filterList(query: String?) {
