@@ -37,7 +37,7 @@ object Utilities {
         }
     }
 
-    fun customToast(
+    private fun customToast(
         message: String,
         iconResId: Int,
         textColor: Int,
