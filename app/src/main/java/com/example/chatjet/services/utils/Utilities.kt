@@ -20,14 +20,44 @@ object Utilities {
         appContext = context.applicationContext
     }
 
-    fun customToast(message: String, iconResId: Int, textColor: Int, backgroundToastColor: Int, duration: Int) {
+    fun showToast(
+        message: String,
+        backgroundToastColor: Int,
+        iconResId: Int,
+        duration: Int
+    ) {
+        appContext?.let {
+            customToast(
+                message,
+                iconResId,
+                R.color.white,
+                backgroundToastColor,
+                duration
+            )
+        }
+    }
+
+    fun customToast(
+        message: String,
+        iconResId: Int,
+        textColor: Int,
+        backgroundToastColor: Int,
+        duration: Int
+    ) {
         val toast = Toast.makeText(appContext, message, Toast.LENGTH_LONG)
         // Creates a LayoutInflater object which can be used to inflate a custom layout.
-        val inflater = appContext?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
+        val inflater =
+            appContext?.getSystemService(Context.LAYOUT_INFLATER_SERVICE) as LayoutInflater
         // Inflates the custom layout for the toast, which is defined in the R.layout.custom_toast XML file.
         val view = inflater.inflate(R.layout.custom_toast, null)
-        val backgroundDrawable = ContextCompat.getDrawable(appContext!!, R.drawable.custom_toast_background)
-        backgroundDrawable?.setColorFilter(ContextCompat.getColor(appContext!!, backgroundToastColor), PorterDuff.Mode.SRC_IN)
+        val backgroundDrawable =
+            ContextCompat.getDrawable(appContext!!, R.drawable.custom_toast_background)
+        backgroundDrawable?.setColorFilter(
+            ContextCompat.getColor(
+                appContext!!,
+                backgroundToastColor
+            ), PorterDuff.Mode.SRC_IN
+        )
         view.background = backgroundDrawable
         val textView = view.findViewById<TextView>(R.id.toast_text)
         // Gets the Drawable resource for the icon from the app's resources

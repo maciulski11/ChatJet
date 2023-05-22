@@ -25,19 +25,17 @@ class MainViewModel(var user: User? = null) : ViewModel() {
                 navController.navigate(R.id.action_loginFragment_to_usersFragment)
             },
             {
-                Utilities.customToast(
+                Utilities.showToast(
                     "Please verify your email!",
                     R.drawable.ic_baseline_remove_circle_outline_24,
-                    R.color.white,
                     R.color.red,
                     Toast.LENGTH_SHORT
                 )
             },
             {
-                Utilities.customToast(
+                Utilities.showToast(
                     "Email or password is incorrect!",
                     R.drawable.ic_baseline_remove_circle_outline_24,
-                    R.color.white,
                     R.color.red,
                     Toast.LENGTH_SHORT
                 )

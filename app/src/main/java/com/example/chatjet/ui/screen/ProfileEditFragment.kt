@@ -2,7 +2,6 @@ package com.example.chatjet.ui.screen
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.content.DialogInterface
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
@@ -24,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_profile_edit.statusText
 import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileInputStream
-import java.lang.Boolean
 
 class ProfileEditFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_profile_edit
@@ -184,10 +182,9 @@ class ProfileEditFragment : BaseFragment() {
 
             mainViewModel.updateDataOfUser(name, number, location, status, findNavController())
 
-            Utilities.customToast(
+            Utilities.showToast(
                 "Success!",
                 R.drawable.ic_baseline_check_circle_outline_24,
-                R.color.white,
                 R.color.green,
                 Toast.LENGTH_SHORT
             )
@@ -198,10 +195,9 @@ class ProfileEditFragment : BaseFragment() {
 
         } else {
 
-            Utilities.customToast(
+            Utilities.showToast(
                 "Your phone number should have 9 digits!",
                 R.drawable.ic_baseline_remove_circle_outline_24,
-                R.color.white,
                 R.color.red,
                 Toast.LENGTH_SHORT
             )

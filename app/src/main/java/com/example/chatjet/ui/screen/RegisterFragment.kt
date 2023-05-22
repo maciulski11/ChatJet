@@ -30,23 +30,6 @@ class RegisterFragment : BaseFragment() {
         }
     }
 
-    private fun showToast(
-        message: String,
-        backgroundToastColor: Int,
-        iconResId: Int,
-        duration: Int
-    ) {
-        context?.let {
-            Utilities.customToast(
-                message,
-                iconResId,
-                R.color.white,
-                backgroundToastColor,
-                duration
-            )
-        }
-    }
-
     /**
      * the input is not valid if...
      * ...the username/password is empty
@@ -64,7 +47,7 @@ class RegisterFragment : BaseFragment() {
 
         if (fullName.isEmpty() || email.isEmpty() || phoneNumber.isEmpty() || password.isEmpty() || confirmedPassword.isEmpty()) {
 
-            showToast(
+            Utilities.showToast(
                 "All fields must be completed!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
@@ -76,7 +59,7 @@ class RegisterFragment : BaseFragment() {
         // Checks the email according to the pattern
         if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
 
-            showToast(
+            Utilities.showToast(
                 "Email is not valid!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
@@ -87,7 +70,7 @@ class RegisterFragment : BaseFragment() {
 
         if (password != confirmedPassword) {
 
-            showToast(
+            Utilities.showToast(
                 "The passwords are different!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
@@ -98,7 +81,7 @@ class RegisterFragment : BaseFragment() {
 
         if (password.count { it.isDigit() } < 1) {
 
-            showToast(
+            Utilities.showToast(
                 "Password must have at least 1 digit!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
@@ -109,7 +92,7 @@ class RegisterFragment : BaseFragment() {
 
         if (password.none { it.isUpperCase() }) {
 
-            showToast(
+            Utilities.showToast(
                 "Password must have at least 1 capital letter!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
@@ -120,7 +103,7 @@ class RegisterFragment : BaseFragment() {
 
         if (password.length < 8) {
 
-            showToast(
+            Utilities.showToast(
                 "Password must have at least 8 characters!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
@@ -131,7 +114,7 @@ class RegisterFragment : BaseFragment() {
 
         if (phoneNumber.length < 9) {
 
-            showToast(
+            Utilities.showToast(
                 "Your phone number should have 9 digits!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
@@ -140,7 +123,7 @@ class RegisterFragment : BaseFragment() {
             return false
         }
 
-        showToast(
+        Utilities.showToast(
             "Registered successfully!\nPlease check your email for verification.",
             R.color.green,
             R.drawable.ic_baseline_check_circle_outline_24,

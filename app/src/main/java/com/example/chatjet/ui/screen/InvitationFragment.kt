@@ -35,10 +35,9 @@ class InvitationFragment : BaseFragment() {
             {
                 mainViewModel.acceptInvitation(it)
 
-                Utilities.customToast(
+                Utilities.showToast(
                     "Invitation accepted!",
                     R.drawable.ic_baseline_check_circle_outline_24,
-                    R.color.white,
                     R.color.green,
                     Toast.LENGTH_SHORT
                 )
@@ -46,10 +45,9 @@ class InvitationFragment : BaseFragment() {
             {
                 mainViewModel.deleteInvitation(it)
 
-                Utilities.customToast(
+                Utilities.showToast(
                     "Invitation not accepted!",
                     R.drawable.ic_baseline_remove_circle_outline_24,
-                    R.color.white,
                     R.color.red,
                     Toast.LENGTH_SHORT
                 )

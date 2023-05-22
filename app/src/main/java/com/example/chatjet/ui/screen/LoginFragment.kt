@@ -9,7 +9,6 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
-import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.Utilities
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -83,23 +82,6 @@ class LoginFragment : BaseFragment() {
         }
     }
 
-    private fun showToast(
-        message: String,
-        backgroundToastColor: Int,
-        iconResId: Int,
-        duration: Int
-    ) {
-        context?.let {
-            Utilities.customToast(
-                message,
-                iconResId,
-                R.color.white,
-                backgroundToastColor,
-                duration
-            )
-        }
-    }
-
     /**
      * the input is not valid if...
      * ...the username/password is empty
@@ -113,7 +95,7 @@ class LoginFragment : BaseFragment() {
     ): Boolean {
 
         if (email.isEmpty() || password.isEmpty()) {
-            showToast(
+            Utilities.showToast(
                 "All fields must be completed!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
