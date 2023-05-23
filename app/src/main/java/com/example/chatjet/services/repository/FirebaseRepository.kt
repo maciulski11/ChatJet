@@ -1,6 +1,8 @@
 package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
+import android.content.Context
 import android.util.Log
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.InvitationReceived
@@ -72,7 +74,8 @@ class FirebaseRepository {
         password: String,
         onNavigate: () -> Unit,
         onVerifyEmail: () -> Unit,
-        onNotExistUser: () -> Unit
+        onNotExistUser: () -> Unit,
+        context: Context
     ) {
         //we check that this data is in our datebase
         fbAuth.signInWithEmailAndPassword(
@@ -85,6 +88,19 @@ class FirebaseRepository {
 
                     // Check verified your email
                     if (fbAuth.currentUser!!.isEmailVerified) {
+
+                        //TODO:
+//                        if (fbAuth.currentUser?.phoneNumber.isNullOrEmpty()){
+//                            val alertDialog = AlertDialog.Builder(context)
+//                                .setTitle("Potwierdź adres e-mail")
+//                                .setMessage("Na Twój adres e-mail została wysłana wiadomość z linkiem potwierdzającym. Kliknij ten link, aby potwierdzić swój adres e-mail.")
+//                                .setPositiveButton("OK") { dialog, _ ->
+//                                    dialog.dismiss()
+//                                }
+//                                .create()
+//
+//                            alertDialog.show()
+//                            }
 
                         FirebaseMessaging.getInstance().token
                             .addOnCompleteListener { task ->
@@ -166,10 +182,9 @@ class FirebaseRepository {
                 val currentUser = userResult.toObject(User::class.java)
                 val friendsUid = currentUser?.friends?.map { it.uid } ?: arrayListOf()
 
+
                 db.collection(USERS)
                     .limit(12)
-                    .whereNotIn("uid", friendsUid)
-//                    .whereNotEqualTo("uid", currentUserUid)
                     .get()
                     .addOnSuccessListener { usersResult ->
                         db.collection(USERS)
@@ -184,7 +199,7 @@ class FirebaseRepository {
                                 // Utworzenie listy użytkowników, którzy nie otrzymali zaproszeń
                                 val list = arrayListOf<User>()
                                 for (user in users) {
-                                    if (user.uid != currentUserUid && !invitedUid.contains(user.uid)) {
+                                    if (user.uid != currentUserUid && !invitedUid.contains(user.uid) && !friendsUid.contains(user.uid)) {
                                         list.add(user)
                                     }
                                 }
@@ -388,7 +403,6 @@ class FirebaseRepository {
             updatedFriends?.let {
                 receiverDocRef.update("friends", it)
             }
-
         }
     }
 
@@ -420,7 +434,6 @@ class FirebaseRepository {
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error adding document", e)
             }
-
     }
 
     private fun updateLastMessage(senderId: String, receiverId: String, docUid: String) {
@@ -522,7 +535,6 @@ class FirebaseRepository {
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error writing document", e)
             }
-
     }
 
     private fun transferDocUid(docUid: String) {

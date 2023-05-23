@@ -1,5 +1,6 @@
 package com.example.chatjet.view_model
 
+import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -19,7 +20,7 @@ class MainViewModel(var user: User? = null) : ViewModel() {
     var usersList = MutableLiveData<ArrayList<User>>()
     var invitationsList = MutableLiveData<ArrayList<InvitationReceived>>()
 
-    fun loginUser(email: String, password: String, navController: NavController) {
+    fun loginUser(email: String, password: String, navController: NavController, context: Context) {
         repository.loginUser(email, password,
             {
                 navController.navigate(R.id.action_loginFragment_to_usersFragment)
@@ -39,7 +40,7 @@ class MainViewModel(var user: User? = null) : ViewModel() {
                     R.color.red,
                     Toast.LENGTH_SHORT
                 )
-            })
+            }, context)
     }
 
     fun registerUser(email: String, fullName: String, number: Int, password: String) {

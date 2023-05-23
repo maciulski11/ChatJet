@@ -27,6 +27,9 @@ class LoginFragment : BaseFragment() {
     @SuppressLint("SetTextI18n")
     override fun subscribeUi() {
 
+        //TODO:
+        //Create token list from one phone for different account
+
         macio.setOnClickListener {
             emailET.setText("macio@wp.pl")
             passwordET.setText("00000000")
@@ -34,8 +37,8 @@ class LoginFragment : BaseFragment() {
         }
 
         stefan.setOnClickListener {
-            emailET.setText("stefan@wp.pl")
-            passwordET.setText("00000000")
+            emailET.setText("maxiokrzym@gmail.com")
+            passwordET.setText("Q1111111")
             validateOnLogin(emailET.text.toString(), passwordET.text.toString())
         }
 
@@ -104,7 +107,7 @@ class LoginFragment : BaseFragment() {
             return false
         }
 
-        mainViewModel.loginUser(email, password, findNavController())
+        mainViewModel.loginUser(email, password, findNavController(), requireContext())
 
         return true
     }
