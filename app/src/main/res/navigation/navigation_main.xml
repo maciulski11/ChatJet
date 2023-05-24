@@ -7,8 +7,6 @@
         android:id="@+id/loginFragment"
         android:name="com.example.chatjet.ui.screen.LoginFragment"
         android:label="LoginFragment" >
-
-
         <action
             android:id="@+id/action_loginFragment_to_usersFragment"
             app:destination="@id/messageFragment" />
@@ -38,6 +36,9 @@
         <action
             android:id="@+id/action_usersFragment_to_findUserFragment"
             app:destination="@id/findUserFragment" />
+        <action
+            android:id="@+id/action_messageFragment_to_profileEditFragment"
+            app:destination="@id/profileEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/findUserFragment"

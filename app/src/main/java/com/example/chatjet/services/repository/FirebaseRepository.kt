@@ -75,62 +75,47 @@ class FirebaseRepository {
         onNavigate: () -> Unit,
         onVerifyEmail: () -> Unit,
         onNotExistUser: () -> Unit,
-        context: Context
     ) {
         //we check that this data is in our datebase
         fbAuth.signInWithEmailAndPassword(
             email,
             password
-        )
-            .addOnSuccessListener { authRes ->
+        ).addOnSuccessListener { authRes ->
 
-                if (authRes != null) {
+            if (authRes != null) {
 
-                    // Check verified your email
-                    if (fbAuth.currentUser!!.isEmailVerified) {
+                // Check verified your email
+                if (fbAuth.currentUser!!.isEmailVerified) {
 
-                        //TODO:
-//                        if (fbAuth.currentUser?.phoneNumber.isNullOrEmpty()){
-//                            val alertDialog = AlertDialog.Builder(context)
-//                                .setTitle("Potwierdź adres e-mail")
-//                                .setMessage("Na Twój adres e-mail została wysłana wiadomość z linkiem potwierdzającym. Kliknij ten link, aby potwierdzić swój adres e-mail.")
-//                                .setPositiveButton("OK") { dialog, _ ->
-//                                    dialog.dismiss()
-//                                }
-//                                .create()
-//
-//                            alertDialog.show()
-//                            }
-
-                        FirebaseMessaging.getInstance().token
-                            .addOnCompleteListener { task ->
-                                if (!task.isSuccessful) {
-                                    Log.w(
-                                        "LoginFragment",
-                                        "Fetching FCM registration token failed",
-                                        task.exception
-                                    )
-                                    return@addOnCompleteListener
-                                }
-
-                                // Get new FCM registration token
-                                val token = task.result
-
-                                db.collection(USERS).document(currentUserUid)
-                                    .update(TOKEN, token)
-
-                                // Log the token
-                                Log.d("LoginFragment", "FCM registration token: $token")
+                    FirebaseMessaging.getInstance().token
+                        .addOnCompleteListener { task ->
+                            if (!task.isSuccessful) {
+                                Log.w(
+                                    "LoginFragment",
+                                    "Fetching FCM registration token failed",
+                                    task.exception
+                                )
+                                return@addOnCompleteListener
                             }
 
-                        onNavigate()
+                            // Get new FCM registration token
+                            val token = task.result
 
-                    } else {
+                            db.collection(USERS).document(currentUserUid)
+                                .update(TOKEN, token)
 
-                        onVerifyEmail()
-                    }
+                            // Log the token
+                            Log.d("LoginFragment", "FCM registration token: $token")
+                        }
+
+                    onNavigate()
+
+                } else {
+
+                    onVerifyEmail()
                 }
             }
+        }
             .addOnFailureListener { exception ->
 
                 onNotExistUser()
@@ -199,7 +184,10 @@ class FirebaseRepository {
                                 // Utworzenie listy użytkowników, którzy nie otrzymali zaproszeń
                                 val list = arrayListOf<User>()
                                 for (user in users) {
-                                    if (user.uid != currentUserUid && !invitedUid.contains(user.uid) && !friendsUid.contains(user.uid)) {
+                                    if (user.uid != currentUserUid && !invitedUid.contains(user.uid) && !friendsUid.contains(
+                                            user.uid
+                                        )
+                                    ) {
                                         list.add(user)
                                     }
                                 }

@@ -1,6 +1,7 @@
 package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.icu.text.SimpleDateFormat
 import android.view.View
 import androidx.fragment.app.activityViewModels
@@ -41,6 +42,19 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
 
         FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid) { user ->
             mainViewModel.user = user
+
+            if (user.firstLogin == true){
+                findNavController().navigate(R.id.action_messageFragment_to_profileEditFragment)
+
+                val builder = AlertDialog.Builder(context)
+                builder.setTitle("You have to complete your profile.")
+                    .setPositiveButton("Ok") { _, _ ->
+                    }
+
+                val alertDialog = builder.create()
+                alertDialog.show()
+
+            }
 
             mainViewModel.users.observe(this) {
 
