@@ -3,6 +3,8 @@ package com.example.chatjet.ui.screen
 import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.icu.text.SimpleDateFormat
+import android.view.ContextThemeWrapper
+import android.view.LayoutInflater
 import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -46,13 +48,10 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
             if (user.firstLogin == true){
                 findNavController().navigate(R.id.action_messageFragment_to_profileEditFragment)
 
-                val builder = AlertDialog.Builder(context)
-                builder.setTitle("You have to complete your profile.")
-                    .setPositiveButton("Ok") { _, _ ->
-                    }
-
-                val alertDialog = builder.create()
-                alertDialog.show()
+                val dialogView = LayoutInflater.from(context).inflate(R.layout.custom_dialog, null)
+                AlertDialog.Builder(context)
+                    .setView(dialogView)
+                    .show()
 
             }
 
