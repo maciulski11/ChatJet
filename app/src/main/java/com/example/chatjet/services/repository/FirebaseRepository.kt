@@ -50,7 +50,8 @@ class FirebaseRepository {
                         "",
                         fullName,
                         "",
-                        number
+                        number,
+                        true
                     )
                     db.collection(USERS)
                         .document(currentUserUid)
@@ -121,6 +122,11 @@ class FirebaseRepository {
                 onNotExistUser()
                 Log.d("DEBUG", exception.message.toString())
             }
+    }
+
+    fun firstLogin() {
+        db.collection(USERS).document(currentUserUid)
+            .update("firstLogin", false)
     }
 
     fun getCurrentUserName(onSuccess: (String) -> Unit) {

@@ -2,12 +2,16 @@ package com.example.chatjet.ui.screen
 
 import android.app.Activity
 import android.app.AlertDialog
+import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
+import android.view.LayoutInflater
+import android.view.WindowManager
+import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
@@ -15,8 +19,10 @@ import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.repository.FirebaseRepository
-import com.example.chatjet.services.utils.Utilities
+import com.example.chatjet.services.utils.AlertDialogUtils
+import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.view_model.MainViewModel
+import kotlinx.android.synthetic.main.custom_dialog.*
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
 import kotlinx.android.synthetic.main.fragment_profile_edit.statusColor
 import kotlinx.android.synthetic.main.fragment_profile_edit.statusText
@@ -36,6 +42,15 @@ class ProfileEditFragment : BaseFragment() {
     override fun subscribeUi() {
 
         FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid) { user ->
+
+            if (user.firstLogin == true) {
+
+                AlertDialogUtils.customAlertDialog(
+                    requireContext(),
+                    "Welcome to ChatJet :)",
+                    "You have to complete your profile!"
+                ) { mainViewModel.firstLogin() }
+            }
 
             mainViewModel.users.observe(this) {
 
@@ -90,7 +105,7 @@ class ProfileEditFragment : BaseFragment() {
             val icons = arrayOf(R.drawable.ic_baseline_camera_24, R.drawable.ic_baseline_image_24)
             val builder = AlertDialog.Builder(requireContext())
             builder.setTitle("Choose your profile picture:")
-            
+
             builder.setItems(options) { dialog, item ->
                 when {
                     options[item] == "Take Photo" -> {
@@ -102,7 +117,8 @@ class ProfileEditFragment : BaseFragment() {
                         }
                     }
                     options[item] == "Choose from Gallery" -> {
-                        val intent = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+                        val intent =
+                            Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
                         startActivityForResult(intent, REQUEST_IMAGE_PICK)
                     }
                 }
@@ -145,7 +161,13 @@ class ProfileEditFragment : BaseFragment() {
                     val selectedImage = data.data
                     selectedImage?.let {
                         val filePathColumn = arrayOf(MediaStore.Images.Media.DATA)
-                        val cursor = requireActivity().contentResolver.query(it, filePathColumn, null, null, null)
+                        val cursor = requireActivity().contentResolver.query(
+                            it,
+                            filePathColumn,
+                            null,
+                            null,
+                            null
+                        )
                         cursor?.moveToFirst()
                         val columnIndex = cursor?.getColumnIndex(filePathColumn[0])
                         val imagePath = cursor?.getString(columnIndex!!)
@@ -182,7 +204,7 @@ class ProfileEditFragment : BaseFragment() {
 
             mainViewModel.updateDataOfUser(name, number, location, status, findNavController())
 
-            Utilities.showToast(
+            ToastUtils.showToast(
                 "Success!",
                 R.drawable.ic_baseline_check_circle_outline_24,
                 R.color.green,
@@ -195,7 +217,7 @@ class ProfileEditFragment : BaseFragment() {
 
         } else {
 
-            Utilities.showToast(
+            ToastUtils.showToast(
                 "Your phone number should have 9 digits!",
                 R.drawable.ic_baseline_remove_circle_outline_24,
                 R.color.red,

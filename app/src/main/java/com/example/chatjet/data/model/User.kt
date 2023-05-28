@@ -12,8 +12,8 @@ data class User (
     val full_name: String? = null,
     val photo: String? = null,
     val number: Int? = null,
+    var firstLogin: Boolean? = null,
     val location: String? = null,
     var status: Boolean? = null,
-    var firstLogin: Boolean? = null,
     val friends: @RawValue ArrayList<Friend>? = arrayListOf()
 ): Parcelable {}
