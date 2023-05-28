@@ -35,6 +35,7 @@ class InvitationFragment : BaseFragment() {
         adapter = InvitationAdapter(invitationsList, requireContext(),
             {
                 mainViewModel.acceptInvitation(it)
+                mainViewModel.deleteInvitation(it)
 
                 ToastUtils.showToast(
                     "Invitation accepted!",

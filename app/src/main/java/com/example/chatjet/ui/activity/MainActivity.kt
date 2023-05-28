@@ -78,7 +78,7 @@ class MainActivity : AppCompatActivity() {
             db.collection(FirebaseRepository.USERS)
                 .document(FirebaseRepository().currentUserUid)
                 .collection(FirebaseRepository.INVITATIONS_RECEIVED)
-                .whereEqualTo("status", "new")
+//                .whereEqualTo("status", "new") // off new notification icon
                 .get()
                 .addOnSuccessListener { queryDocumentSnapshots ->
                     val hasNewNotifications = queryDocumentSnapshots.isEmpty.not()

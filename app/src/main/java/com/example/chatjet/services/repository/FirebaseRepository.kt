@@ -593,7 +593,7 @@ class FirebaseRepository {
 
     fun deleteInvitation(uid: String) {
         db.collection(USERS).document(FirebaseRepository().currentUserUid)
-            .collection(INVITATIONS_RECEIVED).document(uid)
+            .collection(INVITATIONS_SENT).document(uid)
             .delete()
             .addOnSuccessListener {
                 Log.d("TAG", "DocumentSnapshot successfully deleted!")
@@ -603,7 +603,7 @@ class FirebaseRepository {
             }
 
         db.collection(USERS).document(uid)
-            .collection(INVITATIONS_SENT).document(currentUserUid)
+            .collection(INVITATIONS_RECEIVED).document(currentUserUid)
             .delete()
             .addOnSuccessListener {
                 Log.d("TAG", "DocumentSnapshot successfully deleted!")
