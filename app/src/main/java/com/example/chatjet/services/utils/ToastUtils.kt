@@ -22,8 +22,8 @@ object ToastUtils {
 
     fun showToast(
         message: String,
-        backgroundToastColor: Int,
         iconResId: Int,
+        backgroundToastColor: Int,
         duration: Int
     ) {
         appContext?.let {
@@ -55,7 +55,7 @@ object ToastUtils {
             ContextCompat.getDrawable(appContext!!, R.drawable.custom_toast_background)
         backgroundDrawable?.setColorFilter(
             ContextCompat.getColor(
-                appContext!!,
+                appContext ?: return,
                 backgroundToastColor
             ), PorterDuff.Mode.SRC_IN
         )

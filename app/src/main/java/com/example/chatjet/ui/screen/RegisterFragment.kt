@@ -49,8 +49,8 @@ class RegisterFragment : BaseFragment() {
 
             ToastUtils.showToast(
                 "All fields must be completed!",
-                R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
                 Toast.LENGTH_SHORT
             )
             return false
@@ -61,8 +61,8 @@ class RegisterFragment : BaseFragment() {
 
             ToastUtils.showToast(
                 "Email is not valid!",
-                R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
                 Toast.LENGTH_SHORT
             )
             return false
@@ -72,8 +72,8 @@ class RegisterFragment : BaseFragment() {
 
             ToastUtils.showToast(
                 "The passwords are different!",
-                R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
                 Toast.LENGTH_SHORT
             )
             return false
@@ -83,8 +83,8 @@ class RegisterFragment : BaseFragment() {
 
             ToastUtils.showToast(
                 "Password must have at least 1 digit!",
-                R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
                 Toast.LENGTH_SHORT
             )
             return false
@@ -94,8 +94,8 @@ class RegisterFragment : BaseFragment() {
 
             ToastUtils.showToast(
                 "Password must have at least 1 capital letter!",
-                R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
                 Toast.LENGTH_SHORT
             )
             return false
@@ -105,8 +105,8 @@ class RegisterFragment : BaseFragment() {
 
             ToastUtils.showToast(
                 "Password must have at least 8 characters!",
-                R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
                 Toast.LENGTH_SHORT
             )
             return false
@@ -116,8 +116,8 @@ class RegisterFragment : BaseFragment() {
 
             ToastUtils.showToast(
                 "Your phone number should have 9 digits!",
-                R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
                 Toast.LENGTH_SHORT
             )
             return false
@@ -125,8 +125,8 @@ class RegisterFragment : BaseFragment() {
 
         ToastUtils.showToast(
             "Registered successfully!\nPlease check your email for verification.",
-            R.color.green,
             R.drawable.ic_baseline_check_circle_outline_24,
+            R.color.green,
             Toast.LENGTH_LONG
         )
 

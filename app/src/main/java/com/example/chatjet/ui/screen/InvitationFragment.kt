@@ -1,6 +1,7 @@
 package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
+import android.graphics.Color
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels

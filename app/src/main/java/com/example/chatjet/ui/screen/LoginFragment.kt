@@ -100,8 +100,8 @@ class LoginFragment : BaseFragment() {
         if (email.isEmpty() || password.isEmpty()) {
             ToastUtils.showToast(
                 "All fields must be completed!",
-                R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
                 Toast.LENGTH_SHORT
             )
             return false

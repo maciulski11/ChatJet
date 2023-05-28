@@ -58,8 +58,13 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
                     // ACTION_DIAL - przenosi do edycji numeru przed polaczeniem
                     val callIntent = Intent(Intent.ACTION_CALL)
                     callIntent.data = Uri.parse("tel:$phoneNumber")
-                    if (ActivityCompat.checkSelfPermission(context, Manifest.permission.CALL_PHONE) != PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(context, "Brak uprawnień do dzwonienia", Toast.LENGTH_SHORT).show()
+                    if (ActivityCompat.checkSelfPermission(
+                            context,
+                            Manifest.permission.CALL_PHONE
+                        ) != PackageManager.PERMISSION_GRANTED
+                    ) {
+                        Toast.makeText(context, "Brak uprawnień do dzwonienia", Toast.LENGTH_SHORT)
+                            .show()
                         return@setOnClickListener
                     }
                     context.startActivity(callIntent)
@@ -73,7 +78,8 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
                         .setPositiveButton("Yes") { _, _ ->
                             // usunięcie przyjaciela
                             val db = FirebaseFirestore.getInstance()
-                            db.collection(FirebaseRepository.USERS).document(FirebaseRepository().currentUserUid!!)
+                            db.collection(FirebaseRepository.USERS)
+                                .document(FirebaseRepository().currentUserUid)
                                 .update(FirebaseRepository.FRIENDS, FieldValue.arrayRemove(friend))
                                 .addOnSuccessListener {
                                     Log.d("TAG", "Friend successfully deleted!")
@@ -92,6 +98,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
                         }
                         .create()
 
+                    alertDialog.setCanceledOnTouchOutside(false)
                     alertDialog.show()
 
 //                    // usunięcie aktualnie zalogowanego użytkownika z listy przyjaciół usuniętego użytkownika
