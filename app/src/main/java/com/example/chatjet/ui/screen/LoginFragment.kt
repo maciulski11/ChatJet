@@ -9,7 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
-import com.example.chatjet.services.utils.Utilities
+import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.emailET
@@ -98,7 +98,7 @@ class LoginFragment : BaseFragment() {
     ): Boolean {
 
         if (email.isEmpty() || password.isEmpty()) {
-            Utilities.showToast(
+            ToastUtils.showToast(
                 "All fields must be completed!",
                 R.color.red,
                 R.drawable.ic_baseline_remove_circle_outline_24,
@@ -107,7 +107,7 @@ class LoginFragment : BaseFragment() {
             return false
         }
 
-        mainViewModel.loginUser(email, password, findNavController(), requireContext())
+        mainViewModel.loginUser(email, password, findNavController())
 
         return true
     }

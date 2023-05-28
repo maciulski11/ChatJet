@@ -18,6 +18,7 @@ import com.example.chatjet.ui.activity.OnBackPressedListener
 import com.example.chatjet.ui.adapter.MessageAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import kotlinx.android.synthetic.main.custom_dialog.*
 import kotlinx.android.synthetic.main.fragment_message.*
 import java.util.*
 
@@ -47,12 +48,6 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
 
             if (user.firstLogin == true){
                 findNavController().navigate(R.id.action_messageFragment_to_profileEditFragment)
-
-                val dialogView = LayoutInflater.from(context).inflate(R.layout.custom_dialog, null)
-                AlertDialog.Builder(context)
-                    .setView(dialogView)
-                    .show()
-
             }
 
             mainViewModel.users.observe(this) {

@@ -1,6 +1,5 @@
 package com.example.chatjet.view_model
 
-import android.content.Context
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,7 +8,7 @@ import com.example.chatjet.R
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.repository.FirebaseRepository
-import com.example.chatjet.services.utils.Utilities
+import com.example.chatjet.services.utils.ToastUtils
 
 class MainViewModel(var user: User? = null) : ViewModel() {
 
@@ -20,13 +19,13 @@ class MainViewModel(var user: User? = null) : ViewModel() {
     var usersList = MutableLiveData<ArrayList<User>>()
     var invitationsList = MutableLiveData<ArrayList<InvitationReceived>>()
 
-    fun loginUser(email: String, password: String, navController: NavController, context: Context) {
+    fun loginUser(email: String, password: String, navController: NavController) {
         repository.loginUser(email, password,
             {
                 navController.navigate(R.id.action_loginFragment_to_usersFragment)
             },
             {
-                Utilities.showToast(
+                ToastUtils.showToast(
                     "Please verify your email!",
                     R.drawable.ic_baseline_remove_circle_outline_24,
                     R.color.red,
@@ -34,17 +33,21 @@ class MainViewModel(var user: User? = null) : ViewModel() {
                 )
             },
             {
-                Utilities.showToast(
+                ToastUtils.showToast(
                     "Email or password is incorrect!",
                     R.drawable.ic_baseline_remove_circle_outline_24,
                     R.color.red,
                     Toast.LENGTH_SHORT
                 )
-            }, context)
+            })
     }
 
     fun registerUser(email: String, fullName: String, number: Int, password: String) {
         repository.registerUser(email, fullName, number, password)
+    }
+
+    fun firstLogin() {
+        repository.firstLogin()
     }
 
     fun fetchUsers() {
