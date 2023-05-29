@@ -37,7 +37,6 @@ object ToastUtils {
         }
     }
 
-    //TODO: blad z kolorem backgroundToastColor
     private fun customToast(
         message: String,
         iconResId: Int,

@@ -97,12 +97,21 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
 
                 name.text = f.full_name
 
-                Glide.with(view)
-                    .load(f.photo)
-                    .override(220, 220)
-                    .circleCrop()
-                    .into(icon)
+                if (f.photo?.isEmpty() == true || f.photo == "") {
+                    Glide.with(view)
+                        .load(R.drawable.ic_baseline_account_circle_240)
+                        .override(220, 220)
+                        .circleCrop()
+                        .into(icon)
 
+                } else {
+
+                    Glide.with(view)
+                        .load(f.photo)
+                        .override(220, 220)
+                        .circleCrop()
+                        .into(icon)
+                }
             }
 
             FirebaseRepository().fetchLastMessage(uidMessage) { m ->

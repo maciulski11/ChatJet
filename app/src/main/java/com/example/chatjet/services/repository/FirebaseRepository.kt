@@ -1,8 +1,6 @@
 package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
-import android.content.Context
 import android.util.Log
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.InvitationReceived
@@ -593,7 +591,7 @@ class FirebaseRepository {
 
     fun deleteInvitation(uid: String) {
         db.collection(USERS).document(FirebaseRepository().currentUserUid)
-            .collection(INVITATIONS_SENT).document(uid)
+            .collection(INVITATIONS_RECEIVED).document(uid)
             .delete()
             .addOnSuccessListener {
                 Log.d("TAG", "DocumentSnapshot successfully deleted!")
@@ -604,6 +602,17 @@ class FirebaseRepository {
 
         db.collection(USERS).document(uid)
             .collection(INVITATIONS_RECEIVED).document(currentUserUid)
+            .delete()
+            .addOnSuccessListener {
+                Log.d("TAG", "DocumentSnapshot successfully deleted!")
+            }
+            .addOnFailureListener { e ->
+                Log.w("TAG", "Error deleting document", e)
+            }
+
+            //TODO: do usuniecia, dla testów!!!
+        db.collection(USERS).document(FirebaseRepository().currentUserUid)
+            .collection(INVITATIONS_SENT).document(uid)
             .delete()
             .addOnSuccessListener {
                 Log.d("TAG", "DocumentSnapshot successfully deleted!")
