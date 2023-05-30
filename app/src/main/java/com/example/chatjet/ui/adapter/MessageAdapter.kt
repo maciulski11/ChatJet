@@ -1,5 +1,6 @@
 package com.example.chatjet.ui.adapter
 
+import android.app.AlertDialog
 import android.graphics.Color
 import android.graphics.Typeface
 import android.icu.text.SimpleDateFormat
@@ -44,24 +45,21 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
             )
 
             if (message.readMessage == false) {
-               holder.readMessage(message.uid!!)
+                holder.readMessage(message.uid!!)
             }
 
             v.findNavController().navigate(R.id.action_usersFragment_to_chatFragment, bundle)
         }
 
+        // Set listener to long click
+        holder.chooseUser.setOnLongClickListener(holder)
         holder.bind(message, message.uid ?: "", message.uidLastMessage ?: "")
     }
 
     override fun getItemCount(): Int = messageList.size
 
-    // Funkcja zwracająca datę w postaci łańcucha znaków
-    private fun getDateString(date: Date): String {
-        val formatter = SimpleDateFormat("dd/MM/yyyy", Locale.getDefault())
-        return formatter.format(date)
-    }
-
-    inner class MyViewHolder(private var view: View): RecyclerView.ViewHolder(view) {
+    inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view),
+        View.OnLongClickListener {
 
         val chooseUser = view.findViewById<ConstraintLayout>(R.id.chooseUser)!!
         private val icon = view.findViewById<ImageView>(R.id.userPhoto)
@@ -129,6 +127,27 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                     status.setColorFilter(Color.RED)
                 }
             }
+        }
+
+        override fun onLongClick(view: View): Boolean {
+            val message = messageList[adapterPosition]
+
+            FirebaseRepository().fetchFriends(message.uid.toString()) { f ->
+
+                val alertDialog = AlertDialog.Builder(view.context)
+                    .setTitle("Delete chat!")
+                    .setMessage("Do you want to delete your messages with ${f.full_name}?")
+                    .setPositiveButton("OK") { dialog, which ->
+                        // Obsługa kliknięcia przycisku OK
+                    }
+                    .setNegativeButton("Anuluj") { dialog, which ->
+                        // Obsługa kliknięcia przycisku Anuluj
+                    }
+                    .create()
+
+                alertDialog.show()
+            }
+            return true
         }
     }
 }
