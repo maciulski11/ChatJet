@@ -96,6 +96,7 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 name.text = f.full_name
 
                 if (f.photo?.isEmpty() == true || f.photo == "") {
+
                     Glide.with(view)
                         .load(R.drawable.ic_baseline_account_circle_240)
                         .override(220, 220)

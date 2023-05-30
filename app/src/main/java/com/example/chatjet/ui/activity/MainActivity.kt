@@ -8,7 +8,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.navigation.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.services.repository.FirebaseRepository
-import com.example.chatjet.services.utils.AlertDialogUtils
 import com.example.chatjet.services.utils.ToastUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
