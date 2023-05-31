@@ -1,5 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<resources>
+<resources xmlns:tools="http://schemas.android.com/tools">
 
+    <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
+        <!-- Extra custom styles -->
+        <item name="android:windowBackground">@color/black</item> <!-- Tło aplikacji -->
+
+    </style>
+
+    <style name="AppTheme.Light" parent="Theme.MaterialComponents.DayNight">
+        <!-- Ustawienia dla trybu jasnego -->
+        <item name="android:windowBackground">@color/white</item> <!-- Tło aplikacji -->
+        <item name="colorPrimary">@color/black</item> <!-- Tło paska narzędzi -->
+        <item name="colorPrimaryVariant">@color/black</item> <!-- Tło paska narzędzi -->
+        <item name="colorOnPrimary">@color/white</item> <!-- Kolor tekstu w pasku narzędzi -->
+        <item name="android:textColorPrimary">@color/black</item> <!-- Kolor tekstu w pasku narzędzi -->
+        <!-- Secondary brand color. -->
+        <item name="colorSecondary">@color/powderBlue</item>
+        <item name="colorSecondaryVariant">@color/powderBlue</item>
+        <item name="colorOnSecondary">@color/white</item>
+        <!-- Status bar color. -->
+        <item name="android:statusBarColor">@color/black</item>
+        <!-- Dodatkowe style -->
+        <!-- ... -->
+
+    </style>
 
 </resources>

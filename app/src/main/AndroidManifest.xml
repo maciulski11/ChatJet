@@ -15,7 +15,7 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_chat_jet_logo_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.ChatJet">
+        android:theme="@style/AppTheme">
 
         <service android:name=".services.notifications.FirebaseServices"
             android:permission="com.google.android.c2dm.permission.SEND"
