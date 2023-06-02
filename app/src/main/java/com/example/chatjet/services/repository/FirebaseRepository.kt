@@ -127,6 +127,23 @@ class FirebaseRepository {
             .update("firstLogin", false)
     }
 
+    // Fun of reset password
+    fun resetPassword(email: String) {
+        val auth = FirebaseAuth.getInstance()
+
+        // Send email with link of change password
+        auth.sendPasswordResetEmail(email)
+            .addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    println("Sent email with link of reset password")
+                    // Wyświetl informację dla użytkownika, że email został wysłany
+                } else {
+                    // Obsłuż błąd wysyłki emaila
+                    println("Eerror sent of email: ${task.exception?.message}")
+                }
+            }
+    }
+
     fun getCurrentUserName(onSuccess: (String) -> Unit) {
         db.collection(USERS).document(currentUserUid)
             .get()
@@ -610,7 +627,7 @@ class FirebaseRepository {
                 Log.w("TAG", "Error deleting document", e)
             }
 
-            //TODO: do usuniecia, dla testów!!!
+        //TODO: do usuniecia, dla testów!!!
         db.collection(USERS).document(FirebaseRepository().currentUserUid)
             .collection(INVITATIONS_SENT).document(uid)
             .delete()

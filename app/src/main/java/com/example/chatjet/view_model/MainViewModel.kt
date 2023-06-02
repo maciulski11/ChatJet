@@ -46,6 +46,10 @@ class MainViewModel(var user: User? = null) : ViewModel() {
         repository.registerUser(email, fullName, number, password)
     }
 
+    fun resetPassword(email: String) {
+        repository.resetPassword(email)
+    }
+
     fun firstLogin() {
         repository.firstLogin()
     }

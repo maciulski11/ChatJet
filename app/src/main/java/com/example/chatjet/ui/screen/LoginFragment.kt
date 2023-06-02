@@ -3,6 +3,7 @@ package com.example.chatjet.ui.screen
 import android.Manifest
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
@@ -11,10 +12,14 @@ import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.view_model.MainViewModel
+import com.google.firebase.auth.ActionCodeSettings
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.emailET
 import kotlinx.android.synthetic.main.fragment_login.passwordET
 import kotlinx.android.synthetic.main.fragment_register.*
+import kotlin.random.Random
 
 class LoginFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_login
@@ -30,15 +35,9 @@ class LoginFragment : BaseFragment() {
         //TODO:
         //Create token list from one phone for different account
 
-        macio.setOnClickListener {
-            emailET.setText("macio@wp.pl")
-            passwordET.setText("00000000")
-            validateOnLogin(emailET.text.toString(), passwordET.text.toString())
-        }
-
         stefan.setOnClickListener {
             emailET.setText("maxiokrzym@gmail.com")
-            passwordET.setText("Q1111111")
+            passwordET.setText("00000000")
             validateOnLogin(emailET.text.toString(), passwordET.text.toString())
         }
 
@@ -50,6 +49,25 @@ class LoginFragment : BaseFragment() {
             findNavController().navigate(R.id.action_loginFragment_to_registrationFragment)
         }
 
+        forgotPasswordButton.setOnClickListener {
+            loginLayout.visibility = View.GONE
+            resetPasswordLayout.visibility = View.VISIBLE
+        }
+
+        resetPasswordButton.setOnClickListener {
+            if (enterEmailET.text.toString() == confirmEmailET.text.toString()) {
+                resetPasswordLayout.visibility = View.GONE
+                loginLayout.visibility = View.VISIBLE
+                mainViewModel.resetPassword("maxiokrzym@gmail.com")
+            } else {
+                ToastUtils.showToast(
+                    "The emails are different!",
+                    R.drawable.ic_baseline_remove_circle_outline_24,
+                    R.color.red,
+                    Toast.LENGTH_SHORT
+                )
+            }
+        }
     }
 
     override fun onResume() {
