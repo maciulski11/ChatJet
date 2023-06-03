@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
+import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -14,14 +15,16 @@ import android.widget.ImageButton
 import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
+import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.AnimationUtils
 import com.google.firebase.firestore.FieldValue
 import com.google.firebase.firestore.FirebaseFirestore
 
-class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Context) :
+class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Context, private val v: View) :
     RecyclerView.Adapter<FriendsAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendsAdapter.MyViewHolder {
@@ -45,6 +48,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
 
         private val name = view.findViewById<TextView>(R.id.nameUser)
         private val callButton = view.findViewById<ImageButton>(R.id.callButton)
+        private val messageButton = view.findViewById<ImageButton>(R.id.messageButton)
         private val deleteButton = view.findViewById<ImageButton>(R.id.deleteButton)
 
         fun bind(friend: Friend) {
@@ -68,6 +72,18 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
                         return@setOnClickListener
                     }
                     context.startActivity(callIntent)
+                }
+
+                messageButton.setOnClickListener {
+                    val bundle = Bundle()
+                    bundle.putParcelable(
+                        "friend",
+                        Friend(
+                            friend.uid,
+                        )
+                    )
+
+                    v.findNavController().navigate(R.id.action_friendsFragment_to_chatFragment, bundle, AnimationUtils.downNavAnim)
                 }
 
                 deleteButton.setOnClickListener {

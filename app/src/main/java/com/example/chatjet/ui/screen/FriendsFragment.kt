@@ -43,7 +43,8 @@ class FriendsFragment: BaseFragment() {
 
                     adapter = FriendsAdapter(
                         friendsList,
-                        requireContext()
+                        requireContext(),
+                        requireView()
                     )
 
                     friendsRecyclerView.adapter = adapter
