@@ -6,6 +6,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
+import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_register.*
@@ -20,7 +21,7 @@ class RegisterFragment : BaseFragment() {
     override fun subscribeUi() {
 
         returnBT.setOnClickListener {
-            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment, null, AnimationUtils.rightNavAnim)
         }
 
         registerButton.setOnClickListener {

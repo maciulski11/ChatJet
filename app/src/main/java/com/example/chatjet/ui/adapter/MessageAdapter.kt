@@ -17,6 +17,7 @@ import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.AnimationUtils
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -48,7 +49,7 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 holder.readMessage(message.uid!!)
             }
 
-            v.findNavController().navigate(R.id.action_usersFragment_to_chatFragment, bundle)
+            v.findNavController().navigate(R.id.action_usersFragment_to_chatFragment, bundle, AnimationUtils.downNavAnim)
         }
 
         // Set listener to long click

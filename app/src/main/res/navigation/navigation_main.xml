@@ -6,24 +6,21 @@
     <fragment
         android:id="@+id/loginFragment"
         android:name="com.example.chatjet.ui.screen.LoginFragment"
-        android:label="LoginFragment" >
+        android:label="LoginFragment">
         <action
             android:id="@+id/action_loginFragment_to_usersFragment"
             app:destination="@id/messageFragment" />
         <action
             android:id="@+id/action_loginFragment_to_registrationFragment"
-            app:destination="@id/registerFragment"
-            app:enterAnim="@android:anim/slide_in_left" />
+            app:destination="@id/registerFragment" />
         <action
             android:id="@+id/action_loginFragment_to_resetPasswordFragment2"
-            app:destination="@id/resetPasswordFragment2"
-            app:enterAnim="@android:anim/slide_in_left" />
+            app:destination="@id/resetPasswordFragment2" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
         android:name="com.example.chatjet.ui.screen.ChatFragment"
-        android:label="ChatFragment" >
-
+        android:label="ChatFragment">
 
         <action
             android:id="@+id/action_chatFragment_to_usersFragment"
@@ -32,7 +29,7 @@
     <fragment
         android:id="@+id/messageFragment"
         android:name="com.example.chatjet.ui.screen.MessageFragment"
-        android:label="UsersFragment" >
+        android:label="UsersFragment">
 
         <action
             android:id="@+id/action_usersFragment_to_chatFragment"
@@ -47,7 +44,7 @@
     <fragment
         android:id="@+id/findUserFragment"
         android:name="com.example.chatjet.ui.screen.FindUserFragment"
-        android:label="FindUserFragment" >
+        android:label="FindUserFragment">
         <action
             android:id="@+id/action_findUserFragment_to_usersFragment"
             app:destination="@id/messageFragment" />
@@ -55,13 +52,13 @@
     <fragment
         android:id="@+id/profileFragment"
         android:name="com.example.chatjet.ui.screen.ProfileFragment"
-        android:label="ProfileFragment" >
-        <action
-            android:id="@+id/action_profileFragment_to_profileEditFragment"
-            app:destination="@id/profileEditFragment" />
+        android:label="ProfileFragment">
         <action
             android:id="@+id/action_profileFragment_to_friendsFragment"
             app:destination="@id/friendsFragment" />
+        <action
+            android:id="@+id/action_profileFragment_to_profileEditFragment"
+            app:destination="@id/profileEditFragment" />
     </fragment>
     <fragment
         android:id="@+id/invitationFragment"
@@ -70,7 +67,7 @@
     <fragment
         android:id="@+id/profileEditFragment"
         android:name="com.example.chatjet.ui.screen.ProfileEditFragment"
-        android:label="ProfileEditFragment" >
+        android:label="ProfileEditFragment">
         <action
             android:id="@+id/action_profileEditFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
@@ -78,7 +75,7 @@
     <fragment
         android:id="@+id/friendsFragment"
         android:name="com.example.chatjet.ui.screen.FriendsFragment"
-        android:label="FriendsFragment" >
+        android:label="FriendsFragment">
         <action
             android:id="@+id/action_friendsFragment_to_profileFragment"
             app:destination="@id/profileFragment" />
@@ -89,16 +86,14 @@
         android:label="RegisterFragment">
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:enterAnim="@android:anim/slide_in_left" />
+            app:destination="@id/loginFragment" />
     </fragment>
     <fragment
         android:id="@+id/resetPasswordFragment2"
         android:name="com.example.chatjet.ui.screen.ResetPasswordFragment"
-        android:label="ResetPasswordFragment" >
+        android:label="ResetPasswordFragment">
         <action
             android:id="@+id/action_resetPasswordFragment2_to_loginFragment"
-            app:destination="@id/loginFragment"
-            app:enterAnim="@android:anim/slide_in_left" />
+            app:destination="@id/loginFragment" />
     </fragment>
 </navigation>

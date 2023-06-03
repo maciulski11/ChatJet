@@ -11,6 +11,7 @@ import com.example.chatjet.RetrofitInstance
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.*
 import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.ui.adapter.ChatAdapter
 import com.example.chatjet.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -72,7 +73,7 @@ class ChatFragment : BaseFragment() {
         returnBT.setOnClickListener {
             // Exit from listener when you click button return
             chatListenerRegistration?.remove()
-            findNavController().navigate(R.id.action_chatFragment_to_usersFragment)
+            findNavController().navigate(R.id.action_chatFragment_to_usersFragment, null, AnimationUtils.topNavAnim)
         }
 
         sendMessage.setOnClickListener {

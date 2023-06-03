@@ -6,6 +6,7 @@ import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.editProfileButton
@@ -20,11 +21,11 @@ class ProfileFragment : BaseFragment() {
     override fun subscribeUi() {
 
         friendsList.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_friendsFragment)
+            findNavController().navigate(R.id.action_profileFragment_to_friendsFragment, null , AnimationUtils.topNavAnim)
         }
 
         editProfileButton.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_profileEditFragment)
+            findNavController().navigate(R.id.action_profileFragment_to_profileEditFragment, null, AnimationUtils.rightNavAnim)
         }
 
         fetchProfileData()

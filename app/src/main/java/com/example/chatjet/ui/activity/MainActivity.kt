@@ -1,17 +1,15 @@
 package com.example.chatjet.ui.activity
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.os.Bundle
 import android.view.Menu
 import android.view.MenuItem
-import android.widget.Toolbar
-import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.navigation.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.services.repository.FirebaseRepository
+import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.services.utils.ToastUtils
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.FirebaseFirestore
@@ -34,30 +32,42 @@ class MainActivity : AppCompatActivity() {
 
         ToastUtils.initialize(this)
 
-        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
+        bottomNavView()
+    }
+
+    private fun bottomNavView() {
         val navController = findNavController(R.id.fragment)
+        val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
         bottomNavigationView.selectedItemId = R.id.messageFragment
 
         bottomNavigationView.setOnItemSelectedListener { menuItem ->
-            when (menuItem.itemId) {
-                R.id.messageFragment -> {
-                    backPressedListener = null
-                    navController.navigate(R.id.messageFragment)
-                    true
-                }
-                R.id.profileFragment -> {
-                    backPressedListener = null
-                    navController.navigate(R.id.profileFragment)
-                    true
-                }
-                R.id.findUserFragment -> {
-                    backPressedListener = null
-                    navController.navigate(R.id.findUserFragment)
-                    true
-                }
+            // Check if the button is already selected
+            val isButtonSelected = when (menuItem.itemId) {
+                R.id.messageFragment -> navController.currentDestination?.id != R.id.messageFragment
+                R.id.profileFragment -> navController.currentDestination?.id != R.id.profileFragment
+                R.id.findUserFragment -> navController.currentDestination?.id != R.id.findUserFragment
                 else -> false
             }
+
+            // Navigate to the selected fragment if the button is not already selected
+            if (isButtonSelected) {
+                when (menuItem.itemId) {
+                    R.id.messageFragment -> {
+                        backPressedListener = null
+                        navController.navigate(R.id.messageFragment, null, AnimationUtils.topNavAnim)
+                    }
+                    R.id.profileFragment -> {
+                        backPressedListener = null
+                        navController.navigate(R.id.profileFragment, null, AnimationUtils.rightNavAnim)
+                    }
+                    R.id.findUserFragment -> {
+                        backPressedListener = null
+                        navController.navigate(R.id.findUserFragment, null, AnimationUtils.leftNavAnim)
+                    }
+                }
+            }
+            isButtonSelected
         }
     }
 
@@ -70,8 +80,10 @@ class MainActivity : AppCompatActivity() {
     }
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
+        // Get the NavController
         val navController = findNavController(R.id.fragment)
 
+        // Inflate the menu for the invitation fragment if it is the current destination
         if (navController.currentDestination?.id == R.id.messageFragment) {
             menuInflater.inflate(R.menu.invitation_menu, menu)
             return true
@@ -102,15 +114,20 @@ class MainActivity : AppCompatActivity() {
                     }
                 }
         }
-
         return super.onPrepareOptionsMenu(menu)
     }
 
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        val navController = findNavController(R.id.fragment)
+
+        // Handle the click event for the invitation menu item
         when (item.itemId) {
             R.id.invitation -> {
-                findNavController(R.id.fragment).navigate(R.id.invitationFragment)
+                // Navigate to the invitation fragment only if it is not the current destination
+                if (navController.currentDestination?.id != R.id.invitationFragment) {
+                    navController.navigate(R.id.invitationFragment, null, AnimationUtils.downNavAnim)
+                }
                 return true
             }
         }

@@ -16,6 +16,7 @@ import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AlertDialogUtils
+import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.custom_dialog.*
@@ -93,7 +94,7 @@ class ProfileEditFragment : BaseFragment() {
         }
 
         returnButton.setOnClickListener {
-            findNavController().navigate(R.id.action_profileEditFragment_to_profileFragment)
+            findNavController().navigate(R.id.action_profileEditFragment_to_profileFragment, null, AnimationUtils.leftNavAnim)
         }
 
         setupTakePictureClick()
@@ -223,7 +224,6 @@ class ProfileEditFragment : BaseFragment() {
                 R.color.red,
                 Toast.LENGTH_SHORT
             )
-
         }
     }
 

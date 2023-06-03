@@ -9,6 +9,7 @@ import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
+import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_login.*
@@ -41,11 +42,11 @@ class LoginFragment : BaseFragment() {
         }
 
         registerBT.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registrationFragment)
+            findNavController().navigate(R.id.action_loginFragment_to_registrationFragment, null, AnimationUtils.leftNavAnim)
         }
 
         forgotPasswordButton.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_resetPasswordFragment2)
+            findNavController().navigate(R.id.action_loginFragment_to_resetPasswordFragment2, null, AnimationUtils.rightNavAnim)
         }
 
     }
