@@ -61,7 +61,6 @@ class InvitationAdapter(
                 acceptButton.setOnClickListener {
 
                     onAccept(uid)
-                    onDelete(uid)
                 }
 
                 unacceptedButton.setOnClickListener {

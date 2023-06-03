@@ -19,6 +19,10 @@ class RegisterFragment : BaseFragment() {
 
     override fun subscribeUi() {
 
+        returnBT.setOnClickListener {
+            findNavController().navigate(R.id.action_registerFragment_to_loginFragment)
+        }
+
         registerButton.setOnClickListener {
             validateRegistrationInput(
                 fullNameET.text.toString(),

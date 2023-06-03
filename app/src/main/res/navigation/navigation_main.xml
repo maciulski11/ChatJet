@@ -86,6 +86,6 @@
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
             app:destination="@id/loginFragment"
-            app:enterAnim="@anim/nav_default_exit_anim" />
+            app:enterAnim="@android:anim/slide_in_left" />
     </fragment>
 </navigation>

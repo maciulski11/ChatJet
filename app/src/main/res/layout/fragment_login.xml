@@ -20,11 +20,12 @@
             android:id="@+id/textView"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="74dp"
             android:text="Login:"
             android:textAlignment="center"
             android:textColor="@color/black"
-            android:textSize="36sp"
+            android:textStyle="bold"
+            android:textSize="38sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -46,6 +47,7 @@
                 android:background="@color/white"
                 android:hint="e-mail"
                 android:text="ania@wp.pl"
+                android:textSize="16sp"
                 tools:layout_editor_absoluteX="16dp" />
 
         </com.google.android.material.textfield.TextInputLayout>
@@ -68,6 +70,7 @@
                 android:layout_height="wrap_content"
                 android:background="@color/white"
                 android:hint="password"
+                android:textSize="16sp"
                 android:inputType="textPassword"
                 android:maxLines="1"
                 android:text="00000000" />
@@ -138,15 +141,27 @@
         app:layout_constraintTop_toTopOf="parent"
         android:visibility="gone">
 
+        <ImageButton
+            android:id="@+id/returnButton"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:backgroundTint="@android:color/transparent"
+            android:src="@drawable/ic_baseline_arrow__24"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
         <TextView
             android:id="@+id/textView3"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginTop="112dp"
+            android:layout_marginTop="74dp"
             android:gravity="center"
             android:text="Password reset:"
             android:textColor="@color/black"
-            android:textSize="40sp"
+            android:textSize="38sp"
             android:textStyle="bold"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -158,10 +173,10 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginStart="30dp"
-            android:layout_marginTop="64dp"
+            android:layout_marginTop="48dp"
             android:layout_marginEnd="30dp"
             android:hint="enter email..."
-            android:textSize="22sp"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
@@ -175,7 +190,7 @@
             android:layout_marginStart="30dp"
             android:layout_marginEnd="30dp"
             android:hint="confirm email..."
-            android:textSize="22sp"
+            android:textSize="16sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"

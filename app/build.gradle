@@ -80,6 +80,4 @@ dependencies {
 
     // View of Day and Night Style Phone
     implementation 'com.google.android.material:material:1.9.0'
-
-
 }

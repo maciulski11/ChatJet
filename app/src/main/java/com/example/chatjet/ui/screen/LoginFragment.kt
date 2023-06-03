@@ -1,8 +1,12 @@
 package com.example.chatjet.ui.screen
 
 import android.Manifest
+import android.animation.Animator
+import android.animation.AnimatorListenerAdapter
+import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
+import android.util.Patterns
 import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
@@ -55,18 +59,12 @@ class LoginFragment : BaseFragment() {
         }
 
         resetPasswordButton.setOnClickListener {
-            if (enterEmailET.text.toString() == confirmEmailET.text.toString()) {
-                resetPasswordLayout.visibility = View.GONE
-                loginLayout.visibility = View.VISIBLE
-                mainViewModel.resetPassword("maxiokrzym@gmail.com")
-            } else {
-                ToastUtils.showToast(
-                    "The emails are different!",
-                    R.drawable.ic_baseline_remove_circle_outline_24,
-                    R.color.red,
-                    Toast.LENGTH_SHORT
-                )
-            }
+            validateResetPassword(enterEmailET.text.toString(), confirmEmailET.text.toString())
+        }
+
+        returnButton.setOnClickListener {
+            resetPasswordLayout.visibility = View.GONE
+            loginLayout.visibility = View.VISIBLE
         }
     }
 
@@ -110,10 +108,7 @@ class LoginFragment : BaseFragment() {
      * ...the confirmed password is not the same as the real password
      * ...the password contains less than 2 digits
      */
-    fun validateOnLogin(
-        email: String,
-        password: String
-    ): Boolean {
+    fun validateOnLogin(email: String, password: String): Boolean {
 
         if (email.isEmpty() || password.isEmpty()) {
             ToastUtils.showToast(
@@ -126,6 +121,58 @@ class LoginFragment : BaseFragment() {
         }
 
         mainViewModel.loginUser(email, password, findNavController())
+
+        return true
+    }
+
+    fun validateResetPassword(email: String, confirmEmail: String): Boolean {
+
+        if (email.isEmpty() || confirmEmail.isEmpty()) {
+
+            ToastUtils.showToast(
+                "All fields must be completed!",
+                R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
+                Toast.LENGTH_SHORT
+            )
+
+            return false
+        }
+
+        // Checks the email according to the pattern
+        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
+
+            ToastUtils.showToast(
+                "Email is not valid!",
+                R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
+                Toast.LENGTH_SHORT
+            )
+            return false
+        }
+
+        if (email != confirmEmail) {
+
+            ToastUtils.showToast(
+                "The emails are different!",
+                R.drawable.ic_baseline_remove_circle_outline_24,
+                R.color.red,
+                Toast.LENGTH_SHORT
+            )
+
+            return false
+        }
+
+        resetPasswordLayout.visibility = View.GONE
+        loginLayout.visibility = View.VISIBLE
+        mainViewModel.resetPassword(email)
+
+        ToastUtils.showToast(
+            "Success, please check your email.",
+            R.drawable.ic_baseline_check_circle_outline_24,
+            R.color.green,
+            Toast.LENGTH_LONG
+        )
 
         return true
     }
