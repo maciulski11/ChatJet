@@ -9,7 +9,7 @@ class RegisterFragmentTest {
     private val registerFragment = RegisterFragment()
 
     @Test
-    fun `empty full name return false`() {
+    fun `empty field return false`() {
         val result = registerFragment.validateRegistrationInput(
             "dsdds",
             "123",
