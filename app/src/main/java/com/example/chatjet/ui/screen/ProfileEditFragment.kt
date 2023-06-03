@@ -2,16 +2,12 @@ package com.example.chatjet.ui.screen
 
 import android.app.Activity
 import android.app.AlertDialog
-import android.app.Dialog
 import android.content.Intent
 import android.graphics.Bitmap
 import android.graphics.Color
 import android.provider.MediaStore
 import android.util.Log
 import android.view.Gravity
-import android.view.LayoutInflater
-import android.view.WindowManager
-import android.widget.TextView
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController

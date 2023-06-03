@@ -1,13 +1,8 @@
 package com.example.chatjet.ui.screen
 
 import android.Manifest
-import android.animation.Animator
-import android.animation.AnimatorListenerAdapter
-import android.animation.ObjectAnimator
 import android.annotation.SuppressLint
 import android.content.pm.PackageManager
-import android.util.Patterns
-import android.view.View
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
@@ -16,14 +11,10 @@ import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.view_model.MainViewModel
-import com.google.firebase.auth.ActionCodeSettings
-import com.google.firebase.auth.FirebaseAuth
-import com.google.firebase.firestore.FirebaseFirestore
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.emailET
 import kotlinx.android.synthetic.main.fragment_login.passwordET
 import kotlinx.android.synthetic.main.fragment_register.*
-import kotlin.random.Random
 
 class LoginFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_login
@@ -54,18 +45,9 @@ class LoginFragment : BaseFragment() {
         }
 
         forgotPasswordButton.setOnClickListener {
-            loginLayout.visibility = View.GONE
-            resetPasswordLayout.visibility = View.VISIBLE
+            findNavController().navigate(R.id.action_loginFragment_to_resetPasswordFragment2)
         }
 
-        resetPasswordButton.setOnClickListener {
-            validateResetPassword(enterEmailET.text.toString(), confirmEmailET.text.toString())
-        }
-
-        returnButton.setOnClickListener {
-            resetPasswordLayout.visibility = View.GONE
-            loginLayout.visibility = View.VISIBLE
-        }
     }
 
     override fun onResume() {
@@ -121,58 +103,6 @@ class LoginFragment : BaseFragment() {
         }
 
         mainViewModel.loginUser(email, password, findNavController())
-
-        return true
-    }
-
-    fun validateResetPassword(email: String, confirmEmail: String): Boolean {
-
-        if (email.isEmpty() || confirmEmail.isEmpty()) {
-
-            ToastUtils.showToast(
-                "All fields must be completed!",
-                R.drawable.ic_baseline_remove_circle_outline_24,
-                R.color.red,
-                Toast.LENGTH_SHORT
-            )
-
-            return false
-        }
-
-        // Checks the email according to the pattern
-        if (!Patterns.EMAIL_ADDRESS.matcher(email).matches()) {
-
-            ToastUtils.showToast(
-                "Email is not valid!",
-                R.drawable.ic_baseline_remove_circle_outline_24,
-                R.color.red,
-                Toast.LENGTH_SHORT
-            )
-            return false
-        }
-
-        if (email != confirmEmail) {
-
-            ToastUtils.showToast(
-                "The emails are different!",
-                R.drawable.ic_baseline_remove_circle_outline_24,
-                R.color.red,
-                Toast.LENGTH_SHORT
-            )
-
-            return false
-        }
-
-        resetPasswordLayout.visibility = View.GONE
-        loginLayout.visibility = View.VISIBLE
-        mainViewModel.resetPassword(email)
-
-        ToastUtils.showToast(
-            "Success, please check your email.",
-            R.drawable.ic_baseline_check_circle_outline_24,
-            R.color.green,
-            Toast.LENGTH_LONG
-        )
 
         return true
     }

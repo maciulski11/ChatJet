@@ -6,16 +6,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".ui.activity.MainActivity">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/loginLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="visible">
-
         <TextView
             android:id="@+id/textView"
             android:layout_width="match_parent"
@@ -84,6 +74,7 @@
             android:layout_marginTop="48dp"
             android:backgroundTint="@color/black"
             android:text="Sign in"
+            android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/passwordET1" />
@@ -92,7 +83,7 @@
             android:id="@+id/stefan"
             android:layout_width="120dp"
             android:layout_height="60dp"
-            android:layout_marginTop="100dp"
+            android:layout_marginTop="140dp"
             android:backgroundTint="@color/black"
             android:text="stefan"
             android:visibility="visible"
@@ -105,11 +96,12 @@
             android:id="@+id/forgotPasswordButton"
             android:layout_width="240dp"
             android:layout_height="40dp"
-            android:layout_marginTop="11dp"
+            android:layout_marginTop="9dp"
             android:background="@android:color/transparent"
             android:textColor="@color/grey"
             android:textSize="12sp"
             android:text="Do you forgot password?"
+            android:textAllCaps="false"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/loginBT" />
@@ -118,95 +110,16 @@
             android:id="@+id/registerBT"
             android:layout_width="240dp"
             android:layout_height="50dp"
-            android:layout_marginTop="11dp"
+            android:layout_marginTop="9dp"
             android:background="@android:color/transparent"
             android:textColor="@color/grey"
             android:textSize="12sp"
-            android:text="Do you want to join to our community?"
+            android:text="Do you want to join to ChatJet community?"
+            android:textAllCaps="false"
             android:visibility="visible"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.498"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/forgotPasswordButton" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
-
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/resetPasswordLayout"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:visibility="gone">
-
-        <ImageButton
-            android:id="@+id/returnButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="6dp"
-            android:backgroundTint="@android:color/transparent"
-            android:src="@drawable/ic_baseline_arrow_34"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:id="@+id/textView3"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="74dp"
-            android:gravity="center"
-            android:text="Password reset:"
-            android:textColor="@color/black"
-            android:textSize="38sp"
-            android:textStyle="bold"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <EditText
-            android:id="@+id/enterEmailET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginStart="30dp"
-            android:layout_marginTop="48dp"
-            android:layout_marginEnd="30dp"
-            android:hint="enter email..."
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/textView3" />
-
-        <EditText
-            android:id="@+id/confirmEmailET"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="14dp"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:hint="confirm email..."
-            android:textSize="16sp"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/enterEmailET" />
-
-        <Button
-            android:id="@+id/resetPasswordButton"
-            android:layout_width="120dp"
-            android:layout_height="60dp"
-            android:layout_marginTop="60dp"
-            android:text="Reset"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.498"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/confirmEmailET" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -14,6 +14,10 @@
             android:id="@+id/action_loginFragment_to_registrationFragment"
             app:destination="@id/registerFragment"
             app:enterAnim="@android:anim/slide_in_left" />
+        <action
+            android:id="@+id/action_loginFragment_to_resetPasswordFragment2"
+            app:destination="@id/resetPasswordFragment2"
+            app:enterAnim="@android:anim/slide_in_left" />
     </fragment>
     <fragment
         android:id="@+id/chatFragment"
@@ -85,6 +89,15 @@
         android:label="RegisterFragment">
         <action
             android:id="@+id/action_registerFragment_to_loginFragment"
+            app:destination="@id/loginFragment"
+            app:enterAnim="@android:anim/slide_in_left" />
+    </fragment>
+    <fragment
+        android:id="@+id/resetPasswordFragment2"
+        android:name="com.example.chatjet.ui.screen.ResetPasswordFragment"
+        android:label="ResetPasswordFragment" >
+        <action
+            android:id="@+id/action_resetPasswordFragment2_to_loginFragment"
             app:destination="@id/loginFragment"
             app:enterAnim="@android:anim/slide_in_left" />
     </fragment>
