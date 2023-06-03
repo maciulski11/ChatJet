@@ -11,7 +11,7 @@
         android:layout_height="wrap_content"
         android:layout_marginTop="6dp"
         android:backgroundTint="@android:color/transparent"
-        android:src="@drawable/ic_baseline_arrow__24"
+        android:src="@drawable/ic_baseline_arrow_34"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"

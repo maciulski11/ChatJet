@@ -96,6 +96,10 @@ class ProfileEditFragment : BaseFragment() {
             changeUserPhoneNumber()
         }
 
+        returnButton.setOnClickListener {
+            findNavController().navigate(R.id.action_profileEditFragment_to_profileFragment)
+        }
+
         setupTakePictureClick()
     }
 
