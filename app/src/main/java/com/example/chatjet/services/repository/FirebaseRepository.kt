@@ -26,6 +26,7 @@ class FirebaseRepository {
         get() = fbAuth.currentUser?.uid ?: ""
 
     companion object {
+        const val CHAT = "chat"
         const val USERS = "users"
         const val FRIENDS = "friends"
         const val TOKEN = "token"
@@ -322,7 +323,7 @@ class FirebaseRepository {
 
     //wczytanie zdjecia
     fun uploadUserPhoto(bytes: ByteArray) {
-        storage.getReference("users")
+        storage.getReference(USERS)
             .child("${currentUserUid}.jpg")
             .putBytes(bytes)
             .addOnCompleteListener {
@@ -359,8 +360,14 @@ class FirebaseRepository {
             }
     }
 
-    fun fetchLastMessage(uid: String, onComplete: (Chat) -> Unit) {
-        db.collection("chat").document(uid)
+    fun fetchLastMessage(
+        senderId: String,
+        receiverId: String,
+        messageId: String,
+        onComplete: (Chat) -> Unit
+    ) {
+        db.collection(CHAT).document(senderId)
+            .collection(receiverId).document(messageId)
             .get().addOnSuccessListener { snapshot ->
                 snapshot.toObject(Chat::class.java)?.let {
                     Log.d("REPO FetchAdditions", it.toString())
@@ -394,7 +401,7 @@ class FirebaseRepository {
 
         receiverDocRef.get().addOnSuccessListener { receiverDocSnapshot ->
             val receiverFriends =
-                receiverDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+                receiverDocSnapshot.get(FRIENDS) as ArrayList<HashMap<String, Any>>?
 
             // znajdź przyjaciela w liście przyjaciół użytkownika, który odbiera wiadomość i zaktualizuj jego "lastMessage"
             val updatedFriends = receiverFriends?.map { friend ->
@@ -430,24 +437,57 @@ class FirebaseRepository {
 
             )
 
-        db.collection("chat")
+        // Save for sender
+        db.collection(CHAT).document(senderId)
+            .collection(receiverId)
             .add(chat)
             .addOnSuccessListener { documentReference ->
                 val docUid = documentReference.id
+
                 onSendMessageSuccess(docUid)
 
                 updateLastMessage(senderId, receiverId, docUid)
 
                 Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
+
+                // Save for receiver
+                db.collection(CHAT).document(receiverId)
+                    .collection(senderId)
+                    .document(docUid)  // Używamy tego samego docUid
+                    .set(chat)
+                    .addOnSuccessListener {
+                        onSendMessageSuccess(docUid)
+                        updateLastMessage(receiverId, senderId, docUid)
+                        Log.d("TAG", "DocumentSnapshot added with ID: $docUid")
+                    }
+                    .addOnFailureListener { e ->
+                        Log.w("TAG", "Error adding document", e)
+                    }
             }
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error adding document", e)
             }
+
+
+//        db.collection("chat")
+//            .add(chat)
+//            .addOnSuccessListener { documentReference ->
+//                val docUid = documentReference.id
+//                onSendMessageSuccess(docUid)
+//
+//                updateLastMessage(senderId, receiverId, docUid)
+//
+//                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
+//            }
+//            .addOnFailureListener { e ->
+//                Log.w("TAG", "Error adding document", e)
+//            }
     }
 
+    //TODO: do ogarniecia co tu sie odjebalo, ale dziala
     private fun updateLastMessage(senderId: String, receiverId: String, docUid: String) {
-        // pobierz dokument użytkownika, który wysyła wiadomość
-        val senderDocRef = db.collection("users").document(senderId)
+        // pobierz dokument użytkownika, który odbiera wiadomość
+        val senderDocRef = db.collection(USERS).document(senderId)
 
         senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
             val senderFriends =
@@ -460,6 +500,7 @@ class FirebaseRepository {
 
                 set("uidLastMessage", docUid)
                 set("sentAt", Timestamp.now())
+                set("readMessage", false)
 
             }
 
@@ -468,8 +509,8 @@ class FirebaseRepository {
             }
         }
 
-        // pobierz dokument użytkownika, który odbiera wiadomość
-        val receiverDocRef = db.collection("users").document(receiverId)
+        // pobierz dokument użytkownika, który wysyła wiadomość
+        val receiverDocRef = db.collection(USERS).document(receiverId)
 
         receiverDocRef.get().addOnSuccessListener { receiverDocSnapshot ->
             val receiverFriends =
@@ -480,7 +521,8 @@ class FirebaseRepository {
                     friend.apply {
 
                         set("uidLastMessage", docUid)
-                        set("readMessage", false)
+                        set("sentAt", Timestamp.now())
+                        set("readMessage", true)
 
                     }
                 } else {
@@ -565,7 +607,7 @@ class FirebaseRepository {
             )
 
             db.collection(USERS).document(currentUserUid)
-                .update("friends", FieldValue.arrayUnion(sender))
+                .update(FRIENDS, FieldValue.arrayUnion(sender))
                 .addOnSuccessListener {
                     // Dodanie do listy zakończone sukcesem
                     Log.d("TAG", "Dodano do listy!")
@@ -583,7 +625,7 @@ class FirebaseRepository {
             )
 
             db.collection(USERS).document(uid)
-                .update("friends", FieldValue.arrayUnion(receiver))
+                .update(FRIENDS, FieldValue.arrayUnion(receiver))
                 .addOnSuccessListener {
                     // Dodanie do listy zakończone sukcesem
                     Log.d("TAG", "Dodano do listy!")

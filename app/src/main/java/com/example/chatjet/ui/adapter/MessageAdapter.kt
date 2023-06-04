@@ -114,7 +114,7 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 }
             }
 
-            FirebaseRepository().fetchLastMessage(uidMessage) { m ->
+            FirebaseRepository().fetchLastMessage(uidFriend, FirebaseRepository().currentUserUid, uidMessage) { m ->
                 // SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl")) add polish language
                 val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
                 time.text = dateFormat.format(m.sentAt)

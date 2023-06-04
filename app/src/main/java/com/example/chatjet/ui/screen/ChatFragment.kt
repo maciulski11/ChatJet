@@ -6,6 +6,7 @@ import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
 import com.example.chatjet.RetrofitInstance
 import com.example.chatjet.base.BaseFragment
@@ -17,7 +18,6 @@ import com.example.chatjet.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.fragment_chat.*
-import kotlinx.android.synthetic.main.fragment_invitation.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -29,8 +29,6 @@ class ChatFragment : BaseFragment() {
 
     private var chatList = ArrayList<Chat>()
     private lateinit var adapter: ChatAdapter
-
-//    private var limit = 25
 
     private val db = FirebaseFirestore.getInstance()
     private val dbChat = db.collection("chat")
@@ -52,8 +50,10 @@ class ChatFragment : BaseFragment() {
 
         // Wczytanie elementów w recycler view od dołu:
         layoutManager.stackFromEnd = true
-        chatRecyclerView.layoutManager = layoutManager
-        chatRecyclerView.setHasFixedSize(true)
+
+        val chatRecyclerView = view?.findViewById<RecyclerView>(R.id.chatRecyclerView)
+        chatRecyclerView?.layoutManager = layoutManager
+        chatRecyclerView?.setHasFixedSize(true)
 
         viewModel.fetchUserOrFriend(userUid){
             nameUser.text = it?.full_name
@@ -97,8 +97,7 @@ class ChatFragment : BaseFragment() {
                 }
             }
         }
-        readMessage(FirebaseRepository().currentUserUid, userUid)
-
+            readMessage(FirebaseRepository().currentUserUid, userUid)
     }
 
     private fun sendMessage(senderId: String, receiverId: String, message: String) {
@@ -110,8 +109,10 @@ class ChatFragment : BaseFragment() {
     private fun readMessage(senderId: String, receiverId: String) {
 
         // Implemented object listener which is listening change in Firebase
-        chatListenerRegistration = dbChat
+        db.collection(FirebaseRepository.CHAT).document(senderId)
+            .collection(receiverId)
             .orderBy("sentAt", Query.Direction.DESCENDING)
+//            .limit(20)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
                     Log.w("TAG", "Listen failed.", error)
@@ -152,9 +153,19 @@ class ChatFragment : BaseFragment() {
                         chatGroupList.add(ChatGroup(date.toString(), chats))
                     }
 
+                    if (chatRecyclerView == null) {
+                        Log.d("TAG", "chatRecyclerView is null")
+                        return@addSnapshotListener
+                    }
+
                     adapter = ChatAdapter(chatList)
                     chatRecyclerView.adapter = adapter
                     Log.d("REPOADAPTER", "$adapter")
+
+                    //TODO: cos jest nie tak z wyrownainiem do dolu ostatniej wiadomosci
+                    chatRecyclerView.post {
+                        chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                    }
 
                 } else {
 
