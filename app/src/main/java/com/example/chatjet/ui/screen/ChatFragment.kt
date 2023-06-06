@@ -36,7 +36,7 @@ class ChatFragment : BaseFragment() {
     // Added object which registration listener in Firebase
     private var chatListenerRegistration: ListenerRegistration? = null
 
-    private val viewModel: MainViewModel by activityViewModels()
+    private val mainViewModel: MainViewModel by activityViewModels()
     private val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
     override fun subscribeUi() {
@@ -55,7 +55,7 @@ class ChatFragment : BaseFragment() {
         chatRecyclerView?.layoutManager = layoutManager
         chatRecyclerView?.setHasFixedSize(true)
 
-        viewModel.fetchUserOrFriend(userUid) {
+        mainViewModel.fetchUserOrFriend(userUid) {
             nameUser.text = it?.full_name
         }
 
@@ -106,11 +106,11 @@ class ChatFragment : BaseFragment() {
 
     private fun sendMessage(senderId: String, receiverId: String, message: String) {
 
-        viewModel.sendMessage(senderId, receiverId, message)
+        mainViewModel.sendMessage(senderId, receiverId, message)
 
     }
 
-    fun readMessage(senderId: String, receiverId: String) {
+    private fun readMessage(senderId: String, receiverId: String) {
 
         // Implemented object listener which is listening change in Firebase
         db.collection(FirebaseRepository.CHAT).document(senderId)

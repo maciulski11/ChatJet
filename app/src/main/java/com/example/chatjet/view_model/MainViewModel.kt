@@ -1,5 +1,6 @@
 package com.example.chatjet.view_model
 
+import android.icu.text.SimpleDateFormat
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,9 +10,10 @@ import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.ToastUtils
+import java.util.*
+import kotlin.collections.ArrayList
 
 class MainViewModel(var user: User? = null) : ViewModel() {
-
 
     private val repository = FirebaseRepository()
 

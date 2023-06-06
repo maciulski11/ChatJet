@@ -3,8 +3,10 @@ package com.example.chatjet.services.repository
 import android.annotation.SuppressLint
 import android.util.Log
 import com.example.chatjet.data.model.Chat
+import com.example.chatjet.data.model.ChatGroup
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
+import com.example.chatjet.ui.adapter.ChatAdapter
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -12,6 +14,7 @@ import com.google.firebase.firestore.EventListener
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.storage.FirebaseStorage
 import com.google.firebase.storage.StorageReference
+import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
 import java.util.*
 import kotlin.collections.ArrayList
@@ -469,7 +472,9 @@ class FirebaseRepository {
             }
     }
 
-
+    fun fetchAndUpdateMessages() {
+        //TODO: przeniesc funkcje z chatFragment
+    }
 
     //TODO: do ogarniecia co tu sie odjebalo, ale dziala
     private fun updateLastMessage(senderId: String, receiverId: String, docUid: String) {
