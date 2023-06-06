@@ -79,7 +79,7 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
                     bundle.putParcelable(
                         "friend",
                         Friend(
-                            friend.uid,
+                            friend.uid
                         )
                     )
 
