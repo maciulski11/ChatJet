@@ -467,22 +467,9 @@ class FirebaseRepository {
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error adding document", e)
             }
-
-
-//        db.collection("chat")
-//            .add(chat)
-//            .addOnSuccessListener { documentReference ->
-//                val docUid = documentReference.id
-//                onSendMessageSuccess(docUid)
-//
-//                updateLastMessage(senderId, receiverId, docUid)
-//
-//                Log.d("TAG", "DocumentSnapshot added with ID: ${documentReference.id}")
-//            }
-//            .addOnFailureListener { e ->
-//                Log.w("TAG", "Error adding document", e)
-//            }
     }
+
+
 
     //TODO: do ogarniecia co tu sie odjebalo, ale dziala
     private fun updateLastMessage(senderId: String, receiverId: String, docUid: String) {

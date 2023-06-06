@@ -3,7 +3,7 @@
 
     <style name="AppTheme" parent="Theme.MaterialComponents.DayNight">
         <!-- Extra custom styles -->
-        <item name="android:windowBackground">@color/black</item> <!-- Tło aplikacji -->
+        <item name="android:windowBackground">@color/white</item> <!-- Tło aplikacji -->
 
     </style>
 

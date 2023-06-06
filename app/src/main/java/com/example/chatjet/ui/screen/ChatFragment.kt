@@ -55,7 +55,7 @@ class ChatFragment : BaseFragment() {
         chatRecyclerView?.layoutManager = layoutManager
         chatRecyclerView?.setHasFixedSize(true)
 
-        viewModel.fetchUserOrFriend(userUid){
+        viewModel.fetchUserOrFriend(userUid) {
             nameUser.text = it?.full_name
         }
 
@@ -73,7 +73,11 @@ class ChatFragment : BaseFragment() {
         returnBT.setOnClickListener {
             // Exit from listener when you click button return
             chatListenerRegistration?.remove()
-            findNavController().navigate(R.id.action_chatFragment_to_usersFragment, null, AnimationUtils.topNavAnim)
+            findNavController().navigate(
+                R.id.action_chatFragment_to_usersFragment,
+                null,
+                AnimationUtils.topNavAnim
+            )
         }
 
         sendMessage.setOnClickListener {
@@ -97,7 +101,7 @@ class ChatFragment : BaseFragment() {
                 }
             }
         }
-            readMessage(FirebaseRepository().currentUserUid, userUid)
+        readMessage(FirebaseRepository().currentUserUid, userUid)
     }
 
     private fun sendMessage(senderId: String, receiverId: String, message: String) {
@@ -106,7 +110,7 @@ class ChatFragment : BaseFragment() {
 
     }
 
-    private fun readMessage(senderId: String, receiverId: String) {
+    fun readMessage(senderId: String, receiverId: String) {
 
         // Implemented object listener which is listening change in Firebase
         db.collection(FirebaseRepository.CHAT).document(senderId)
@@ -158,12 +162,11 @@ class ChatFragment : BaseFragment() {
                         return@addSnapshotListener
                     }
 
-                    adapter = ChatAdapter(chatList)
-                    chatRecyclerView.adapter = adapter
-                    Log.d("REPOADAPTER", "$adapter")
-
                     //TODO: cos jest nie tak z wyrownainiem do dolu ostatniej wiadomosci
                     chatRecyclerView.post {
+                        adapter = ChatAdapter(chatList)
+                        chatRecyclerView.adapter = adapter
+                        Log.d("REPOADAPTER", "$adapter")
                         chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
                     }
 
