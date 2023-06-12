@@ -1,6 +1,7 @@
 package com.example.chatjet.view_model
 
-import android.icu.text.SimpleDateFormat
+import android.app.AlertDialog
+import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -10,7 +11,6 @@ import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.ToastUtils
-import java.util.*
 import kotlin.collections.ArrayList
 
 class MainViewModel(var user: User? = null) : ViewModel() {
@@ -24,7 +24,7 @@ class MainViewModel(var user: User? = null) : ViewModel() {
     fun loginUser(email: String, password: String, navController: NavController) {
         repository.loginUser(email, password,
             {
-                navController.navigate(R.id.action_loginFragment_to_usersFragment)
+                navController.navigate(R.id.action_loginFragment_to_messageFragment)
             },
             {
                 ToastUtils.showToast(
@@ -80,6 +80,24 @@ class MainViewModel(var user: User? = null) : ViewModel() {
     fun sendMessage(senderId: String, receiverId: String, message: String) {
         repository.sendMessage(senderId, receiverId, message) { docUid ->
         }
+    }
+
+    fun deleteConversation(messageUid: String, view: View, fullName: String) {
+        val alertDialog = AlertDialog.Builder(view.context)
+            .setTitle("Delete chat!")
+            .setMessage("Do you want to delete your messages with ${fullName}?")
+            .setPositiveButton("OK") { dialog, which ->
+                // Obsługa kliknięcia przycisku OK
+
+                repository.deleteConversation(messageUid)
+
+            }
+            .setNegativeButton("Anuluj") { dialog, which ->
+                // Obsługa kliknięcia przycisku Anuluj
+            }
+            .create()
+
+        alertDialog.show()
     }
 
     fun fetchUserOrFriend(userUid: String, onComplete: (User?) -> Unit) {

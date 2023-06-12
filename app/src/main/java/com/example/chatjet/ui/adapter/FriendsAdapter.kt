@@ -36,10 +36,9 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
     }
 
     override fun onBindViewHolder(holder: FriendsAdapter.MyViewHolder, position: Int) {
-        val friend = friendsList[position]
+            val friend = friendsList[position]
 
-        holder.bind(friend)
-
+            holder.bind(friend)
     }
 
     override fun getItemCount(): Int = friendsList.size

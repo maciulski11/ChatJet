@@ -16,6 +16,8 @@ import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
 import kotlinx.android.synthetic.main.fragment_invitation.*
 
+//TODO: sprawdzicz czemu powiadomienie znika tylko po wejsciu w messageFrament
+
 class InvitationFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_invitation
 

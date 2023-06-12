@@ -5,6 +5,7 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AnimationUtils
+import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -49,7 +51,16 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 holder.readMessage(message.uid!!)
             }
 
-            v.findNavController().navigate(R.id.action_usersFragment_to_chatFragment, bundle, AnimationUtils.downNavAnim)
+            v.findNavController().navigate(
+                R.id.action_usersFragment_to_chatFragment,
+                bundle,
+                AnimationUtils.downNavAnim
+            )
+        }
+
+        if (message.uidLastMessage!!.isEmpty()) {
+            // Jeśli uidMessage jest puste, pomiń ustawianie danych i powróć
+            return
         }
 
         // Set listener to long click
@@ -57,7 +68,9 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
         holder.bind(message, message.uid ?: "", message.uidLastMessage ?: "")
     }
 
-    override fun getItemCount(): Int = messageList.size
+    override fun getItemCount(): Int {
+        return messageList.count { it.uidLastMessage!!.isNotEmpty() }
+    }
 
     inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view),
         View.OnLongClickListener {
@@ -114,12 +127,20 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 }
             }
 
-            FirebaseRepository().fetchLastMessage(uidFriend, FirebaseRepository().currentUserUid, uidMessage) { m ->
-                // SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl")) add polish language
-                val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
-                time.text = dateFormat.format(m.sentAt)
-                message.text = m.message
-
+            if (uidMessage.isEmpty()) {
+                message?.text = ""
+                time?.text = ""
+            } else {
+                FirebaseRepository().fetchLastMessage(
+                    uidFriend,
+                    FirebaseRepository().currentUserUid,
+                    uidMessage
+                ) { m ->
+                    // SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl")) add polish language
+                    val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
+                    time?.text = dateFormat.format(m.sentAt)
+                    message?.text = m.message ?: ""
+                }
             }
 
             FirebaseRepository().fetchUserOrFriend(uidFriend) { user ->
@@ -128,8 +149,10 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 } else {
                     status.setColorFilter(Color.RED)
                 }
+
             }
         }
+
 
         override fun onLongClick(view: View): Boolean {
             val message = messageList[adapterPosition]
@@ -141,6 +164,26 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                     .setMessage("Do you want to delete your messages with ${f.full_name}?")
                     .setPositiveButton("OK") { dialog, which ->
                         // Obsługa kliknięcia przycisku OK
+
+                        val db = FirebaseFirestore.getInstance()
+                        val collectionRef = db.collection(FirebaseRepository.CHAT)
+                            .document(FirebaseRepository().currentUserUid)
+                            .collection(message.uid.toString())
+
+                        collectionRef.get().addOnSuccessListener { snapshot ->
+                            val batch = db.batch()
+                            for (document in snapshot.documents) {
+                                batch.delete(document.reference)
+                            }
+
+                            //TODO: zrobic zeby firend -> uidLastMessage na ""
+
+                            batch.commit().addOnSuccessListener {
+                                Log.d("TAG", "Collection successfully deleted!")
+                            }.addOnFailureListener { e ->
+                                Log.w("TAG", "Error deleting collection", e)
+                            }
+                        }
                     }
                     .setNegativeButton("Anuluj") { dialog, which ->
                         // Obsługa kliknięcia przycisku Anuluj

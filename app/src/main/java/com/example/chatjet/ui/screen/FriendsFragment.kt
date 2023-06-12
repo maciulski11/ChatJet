@@ -1,6 +1,7 @@
 package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
+import android.view.View
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
@@ -13,7 +14,7 @@ import kotlinx.android.synthetic.main.fragment_friends.*
 import kotlinx.android.synthetic.main.fragment_message.*
 import java.util.ArrayList
 
-class FriendsFragment: BaseFragment() {
+class FriendsFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_friends
 
     private lateinit var friendsList: ArrayList<Friend>
@@ -49,8 +50,15 @@ class FriendsFragment: BaseFragment() {
 
                     friendsRecyclerView.adapter = adapter
                 }
-                adapter.notifyDataSetChanged()
+
+                if (friendsList.isEmpty()) {
+                    emptyFriendsListTV.visibility = View.VISIBLE
+                } else {
+                    emptyFriendsListTV.visibility = View.GONE
+                }
             }
+
+            adapter.notifyDataSetChanged()
         }
     }
 

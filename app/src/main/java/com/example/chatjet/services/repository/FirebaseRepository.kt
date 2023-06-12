@@ -1,7 +1,9 @@
 package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
+import android.app.AlertDialog
 import android.util.Log
+import android.view.View
 import com.example.chatjet.data.model.Chat
 import com.example.chatjet.data.model.ChatGroup
 import com.example.chatjet.data.model.InvitationReceived
@@ -363,6 +365,7 @@ class FirebaseRepository {
             }
     }
 
+
     fun fetchLastMessage(
         senderId: String,
         receiverId: String,
@@ -372,16 +375,43 @@ class FirebaseRepository {
         db.collection(CHAT).document(senderId)
             .collection(receiverId).document(messageId)
             .get().addOnSuccessListener { snapshot ->
-                snapshot.toObject(Chat::class.java)?.let {
+                val chat = snapshot.toObject(Chat::class.java)
+                chat?.let {
                     Log.d("REPO FetchAdditions", it.toString())
                     onComplete.invoke(it)
-
+                } ?: run {
+                    // Obsługa sytuacji, gdy chat jest równy null
+                    // Możesz przypisać wartość domyślną lub wykonać inne działania
+//                     val defaultChat = Chat()
+//                     onComplete.invoke(defaultChat)
                 }
             }
             .addOnFailureListener {
                 Log.d("REPO", it.toString())
             }
     }
+
+
+
+//    fun fetchLastMessage(
+//        senderId: String,
+//        receiverId: String,
+//        messageId: String,
+//        onComplete: (Chat) -> Unit
+//    ) {
+//        db.collection(CHAT).document(senderId)
+//            .collection(receiverId).document(messageId)
+//            .get().addOnSuccessListener { snapshot ->
+//                snapshot.toObject(Chat::class.java)?.let {
+//                    Log.d("REPO FetchAdditions", it.toString())
+//                    onComplete.invoke(it)
+//
+//                }
+//            }
+//            .addOnFailureListener {
+//                Log.d("REPO", it.toString())
+//            }
+//    }
 
     fun fetchUserOrFriend(uid: String, onComplete: (User?) -> Unit) {
         // Load full name user to you write
@@ -470,6 +500,25 @@ class FirebaseRepository {
             .addOnFailureListener { e ->
                 Log.w("TAG", "Error adding document", e)
             }
+    }
+
+    fun deleteConversation(messageUid: String) {
+        val db = FirebaseFirestore.getInstance()
+        val collectionRef = db.collection(FirebaseRepository.CHAT)
+            .document(FirebaseRepository().currentUserUid)
+            .collection(messageUid)
+
+        collectionRef.get().addOnSuccessListener { snapshot ->
+            val batch = db.batch()
+            for (document in snapshot.documents) {
+                batch.delete(document.reference)
+            }
+            batch.commit().addOnSuccessListener {
+                Log.d("TAG", "Collection successfully deleted!")
+            }.addOnFailureListener { e ->
+                Log.w("TAG", "Error deleting collection", e)
+            }
+        }
     }
 
     fun fetchAndUpdateMessages() {
@@ -598,16 +647,31 @@ class FirebaseRepository {
                 "sentAt" to Timestamp.now()
             )
 
-            db.collection(USERS).document(currentUserUid)
-                .update(FRIENDS, FieldValue.arrayUnion(sender))
-                .addOnSuccessListener {
-                    // Dodanie do listy zakończone sukcesem
-                    Log.d("TAG", "Dodano do listy!")
+            val currentUserRef = db.collection(USERS).document(currentUserUid)
+
+            currentUserRef.get().addOnSuccessListener { snapshot ->
+                val friends = snapshot.get(FRIENDS) as? ArrayList<HashMap<String, Any>>?
+                val isAlreadyFriend = friends?.any { it["uid"] == uid } ?: false
+
+                if (!isAlreadyFriend) {
+                    currentUserRef
+                        .update(FRIENDS, FieldValue.arrayUnion(sender))
+                        .addOnSuccessListener {
+                            // Dodanie do listy zakończone sukcesem
+                            Log.d("TAG", "Dodano do listy!")
+                        }
+                        .addOnFailureListener {
+                            // Błąd podczas dodawania do listy
+                            Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
+                        }
+                } else {
+                    // Użytkownik już znajduje się na liście
+                    Log.d("TAG", "Użytkownik już znajduje się na liście!")
                 }
-                .addOnFailureListener {
-                    // Błąd podczas dodawania do listy
-                    Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
-                }
+            }.addOnFailureListener {
+                // Błąd podczas pobierania danych użytkownika
+                Log.d("TAG", "Błąd podczas pobierania danych użytkownika: ${it.message}")
+            }
 
             val receiver = hashMapOf(
                 "uid" to currentUserUid,
@@ -616,16 +680,31 @@ class FirebaseRepository {
                 "sentAt" to Timestamp.now()
             )
 
-            db.collection(USERS).document(uid)
-                .update(FRIENDS, FieldValue.arrayUnion(receiver))
-                .addOnSuccessListener {
-                    // Dodanie do listy zakończone sukcesem
-                    Log.d("TAG", "Dodano do listy!")
+            val userRef = db.collection(USERS).document(uid)
+
+            userRef.get().addOnSuccessListener { snapshot ->
+                val friends = snapshot.get(FRIENDS) as? ArrayList<HashMap<String, Any>>?
+                val isAlreadyFriend = friends?.any { it["uid"] == currentUserUid } ?: false
+
+                if (!isAlreadyFriend) {
+                    userRef
+                        .update(FRIENDS, FieldValue.arrayUnion(receiver))
+                        .addOnSuccessListener {
+                            // Dodanie do listy zakończone sukcesem
+                            Log.d("TAG", "Dodano do listy!")
+                        }
+                        .addOnFailureListener {
+                            // Błąd podczas dodawania do listy
+                            Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
+                        }
+                } else {
+                    // Użytkownik już znajduje się na liście
+                    Log.d("TAG", "Użytkownik już znajduje się na liście!")
                 }
-                .addOnFailureListener {
-                    // Błąd podczas dodawania do listy
-                    Log.d("TAG", "Błąd podczas dodawania do listy: ${it.message}")
-                }
+            }.addOnFailureListener {
+                // Błąd podczas pobierania danych użytkownika
+                Log.d("TAG", "Błąd podczas pobierania danych użytkownika: ${it.message}")
+            }
         }
     }
 

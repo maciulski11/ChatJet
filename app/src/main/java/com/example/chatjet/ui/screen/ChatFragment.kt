@@ -174,9 +174,6 @@ class ChatFragment : BaseFragment() {
 
                     // List is empty, load empty layout
                     chatList.clear()
-                    adapter = ChatAdapter(chatList)
-                    chatRecyclerView.adapter = adapter
-
                 }
             }
     }
