@@ -42,7 +42,7 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
         FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid) { user ->
             mainViewModel.user = user
 
-            if (user.firstLogin == true) {
+            if (user?.firstLogin == true) {
                 findNavController().navigate(R.id.action_messageFragment_to_profileEditFragment)
             }
 

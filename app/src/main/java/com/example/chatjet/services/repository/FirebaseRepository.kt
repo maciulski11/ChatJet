@@ -1,14 +1,10 @@
 package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
-import android.app.AlertDialog
 import android.util.Log
-import android.view.View
 import com.example.chatjet.data.model.Chat
-import com.example.chatjet.data.model.ChatGroup
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
-import com.example.chatjet.ui.adapter.ChatAdapter
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -276,7 +272,7 @@ class FirebaseRepository {
             })
     }
 
-    fun fetchFriends(uid: String, onComplete: (User) -> Unit): DocumentReference {
+    fun fetchFriends(uid: String, onComplete: (User?) -> Unit): DocumentReference {
         val docRef = db.collection(USERS).document(uid)
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -287,7 +283,7 @@ class FirebaseRepository {
             if (snapshot != null && snapshot.exists()) {
                 val user = snapshot.toObject(User::class.java)
                 Log.d("TAG", "Current data: $user")
-                onComplete.invoke(user!!)
+                onComplete.invoke(user)
             } else {
                 Log.d("TAG", "Current data: null")
             }

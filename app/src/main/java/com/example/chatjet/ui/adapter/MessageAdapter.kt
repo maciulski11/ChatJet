@@ -107,9 +107,9 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                     time.setTypeface(null, Typeface.NORMAL)
                 }
 
-                name.text = f.full_name
+                name.text = f?.full_name
 
-                if (f.photo?.isEmpty() == true || f.photo == "") {
+                if (f?.photo?.isEmpty() == true || f?.photo == "") {
 
                     Glide.with(view)
                         .load(R.drawable.ic_baseline_account_circle_240)
@@ -120,7 +120,7 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 } else {
 
                     Glide.with(view)
-                        .load(f.photo)
+                        .load(f?.photo)
                         .override(220, 220)
                         .circleCrop()
                         .into(icon)
@@ -149,49 +149,69 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 } else {
                     status.setColorFilter(Color.RED)
                 }
-
             }
         }
-
 
         override fun onLongClick(view: View): Boolean {
             val message = messageList[adapterPosition]
 
-            FirebaseRepository().fetchFriends(message.uid.toString()) { f ->
+            val alertDialog = AlertDialog.Builder(view.context)
+                .setTitle("Delete chat!")
+                //TODO: zrobic i wczytywac imie
+                .setMessage("Do you want to delete your messages with fullName")
+                .setPositiveButton("OK") { dialog, which ->
+                    // Obsługa kliknięcia przycisku OK
 
-                val alertDialog = AlertDialog.Builder(view.context)
-                    .setTitle("Delete chat!")
-                    .setMessage("Do you want to delete your messages with ${f.full_name}?")
-                    .setPositiveButton("OK") { dialog, which ->
-                        // Obsługa kliknięcia przycisku OK
 
-                        val db = FirebaseFirestore.getInstance()
-                        val collectionRef = db.collection(FirebaseRepository.CHAT)
+                    val db = FirebaseFirestore.getInstance()
+                    val collectionRef = db.collection(FirebaseRepository.CHAT)
+                        .document(FirebaseRepository().currentUserUid)
+                        .collection(message.uid.toString())
+
+                    collectionRef.get().addOnSuccessListener { snapshot ->
+                        val batch = db.batch()
+                        for (document in snapshot.documents) {
+                            batch.delete(document.reference)
+                        }
+
+                        // pobierz dokument użytkownika, który odbiera wiadomość
+                        val senderDocRef = db.collection(FirebaseRepository.USERS)
                             .document(FirebaseRepository().currentUserUid)
-                            .collection(message.uid.toString())
 
-                        collectionRef.get().addOnSuccessListener { snapshot ->
-                            val batch = db.batch()
-                            for (document in snapshot.documents) {
-                                batch.delete(document.reference)
+                        senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
+                            val senderFriends =
+                                senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
+
+                            // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
+                            val friendToUpdate = senderFriends?.find { it["uid"] == message.uid }
+
+                            friendToUpdate?.apply {
+
+                                set("uidLastMessage", "")
                             }
 
-                            //TODO: zrobic zeby firend -> uidLastMessage na ""
+                            friendToUpdate?.let {
+                                senderDocRef.update("friends", senderFriends)
 
-                            batch.commit().addOnSuccessListener {
-                                Log.d("TAG", "Collection successfully deleted!")
-                            }.addOnFailureListener { e ->
-                                Log.w("TAG", "Error deleting collection", e)
+                                messageList.removeAt(adapterPosition)
                             }
                         }
-                    }
-                    .setNegativeButton("Anuluj") { dialog, which ->
-                        // Obsługa kliknięcia przycisku Anuluj
-                    }
-                    .create()
 
-                alertDialog.show()
-            }
+                        batch.commit().addOnCompleteListener {
+                            Log.d("TAG", "Collection successfully deleted!")
+
+                        }.addOnFailureListener { e ->
+                            Log.w("TAG", "Error deleting collection", e)
+                        }
+                    }
+                }
+                .setNegativeButton("Anuluj") { dialog, which ->
+                    // Obsługa kliknięcia przycisku Anuluj
+                }
+                .create()
+
+            alertDialog.show()
+
             return true
         }
     }
