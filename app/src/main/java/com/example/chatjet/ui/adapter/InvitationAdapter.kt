@@ -50,11 +50,11 @@ class InvitationAdapter(
             val uid = invitation.uid ?: ""
 
             FirebaseRepository().fetchFriends(uid) { user ->
-                nameUser.text = user.full_name
-                location.text = user.location
+                nameUser.text = user?.full_name
+                location.text = user?.location
 
                 Glide.with(view)
-                    .load(user.photo)
+                    .load(user?.photo)
                     .circleCrop()
                     .into(photo)
 
@@ -67,7 +67,6 @@ class InvitationAdapter(
 
                     onDelete(uid)
                 }
-
             }
         }
     }

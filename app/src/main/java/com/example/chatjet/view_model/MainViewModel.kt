@@ -78,7 +78,7 @@ class MainViewModel(var user: User? = null) : ViewModel() {
     }
 
     fun sendMessage(senderId: String, receiverId: String, message: String) {
-        repository.sendMessage(senderId, receiverId, message) { docUid ->
+        repository.sendMessage(senderId, receiverId, message) {
         }
     }
 

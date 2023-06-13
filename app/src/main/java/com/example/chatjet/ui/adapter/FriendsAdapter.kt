@@ -54,10 +54,10 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
 
             FirebaseRepository().fetchFriends(friend.uid ?: "") { f ->
 
-                name.text = f.full_name
+                name.text = f?.full_name
 
                 callButton.setOnClickListener {
-                    val phoneNumber = f.number
+                    val phoneNumber = f?.number
                     // ACTION_DIAL - przenosi do edycji numeru przed polaczeniem
                     val callIntent = Intent(Intent.ACTION_CALL)
                     callIntent.data = Uri.parse("tel:$phoneNumber")
@@ -139,7 +139,6 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
 //                            Log.e("TAG", "Error getting document", e)
 //                        }
                 }
-
             }
         }
     }

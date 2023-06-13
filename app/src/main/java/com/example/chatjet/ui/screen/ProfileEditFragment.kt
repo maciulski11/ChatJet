@@ -40,7 +40,7 @@ class ProfileEditFragment : BaseFragment() {
 
         FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid) { user ->
 
-            if (user.firstLogin == true) {
+            if (user?.firstLogin == true) {
 
                 AlertDialogUtils.customAlertDialog(
                     requireContext(),
@@ -51,11 +51,11 @@ class ProfileEditFragment : BaseFragment() {
 
             mainViewModel.users.observe(this) {
 
-                phoneNumberET?.hint = user.number.toString()
-                locationET?.hint = user.location
-                fullNameET?.hint = user.full_name
+                phoneNumberET?.hint = user?.number.toString()
+                locationET?.hint = user?.location
+                fullNameET?.hint = user?.full_name
 
-                if (user.status == true) {
+                if (user?.status == true) {
                     statusText?.text = "Active"
                     statusColor?.setColorFilter(Color.GREEN)
 
@@ -64,7 +64,7 @@ class ProfileEditFragment : BaseFragment() {
                     statusColor?.setColorFilter(Color.RED)
                 }
 
-                if (user.photo!!.isEmpty()) {
+                if (user?.photo!!.isEmpty()) {
                     photoProfileButton?.setImageResource(R.drawable.ic_baseline_account_circle_200)
 
                 } else {
