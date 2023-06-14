@@ -50,9 +50,10 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
 
                 messageList.clear()
 
-                mainViewModel.user?.friends.let { friend ->
+                mainViewModel.user?.friends.let { messageOfFriend ->
 
-                    messageList.addAll(friend!!)
+                    // Real-time list filtering and if uidLastMessage is empty, uid don't load and go to next friend
+                    messageOfFriend?.let { it -> messageList.addAll(it.filter { !it.uidLastMessage.isNullOrEmpty() }) }
 
                     messageList.sortByDescending { it.sentAt }
 
@@ -66,21 +67,20 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
 
                     adapter = MessageAdapter(
                         messageList,
-                        requireView()
+                        requireView(),
                     )
 
                     messageRecyclerView.adapter = adapter
 
-                    if (messageList.isEmpty()) {
-
+                    // Check that RecyclerView is empty
+                    if (messageRecyclerView.adapter?.itemCount == 0) {
+                        // Show TextView if RecyclerView is empty
                         emptyMessageListTV.visibility = View.VISIBLE
-
                     } else {
+                        // Hide TextView, if RecyclerView is not empty
                         emptyMessageListTV.visibility = View.GONE
-
                     }
                 }
-
                 adapter.notifyDataSetChanged()
             }
         }
@@ -91,7 +91,7 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
         return dateFormat.format(date)
     }
 
-    // this function change option button on visible after login
+    // This function change option button on visible after login
     override fun onResume() {
         super.onResume()
         requireActivity().invalidateOptionsMenu()

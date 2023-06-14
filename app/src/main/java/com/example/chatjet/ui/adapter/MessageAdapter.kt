@@ -23,8 +23,11 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
+class MessageAdapter(private val messageList: ArrayList<Friend>, private val v: View) :
     RecyclerView.Adapter<MessageAdapter.MyViewHolder>() {
+
+    private var fullName: String = ""
+
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView =
@@ -48,7 +51,7 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
             )
 
             if (message.readMessage == false) {
-                holder.readMessage(message.uid!!)
+                holder.readMessage(message.uid ?: "")
             }
 
             v.findNavController().navigate(
@@ -58,9 +61,8 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
             )
         }
 
-        if (message.uidLastMessage!!.isEmpty()) {
-            // Jeśli uidMessage jest puste, pomiń ustawianie danych i powróć
-            return
+        FirebaseRepository().fetchUserOrFriend(message.uid.toString()) { user ->
+            fullName = user?.full_name ?: ""
         }
 
         // Set listener to long click
@@ -69,7 +71,7 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
     }
 
     override fun getItemCount(): Int {
-        return messageList.count { it.uidLastMessage!!.isNotEmpty() }
+        return messageList.count { !it.uidLastMessage.isNullOrEmpty() }
     }
 
     inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view),
@@ -127,20 +129,11 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
                 }
             }
 
-            if (uidMessage.isEmpty()) {
-                message?.text = ""
-                time?.text = ""
-            } else {
-                FirebaseRepository().fetchLastMessage(
-                    uidFriend,
-                    FirebaseRepository().currentUserUid,
-                    uidMessage
-                ) { m ->
-                    // SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl")) add polish language
-                    val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
-                    time?.text = dateFormat.format(m.sentAt)
-                    message?.text = m.message ?: ""
-                }
+            FirebaseRepository().fetchLastMessage(uidFriend, FirebaseRepository().currentUserUid, uidMessage) { m ->
+                // SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl")) add polish language
+                val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
+                time?.text = dateFormat.format(m.sentAt)
+                message?.text = m.message ?: ""
             }
 
             FirebaseRepository().fetchUserOrFriend(uidFriend) { user ->
@@ -158,7 +151,7 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
             val alertDialog = AlertDialog.Builder(view.context)
                 .setTitle("Delete chat!")
                 //TODO: zrobic i wczytywac imie
-                .setMessage("Do you want to delete your messages with fullName")
+                .setMessage("Do you want to delete your messages with $fullName?")
                 .setPositiveButton("OK") { dialog, which ->
                     // Obsługa kliknięcia przycisku OK
 
@@ -192,8 +185,6 @@ class MessageAdapter(var messageList: ArrayList<Friend>, private val v: View) :
 
                             friendToUpdate?.let {
                                 senderDocRef.update("friends", senderFriends)
-
-                                messageList.removeAt(adapterPosition)
                             }
                         }
 

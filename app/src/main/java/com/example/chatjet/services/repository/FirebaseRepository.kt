@@ -361,7 +361,6 @@ class FirebaseRepository {
             }
     }
 
-
     fun fetchLastMessage(
         senderId: String,
         receiverId: String,
@@ -375,39 +374,12 @@ class FirebaseRepository {
                 chat?.let {
                     Log.d("REPO FetchAdditions", it.toString())
                     onComplete.invoke(it)
-                } ?: run {
-                    // Obsługa sytuacji, gdy chat jest równy null
-                    // Możesz przypisać wartość domyślną lub wykonać inne działania
-//                     val defaultChat = Chat()
-//                     onComplete.invoke(defaultChat)
                 }
             }
             .addOnFailureListener {
                 Log.d("REPO", it.toString())
             }
     }
-
-
-
-//    fun fetchLastMessage(
-//        senderId: String,
-//        receiverId: String,
-//        messageId: String,
-//        onComplete: (Chat) -> Unit
-//    ) {
-//        db.collection(CHAT).document(senderId)
-//            .collection(receiverId).document(messageId)
-//            .get().addOnSuccessListener { snapshot ->
-//                snapshot.toObject(Chat::class.java)?.let {
-//                    Log.d("REPO FetchAdditions", it.toString())
-//                    onComplete.invoke(it)
-//
-//                }
-//            }
-//            .addOnFailureListener {
-//                Log.d("REPO", it.toString())
-//            }
-//    }
 
     fun fetchUserOrFriend(uid: String, onComplete: (User?) -> Unit) {
         // Load full name user to you write
