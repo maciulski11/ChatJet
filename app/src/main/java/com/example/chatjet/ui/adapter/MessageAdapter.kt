@@ -23,11 +23,15 @@ import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.collections.ArrayList
 
-class MessageAdapter(private val messageList: ArrayList<Friend>, private val v: View) :
+class MessageAdapter(
+    private val messageList: ArrayList<Friend>,
+    private val v: View,
+    val onReadMessage: (String) -> Unit,
+    val onDeleteChat: (String) -> Unit,
+) :
     RecyclerView.Adapter<MessageAdapter.MyViewHolder>() {
 
     private var fullName: String = ""
-
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): MyViewHolder {
         val itemView =
@@ -51,7 +55,7 @@ class MessageAdapter(private val messageList: ArrayList<Friend>, private val v: 
             )
 
             if (message.readMessage == false) {
-                holder.readMessage(message.uid ?: "")
+                onReadMessage(message.uid.toString())
             }
 
             v.findNavController().navigate(
@@ -83,10 +87,6 @@ class MessageAdapter(private val messageList: ArrayList<Friend>, private val v: 
         private val time = view.findViewById<TextView>(R.id.time)
         private val name = view.findViewById<TextView>(R.id.fullName)
         private val status = view.findViewById<ImageView>(R.id.statusColor)
-
-        fun readMessage(uidFriend: String) {
-            FirebaseRepository().readMessage(uidFriend)
-        }
 
         fun bind(friend: Friend, uidFriend: String, uidMessage: String) {
 
@@ -127,21 +127,23 @@ class MessageAdapter(private val messageList: ArrayList<Friend>, private val v: 
                         .circleCrop()
                         .into(icon)
                 }
-            }
 
-            FirebaseRepository().fetchLastMessage(uidFriend, FirebaseRepository().currentUserUid, uidMessage) { m ->
-                // SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl")) add polish language
-                val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
-                time?.text = dateFormat.format(m.sentAt)
-                message?.text = m.message ?: ""
-            }
-
-            FirebaseRepository().fetchUserOrFriend(uidFriend) { user ->
-                if (user?.status == true) {
+                if (f?.status == true) {
                     status.setColorFilter(Color.GREEN)
                 } else {
                     status.setColorFilter(Color.RED)
                 }
+            }
+
+            FirebaseRepository().fetchLastMessage(
+                uidFriend,
+                FirebaseRepository().currentUserUid,
+                uidMessage
+            ) { m ->
+                // SimpleDateFormat("dd.MM.yyyy HH:mm", Locale("pl")) add polish language
+                val dateFormat = SimpleDateFormat("d MMM, HH:mm", Locale("pl"))
+                time?.text = dateFormat.format(m.sentAt)
+                message?.text = m.message ?: ""
             }
         }
 
@@ -150,54 +152,13 @@ class MessageAdapter(private val messageList: ArrayList<Friend>, private val v: 
 
             val alertDialog = AlertDialog.Builder(view.context)
                 .setTitle("Delete chat!")
-                //TODO: zrobic i wczytywac imie
                 .setMessage("Do you want to delete your messages with $fullName?")
                 .setPositiveButton("OK") { dialog, which ->
-                    // Obsługa kliknięcia przycisku OK
 
-
-                    val db = FirebaseFirestore.getInstance()
-                    val collectionRef = db.collection(FirebaseRepository.CHAT)
-                        .document(FirebaseRepository().currentUserUid)
-                        .collection(message.uid.toString())
-
-                    collectionRef.get().addOnSuccessListener { snapshot ->
-                        val batch = db.batch()
-                        for (document in snapshot.documents) {
-                            batch.delete(document.reference)
-                        }
-
-                        // pobierz dokument użytkownika, który odbiera wiadomość
-                        val senderDocRef = db.collection(FirebaseRepository.USERS)
-                            .document(FirebaseRepository().currentUserUid)
-
-                        senderDocRef.get().addOnSuccessListener { senderDocSnapshot ->
-                            val senderFriends =
-                                senderDocSnapshot.get("friends") as ArrayList<HashMap<String, Any>>?
-
-                            // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
-                            val friendToUpdate = senderFriends?.find { it["uid"] == message.uid }
-
-                            friendToUpdate?.apply {
-
-                                set("uidLastMessage", "")
-                            }
-
-                            friendToUpdate?.let {
-                                senderDocRef.update("friends", senderFriends)
-                            }
-                        }
-
-                        batch.commit().addOnCompleteListener {
-                            Log.d("TAG", "Collection successfully deleted!")
-
-                        }.addOnFailureListener { e ->
-                            Log.w("TAG", "Error deleting collection", e)
-                        }
-                    }
+                    onDeleteChat(message.uid.toString())
                 }
                 .setNegativeButton("Anuluj") { dialog, which ->
-                    // Obsługa kliknięcia przycisku Anuluj
+
                 }
                 .create()
 

@@ -7,7 +7,6 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -21,10 +20,13 @@ import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AnimationUtils
-import com.google.firebase.firestore.FieldValue
-import com.google.firebase.firestore.FirebaseFirestore
 
-class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Context, private val v: View) :
+class FriendsAdapter(
+    var friendsList: ArrayList<Friend>,
+    private val context: Context,
+    private val v: View,
+    val onDeleteFriend: (Friend) -> Unit,
+    ) :
     RecyclerView.Adapter<FriendsAdapter.MyViewHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): FriendsAdapter.MyViewHolder {
@@ -36,9 +38,9 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
     }
 
     override fun onBindViewHolder(holder: FriendsAdapter.MyViewHolder, position: Int) {
-            val friend = friendsList[position]
+        val friend = friendsList[position]
 
-            holder.bind(friend)
+        holder.bind(friend)
     }
 
     override fun getItemCount(): Int = friendsList.size
@@ -82,7 +84,11 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
                         )
                     )
 
-                    v.findNavController().navigate(R.id.action_friendsFragment_to_chatFragment, bundle, AnimationUtils.downNavAnim)
+                    v.findNavController().navigate(
+                        R.id.action_friendsFragment_to_chatFragment,
+                        bundle,
+                        AnimationUtils.downNavAnim
+                    )
                 }
 
                 deleteButton.setOnClickListener {
@@ -91,22 +97,9 @@ class FriendsAdapter(var friendsList: ArrayList<Friend>, private val context: Co
                         .setTitle("Delete friend")
                         .setMessage("Are you sure you want to delete this friend?")
                         .setPositiveButton("Yes") { _, _ ->
-                            // usunięcie przyjaciela
-                            val db = FirebaseFirestore.getInstance()
-                            db.collection(FirebaseRepository.USERS)
-                                .document(FirebaseRepository().currentUserUid)
-                                .update(FirebaseRepository.FRIENDS, FieldValue.arrayRemove(friend))
-                                .addOnSuccessListener {
-                                    Log.d("TAG", "Friend successfully deleted!")
-                                }
-                                .addOnFailureListener { e ->
-                                    Log.w("TAG", "Error deleting friend", e)
-                                }
-
-                            // TODO:
-                            // usunac przyjaciela z listy znajomych usunietgo przyjaciela
-
-
+                            //TODO: zrobic zeby po usunieciu przyjaciela tez usunely sie wszystkie wiadomosci
+                            // Delete friend
+                            onDeleteFriend(friend)
                         }
                         .setNegativeButton("No") { _, _ ->
 

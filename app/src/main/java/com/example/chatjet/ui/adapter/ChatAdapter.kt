@@ -47,14 +47,12 @@ class ChatAdapter(private val chatList: ArrayList<Chat>) :
         } else {
             MESSAGE_TYPE_LEFT
         }
-
     }
 
     inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
 
         private val message = view.findViewById<TextView>(R.id.messageTV)
         private val image = view.findViewById<ImageView>(R.id.photo)
-
 
         fun bindView(chat: Chat) {
             message.text = chat.message

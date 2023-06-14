@@ -3,6 +3,7 @@ package com.example.chatjet.services.repository
 import android.annotation.SuppressLint
 import android.util.Log
 import com.example.chatjet.data.model.Chat
+import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
 import com.google.firebase.Timestamp
@@ -416,7 +417,6 @@ class FirebaseRepository {
                     friend
                 }
             }
-
             updatedFriends?.let {
                 receiverDocRef.update("friends", it)
             }
@@ -470,30 +470,10 @@ class FirebaseRepository {
             }
     }
 
-    fun deleteConversation(messageUid: String) {
-        val db = FirebaseFirestore.getInstance()
-        val collectionRef = db.collection(FirebaseRepository.CHAT)
-            .document(FirebaseRepository().currentUserUid)
-            .collection(messageUid)
-
-        collectionRef.get().addOnSuccessListener { snapshot ->
-            val batch = db.batch()
-            for (document in snapshot.documents) {
-                batch.delete(document.reference)
-            }
-            batch.commit().addOnSuccessListener {
-                Log.d("TAG", "Collection successfully deleted!")
-            }.addOnFailureListener { e ->
-                Log.w("TAG", "Error deleting collection", e)
-            }
-        }
-    }
-
     fun fetchAndUpdateMessages() {
         //TODO: przeniesc funkcje z chatFragment
     }
 
-    //TODO: do ogarniecia co tu sie odjebalo, ale dziala
     private fun updateLastMessage(senderId: String, receiverId: String, docUid: String) {
         // pobierz dokument użytkownika, który odbiera wiadomość
         val senderDocRef = db.collection(USERS).document(senderId)
@@ -676,14 +656,55 @@ class FirebaseRepository {
         }
     }
 
-    fun deleteFriend(uid: String) {
-        db.collection(USERS).document(currentUserUid)
-            .delete()
+    fun deleteChat(messageUid: String) {
+        val collectionRef = db.collection(CHAT)
+            .document(currentUserUid)
+            .collection(messageUid)
+
+        collectionRef.get().addOnSuccessListener { snapshot ->
+            val batch = db.batch()
+            for (document in snapshot.documents) {
+                batch.delete(document.reference)
+            }
+
+            // pobierz dokument użytkownika, który odbiera wiadomość
+            val messageDocRef = db.collection(USERS).document(currentUserUid)
+
+            messageDocRef.get().addOnSuccessListener { senderDocSnapshot ->
+                val senderFriends =
+                    senderDocSnapshot.get(FRIENDS) as ArrayList<HashMap<String, Any>>?
+
+                // znajdź przyjaciela w liście przyjaciół użytkownika, który wysyła wiadomość i zaktualizuj jego "lastMessage"
+                val friendToUpdate = senderFriends?.find { it["uid"] == messageUid }
+
+                friendToUpdate?.apply {
+
+                    set("uidLastMessage", "")
+                }
+
+                friendToUpdate?.let {
+                    messageDocRef.update(FRIENDS, senderFriends)
+                }
+            }
+
+            batch.commit().addOnCompleteListener {
+                Log.d("TAG", "Collection successfully deleted!")
+
+            }.addOnFailureListener { e ->
+                Log.w("TAG", "Error deleting collection", e)
+            }
+        }
+    }
+
+    fun deleteFriend(friend: Friend) {
+        db.collection(FirebaseRepository.USERS)
+            .document(FirebaseRepository().currentUserUid)
+            .update(FirebaseRepository.FRIENDS, FieldValue.arrayRemove(friend))
             .addOnSuccessListener {
-                Log.d("TAG", "DocumentSnapshot successfully deleted!")
+                Log.d("TAG", "Friend successfully deleted!")
             }
             .addOnFailureListener { e ->
-                Log.w("TAG", "Error deleting document", e)
+                Log.w("TAG", "Error deleting friend", e)
             }
     }
 

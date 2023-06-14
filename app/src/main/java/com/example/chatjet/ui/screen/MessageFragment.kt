@@ -68,6 +68,12 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
                     adapter = MessageAdapter(
                         messageList,
                         requireView(),
+                        { messageUid ->
+                            mainViewModel.readMessage(messageUid)
+                        },
+                        { messageUid ->
+                            mainViewModel.deleteChat(messageUid)
+                        }
                     )
 
                     messageRecyclerView.adapter = adapter

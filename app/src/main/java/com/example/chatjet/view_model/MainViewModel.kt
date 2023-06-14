@@ -1,12 +1,11 @@
 package com.example.chatjet.view_model
 
-import android.app.AlertDialog
-import android.view.View
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.chatjet.R
+import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.InvitationReceived
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.repository.FirebaseRepository
@@ -82,22 +81,12 @@ class MainViewModel(var user: User? = null) : ViewModel() {
         }
     }
 
-    fun deleteConversation(messageUid: String, view: View, fullName: String) {
-        val alertDialog = AlertDialog.Builder(view.context)
-            .setTitle("Delete chat!")
-            .setMessage("Do you want to delete your messages with ${fullName}?")
-            .setPositiveButton("OK") { dialog, which ->
-                // Obsługa kliknięcia przycisku OK
+    fun readMessage(uidFriend: String) {
+        repository.readMessage(uidFriend)
+    }
 
-                repository.deleteConversation(messageUid)
-
-            }
-            .setNegativeButton("Anuluj") { dialog, which ->
-                // Obsługa kliknięcia przycisku Anuluj
-            }
-            .create()
-
-        alertDialog.show()
+    fun deleteChat(messageUid: String) {
+        repository.deleteChat(messageUid)
     }
 
     fun fetchUserOrFriend(userUid: String, onComplete: (User?) -> Unit) {
@@ -106,7 +95,11 @@ class MainViewModel(var user: User? = null) : ViewModel() {
         }
     }
 
-    fun sendInvitation(uid: String) {
+    fun deleteFriend(friend: Friend) {
+        repository.deleteFriend(friend)
+    }
+
+        fun sendInvitation(uid: String) {
         repository.sendInvitation(uid)
     }
 

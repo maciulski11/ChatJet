@@ -47,6 +47,9 @@ class FriendsFragment : BaseFragment() {
                         requireContext(),
                         requireView()
                     )
+                    { deleteFriend ->
+                        mainViewModel.deleteFriend(deleteFriend)
+                    }
 
                     friendsRecyclerView.adapter = adapter
                 }

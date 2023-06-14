@@ -48,7 +48,6 @@ class LoginFragment : BaseFragment() {
         forgotPasswordButton.setOnClickListener {
             findNavController().navigate(R.id.action_loginFragment_to_resetPasswordFragment2, null, AnimationUtils.rightNavAnim)
         }
-
     }
 
     override fun onResume() {
