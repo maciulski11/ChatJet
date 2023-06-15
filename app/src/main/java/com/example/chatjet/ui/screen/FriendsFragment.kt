@@ -1,7 +1,13 @@
 package com.example.chatjet.ui.screen
 
+import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
 import android.view.View
+import android.widget.Toast
+import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.chatjet.R
@@ -45,11 +51,13 @@ class FriendsFragment : BaseFragment() {
                     adapter = FriendsAdapter(
                         friendsList,
                         requireContext(),
-                        requireView()
-                    )
-                    { deleteFriend ->
-                        mainViewModel.deleteFriend(deleteFriend)
-                    }
+                        requireView(),
+                        { phoneNumber ->
+                            callFriend(phoneNumber)
+                        },
+                        { deleteFriend ->
+                            mainViewModel.deleteFriend(deleteFriend)
+                        })
 
                     friendsRecyclerView.adapter = adapter
                 }
@@ -63,6 +71,22 @@ class FriendsFragment : BaseFragment() {
 
             adapter.notifyDataSetChanged()
         }
+    }
+
+    private fun callFriend(phoneNumber: String) {
+        // ACTION_DIAL - przenosi do edycji numeru przed polaczeniem
+        val callIntent = Intent(Intent.ACTION_CALL)
+        callIntent.data = Uri.parse("tel:$phoneNumber")
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                Manifest.permission.CALL_PHONE
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
+            Toast.makeText(context, "Brak uprawnień do dzwonienia", Toast.LENGTH_SHORT)
+                .show()
+            return
+        }
+        context?.startActivity(callIntent)
     }
 
     override fun unsubscribeUi() {

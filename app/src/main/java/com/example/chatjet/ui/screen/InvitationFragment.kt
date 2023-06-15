@@ -1,11 +1,11 @@
 package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
-import android.graphics.Color
 import android.view.View
 import android.widget.Toast
 import androidx.fragment.app.activityViewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.InvitationReceived
@@ -15,8 +15,9 @@ import com.example.chatjet.ui.adapter.InvitationAdapter
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
 import kotlinx.android.synthetic.main.fragment_invitation.*
+import kotlinx.android.synthetic.main.item_ivitation.*
 
-//TODO: sprawdzicz czemu powiadomienie znika tylko po wejsciu w messageFrament
+//TODO: sprawdzicz czemu powiadomienie znika tylko po wejsciu w messageFragment
 
 class InvitationFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_invitation
@@ -34,28 +35,46 @@ class InvitationFragment : BaseFragment() {
 
         invitationsList = arrayListOf()
 
-        adapter = InvitationAdapter(invitationsList, requireContext(),
-            {
-                mainViewModel.acceptInvitation(it)
-                mainViewModel.deleteInvitation(it)
+        adapter = InvitationAdapter(
+            invitationsList
+        )
+        { friendUid ->
+            mainViewModel.fetchFriend(friendUid) { friend ->
+                nameUser.text = friend?.full_name
+                locationTV.text = friend?.location
 
-                ToastUtils.showToast(
-                    "Invitation accepted!",
-                    R.drawable.ic_baseline_check_circle_outline_24,
-                    R.color.green,
-                    Toast.LENGTH_SHORT
-                )
-            },
-            {
-                mainViewModel.deleteInvitation(it)
+                Glide.with(requireView())
+                    .load(friend?.photo)
+                    .circleCrop()
+                    .into(photo)
 
-                ToastUtils.showToast(
-                    "Invitation not accepted!",
-                    R.drawable.ic_baseline_remove_circle_outline_24,
-                    R.color.red,
-                    Toast.LENGTH_SHORT
-                )
-            })
+                acceptButton.setOnClickListener {
+
+                    mainViewModel.acceptInvitation(friendUid)
+                    mainViewModel.deleteInvitation(friendUid)
+
+                    ToastUtils.showToast(
+                        "Invitation accepted!",
+                        R.drawable.ic_baseline_check_circle_outline_24,
+                        R.color.green,
+                        Toast.LENGTH_SHORT
+                    )
+                }
+
+                unacceptedButton.setOnClickListener {
+
+                    mainViewModel.deleteInvitation(friendUid)
+
+                    ToastUtils.showToast(
+                        "Invitation not accepted!",
+                        R.drawable.ic_baseline_remove_circle_outline_24,
+                        R.color.red,
+                        Toast.LENGTH_SHORT
+                    )
+                }
+            }
+        }
+
         recyclerViewInvitations.adapter = adapter
 
         mainViewModel.invitationsList.observe(this) {

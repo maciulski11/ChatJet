@@ -6,6 +6,7 @@ import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
@@ -28,8 +29,7 @@ class LoginFragment : BaseFragment() {
     @SuppressLint("SetTextI18n")
     override fun subscribeUi() {
 
-        //TODO:
-        //Create token list from one phone for different account
+        //TODO: Create token list from one phone for different account
 
         stefan.setOnClickListener {
             emailET.setText("maxiokrzym@gmail.com")

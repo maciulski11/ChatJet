@@ -323,7 +323,7 @@ class FirebaseRepository {
             }
     }
 
-    //wczytanie zdjecia
+    // Loading photo
     fun uploadUserPhoto(bytes: ByteArray) {
         storage.getReference(USERS)
             .child("${currentUserUid}.jpg")

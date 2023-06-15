@@ -72,7 +72,6 @@ class FirebaseServices : FirebaseMessagingService() {
     }
 }
 
-
 private fun createNotificationChannel(notificationManager: NotificationManager) {
     Log.d(TAG, "createNotificationChannel")
 

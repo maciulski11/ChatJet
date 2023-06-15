@@ -1,19 +1,13 @@
 package com.example.chatjet.ui.adapter
 
-import android.Manifest
 import android.app.AlertDialog
 import android.content.Context
-import android.content.Intent
-import android.content.pm.PackageManager
-import android.net.Uri
 import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.TextView
-import android.widget.Toast
-import androidx.core.app.ActivityCompat
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
@@ -25,6 +19,7 @@ class FriendsAdapter(
     var friendsList: ArrayList<Friend>,
     private val context: Context,
     private val v: View,
+    val onCallFriend: (String) -> Unit,
     val onDeleteFriend: (Friend) -> Unit,
     ) :
     RecyclerView.Adapter<FriendsAdapter.MyViewHolder>() {
@@ -45,7 +40,7 @@ class FriendsAdapter(
 
     override fun getItemCount(): Int = friendsList.size
 
-    inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
+    inner class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         private val name = view.findViewById<TextView>(R.id.nameUser)
         private val callButton = view.findViewById<ImageButton>(R.id.callButton)
@@ -59,20 +54,8 @@ class FriendsAdapter(
                 name.text = f?.full_name
 
                 callButton.setOnClickListener {
-                    val phoneNumber = f?.number
-                    // ACTION_DIAL - przenosi do edycji numeru przed polaczeniem
-                    val callIntent = Intent(Intent.ACTION_CALL)
-                    callIntent.data = Uri.parse("tel:$phoneNumber")
-                    if (ActivityCompat.checkSelfPermission(
-                            context,
-                            Manifest.permission.CALL_PHONE
-                        ) != PackageManager.PERMISSION_GRANTED
-                    ) {
-                        Toast.makeText(context, "Brak uprawnień do dzwonienia", Toast.LENGTH_SHORT)
-                            .show()
-                        return@setOnClickListener
-                    }
-                    context.startActivity(callIntent)
+
+                    onCallFriend(f?.number.toString())
                 }
 
                 messageButton.setOnClickListener {

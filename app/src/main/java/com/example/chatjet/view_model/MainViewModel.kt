@@ -99,7 +99,7 @@ class MainViewModel(var user: User? = null) : ViewModel() {
         repository.deleteFriend(friend)
     }
 
-        fun sendInvitation(uid: String) {
+    fun sendInvitation(uid: String) {
         repository.sendInvitation(uid)
     }
 
@@ -114,6 +114,12 @@ class MainViewModel(var user: User? = null) : ViewModel() {
     fun fetchInvitations() {
         repository.fetchInvitationsList {
             invitationsList.postValue(it)
+        }
+    }
+
+    fun fetchFriend(uidFriend: String, onComplete: (User?) -> Unit) {
+        repository.fetchFriends(uidFriend){ friend ->
+            onComplete(friend)
         }
     }
 }

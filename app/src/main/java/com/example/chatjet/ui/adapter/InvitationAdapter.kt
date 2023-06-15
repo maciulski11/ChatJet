@@ -1,23 +1,15 @@
 package com.example.chatjet.ui.adapter
 
-import android.content.Context
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.InvitationReceived
-import com.example.chatjet.services.repository.FirebaseRepository
 
 class InvitationAdapter(
     var invitationsList: ArrayList<InvitationReceived>,
-    val context: Context,
-    val onAccept: (String) -> Unit,
-    val onDelete: (String) -> Unit
+    val onFriendAction: (String) -> Unit
 ) :
     RecyclerView.Adapter<InvitationAdapter.MyViewHolder>() {
 
@@ -37,37 +29,12 @@ class InvitationAdapter(
 
     override fun getItemCount(): Int = invitationsList.size
 
-    inner class MyViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
-
-        private val photo = view.findViewById<ImageView>(R.id.photo)
-        private val nameUser = view.findViewById<TextView>(R.id.nameUser)
-        private val location = view.findViewById<TextView>(R.id.locationTV)
-        private val acceptButton = view.findViewById<ImageButton>(R.id.acceptButton)
-        private val unacceptedButton = view.findViewById<ImageButton>(R.id.unacceptedButton)
+    inner class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
         fun bind(invitation: InvitationReceived) {
 
-            val uid = invitation.uid ?: ""
+            onFriendAction(invitation.uid ?: "")
 
-            FirebaseRepository().fetchFriends(uid) { user ->
-                nameUser.text = user?.full_name
-                location.text = user?.location
-
-                Glide.with(view)
-                    .load(user?.photo)
-                    .circleCrop()
-                    .into(photo)
-
-                acceptButton.setOnClickListener {
-
-                    onAccept(uid)
-                }
-
-                unacceptedButton.setOnClickListener {
-
-                    onDelete(uid)
-                }
-            }
         }
     }
 }

@@ -55,6 +55,7 @@ class ChatAdapter(private val chatList: ArrayList<Chat>) :
         private val image = view.findViewById<ImageView>(R.id.photo)
 
         fun bindView(chat: Chat) {
+
             message.text = chat.message
 
 
