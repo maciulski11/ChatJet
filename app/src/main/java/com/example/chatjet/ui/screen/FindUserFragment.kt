@@ -1,17 +1,21 @@
 package com.example.chatjet.ui.screen
 
 import android.annotation.SuppressLint
-import android.graphics.Color
+import android.view.View
+import android.widget.ImageView
+import android.widget.TextView
 import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.recyclerview.widget.LinearLayoutManager
+import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.User
-import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.ui.adapter.FindUserAdapter
+import com.example.chatjet.view_model.FindUserViewModel
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
 import java.util.*
@@ -22,6 +26,7 @@ class FindUserFragment : BaseFragment() {
 
     private var usersList = ArrayList<User>()
     private lateinit var adapter: FindUserAdapter
+    private val viewModel: FindUserViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
 
     @SuppressLint("NotifyDataSetChanged")
@@ -33,20 +38,21 @@ class FindUserFragment : BaseFragment() {
 
         usersList = arrayListOf()
 
-        adapter = FindUserAdapter(usersList, requireContext())
-        {
-            mainViewModel.sendInvitation(it)
+        adapter = FindUserAdapter(
+            usersList,
+            requireContext(),
+            { userUid, itemView ->
 
-            ToastUtils.showToast(
-                "Invitation sent!",
-                R.drawable.ic_baseline_check_circle_outline_24,
-                R.color.green,
-                Toast.LENGTH_SHORT
-            )
-        }
+                fetchUser(userUid, itemView)
+            },
+            { userUid ->
+
+                sendInvitation(userUid)
+            })
+
         recyclerViewSearch.adapter = adapter
 
-        mainViewModel.usersList.observe(this) {
+        viewModel.usersList.observe(this) {
             adapter.usersList = it
             adapter.notifyDataSetChanged()
 
@@ -66,11 +72,41 @@ class FindUserFragment : BaseFragment() {
                     return true
                 }
             })
+
+            viewModel.updateUsersList()
         }
 
-        FirebaseRepository().updateUsersList {
-            mainViewModel.fetchUsers()
+        viewModel.fetchUsersList()
+
+    }
+
+    private fun fetchUser(userUid: String, itemView: View) {
+
+        val photo = itemView.findViewById<ImageView>(R.id.photo)
+        val nameUser = itemView.findViewById<TextView>(R.id.nameUser)
+        val location = itemView.findViewById<TextView>(R.id.locationTV)
+
+        mainViewModel.fetchFriend(userUid) { user ->
+
+            nameUser.text = user?.full_name
+            location.text = user?.location
+
+            Glide.with(requireView())
+                .load(user?.photo)
+                .circleCrop()
+                .into(photo)
         }
+    }
+
+    private fun sendInvitation(uid: String) {
+        viewModel.sendInvitation(uid)
+
+        ToastUtils.showToast(
+            "Invitation sent!",
+            R.drawable.ic_baseline_check_circle_outline_24,
+            R.color.green,
+            Toast.LENGTH_SHORT
+        )
     }
 
     private fun filterList(query: String?) {
@@ -91,6 +127,7 @@ class FindUserFragment : BaseFragment() {
     }
 
     override fun unsubscribeUi() {
-        mainViewModel.usersList.removeObservers(this)
+        // Unsubscribes from observing the invitations list LiveData in the ViewModel
+        viewModel.usersList.removeObservers(viewLifecycleOwner)
     }
 }

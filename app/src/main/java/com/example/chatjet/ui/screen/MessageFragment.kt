@@ -69,9 +69,11 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
                         messageList,
                         requireView(),
                         { messageUid ->
+
                             mainViewModel.readMessage(messageUid)
                         },
                         { messageUid ->
+
                             mainViewModel.deleteChat(messageUid)
                         }
                     )
@@ -87,6 +89,7 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
                         emptyMessageListTV.visibility = View.GONE
                     }
                 }
+
                 adapter.notifyDataSetChanged()
             }
         }

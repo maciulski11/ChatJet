@@ -6,10 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageButton
-import android.widget.ImageView
-import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
-import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.data.model.User
 import kotlinx.android.synthetic.main.item_find_user.view.*
@@ -17,6 +14,7 @@ import kotlinx.android.synthetic.main.item_find_user.view.*
 class FindUserAdapter(
     var usersList: ArrayList<User>,
     val context: Context,
+    val onFetchUser: (String, View) -> Unit,
     val onSend: (String) -> Unit
 ) :
     RecyclerView.Adapter<FindUserAdapter.MyViewHolder>() {
@@ -45,24 +43,17 @@ class FindUserAdapter(
 
     inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
 
-        private val photo = view.findViewById<ImageView>(R.id.photo)
-        private val nameUser = view.findViewById<TextView>(R.id.nameUser)
-        private val location = view.findViewById<TextView>(R.id.locationTV)
         private val inviteButton = view.findViewById<ImageButton>(R.id.inviteButton)
 
-
         fun bind(user: User) {
-            nameUser.text = user.full_name
-            location.text = user.location
 
-            Glide.with(view)
-                .load(user.photo)
-                .circleCrop()
-                .into(photo)
+            val uid = user.uid ?: ""
+
+            onFetchUser(uid, view)
 
             inviteButton.setOnClickListener {
 
-                onSend(user.uid ?: "")
+                onSend(uid)
             }
         }
     }

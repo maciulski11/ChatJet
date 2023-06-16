@@ -164,7 +164,7 @@ class FirebaseRepository {
     }
 
     fun updateUsersList(success: () -> Unit) {
-        val docRef = db.collection(USERS).document(currentUserUid)
+        val docRef = db.collection(USERS)
 
         docRef.addSnapshotListener { snapshot, e ->
             if (e != null) {
@@ -193,7 +193,7 @@ class FirebaseRepository {
 
 
                 db.collection(USERS)
-                    .limit(12)
+                    .limit(20)
                     .get()
                     .addOnSuccessListener { usersResult ->
                         db.collection(USERS)
@@ -227,7 +227,7 @@ class FirebaseRepository {
     }
 
     fun updateInvitationsList(success: () -> Unit) {
-        val docRef = db.collection(USERS).document(currentUserUid ?: "")
+        val docRef = db.collection(USERS).document(currentUserUid)
             .collection(INVITATIONS_RECEIVED)
 
         docRef.addSnapshotListener { snapshot, e ->
@@ -708,7 +708,7 @@ class FirebaseRepository {
             }
     }
 
-    fun deleteInvitation(uid: String) {
+    fun notAcceptInvitation(uid: String) {
         db.collection(USERS).document(FirebaseRepository().currentUserUid)
             .collection(INVITATIONS_RECEIVED).document(uid)
             .delete()

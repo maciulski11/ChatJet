@@ -3,13 +3,16 @@ package com.example.chatjet.ui.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
 import com.example.chatjet.data.model.InvitationReceived
 
 class InvitationAdapter(
     var invitationsList: ArrayList<InvitationReceived>,
-    val onFriendAction: (String) -> Unit
+    val onFetchFriend: (String, View) -> Unit,
+    val onAccept: (String) -> Unit,
+    val onDelete: (String) -> Unit
 ) :
     RecyclerView.Adapter<InvitationAdapter.MyViewHolder>() {
 
@@ -31,10 +34,25 @@ class InvitationAdapter(
 
     inner class MyViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
 
+        private val acceptButton = view.findViewById<ImageButton>(R.id.acceptButton)
+        private val unacceptedButton = view.findViewById<ImageButton>(R.id.unacceptedButton)
+
         fun bind(invitation: InvitationReceived) {
 
-            onFriendAction(invitation.uid ?: "")
+            val friendUid = invitation.uid ?: ""
 
+            // Call the onFetchFriend callback function with the friendUid and the itemView
+            onFetchFriend(friendUid, view)
+
+            acceptButton.setOnClickListener {
+                
+                onAccept(friendUid)
+            }
+
+            unacceptedButton.setOnClickListener {
+                
+                onDelete(friendUid)
+            }
         }
     }
 }
