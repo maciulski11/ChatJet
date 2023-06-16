@@ -163,27 +163,7 @@ class FirebaseRepository {
         }
     }
 
-    fun updateUsersList(success: () -> Unit) {
-        val docRef = db.collection(USERS)
-
-        docRef.addSnapshotListener { snapshot, e ->
-            if (e != null) {
-                Log.w("TAG", "Listen failed.", e)
-                return@addSnapshotListener
-            }
-
-            if (snapshot != null) {
-                // Update your UI with the new data here
-                success()
-            } else {
-                Log.d("TAG", "Current data: null")
-            }
-        }
-    }
-
     fun fetchUsersList(onComplete: (ArrayList<User>) -> Unit) {
-
-        // Pobranie listy znajomych użytkownika
         db.collection(USERS)
             .document(currentUserUid)
             .get()
@@ -191,17 +171,17 @@ class FirebaseRepository {
                 val currentUser = userResult.toObject(User::class.java)
                 val friendsUid = currentUser?.friends?.map { it.uid } ?: arrayListOf()
 
-
                 db.collection(USERS)
                     .limit(20)
                     .get()
                     .addOnSuccessListener { usersResult ->
+                        val users = usersResult.toObjects(User::class.java)
+
                         db.collection(USERS)
                             .document(currentUserUid)
                             .collection(INVITATIONS_SENT)
                             .get()
                             .addOnSuccessListener { invitationResult ->
-                                val users = usersResult.toObjects(User::class.java)
                                 val invitations = invitationResult.toObjects(User::class.java)
                                 val invitedUid = invitations.map { it.uid }
 
@@ -215,7 +195,6 @@ class FirebaseRepository {
                                         list.add(user)
                                     }
                                 }
-
                                 onComplete.invoke(list)
                             }
                             .addOnFailureListener { exception ->

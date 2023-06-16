@@ -72,8 +72,6 @@ class FindUserFragment : BaseFragment() {
                     return true
                 }
             })
-
-            viewModel.updateUsersList()
         }
 
         viewModel.fetchUsersList()
@@ -91,10 +89,20 @@ class FindUserFragment : BaseFragment() {
             nameUser.text = user?.full_name
             location.text = user?.location
 
-            Glide.with(requireView())
-                .load(user?.photo)
-                .circleCrop()
-                .into(photo)
+            if (user?.photo.isNullOrEmpty()) {
+
+                Glide.with(requireContext())
+                    .load(R.drawable.ic_baseline_account_circle_24)
+                    .circleCrop()
+                    .into(photo)
+
+            } else {
+
+                Glide.with(requireContext())
+                    .load(user?.photo)
+                    .circleCrop()
+                    .into(photo)
+            }
         }
     }
 

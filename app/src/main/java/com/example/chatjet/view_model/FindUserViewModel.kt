@@ -17,13 +17,8 @@ class FindUserViewModel: ViewModel() {
         }
     }
 
-    fun updateUsersList() {
-        repository.updateUsersList {
-            fetchUsersList()
-        }
-    }
-
     fun sendInvitation(uid: String) {
         repository.sendInvitation(uid)
+        fetchUsersList()
     }
 }

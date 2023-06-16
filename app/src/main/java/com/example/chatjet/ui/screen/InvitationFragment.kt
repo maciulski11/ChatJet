@@ -85,24 +85,34 @@ class InvitationFragment : BaseFragment() {
             nameUser.text = friend?.full_name
             locationTV.text = friend?.location
 
-            Glide.with(requireView())
-                .load(friend?.photo)
-                .circleCrop()
-                .into(photo)
+            if (friend?.photo.isNullOrEmpty()) {
+
+                Glide.with(requireView())
+                    .load(R.drawable.ic_baseline_account_circle_24)
+                    .circleCrop()
+                    .into(photo)
+
+            } else {
+
+                Glide.with(requireView())
+                    .load(friend?.photo)
+                    .circleCrop()
+                    .into(photo)
+            }
         }
     }
 
     private fun acceptInvitation(friendUid: String) {
 
-        viewModel.acceptInvitation(friendUid)
-        viewModel.notAcceptInvitation(friendUid)
+            viewModel.acceptInvitation(friendUid)
+            viewModel.notAcceptInvitation(friendUid)
 
-        ToastUtils.showToast(
-            "Invitation accepted!",
-            R.drawable.ic_baseline_check_circle_outline_24,
-            R.color.green,
-            Toast.LENGTH_SHORT
-        )
+            ToastUtils.showToast(
+                "Invitation accepted!",
+                R.drawable.ic_baseline_check_circle_outline_24,
+                R.color.green,
+                Toast.LENGTH_SHORT
+            )
     }
 
     private fun notAcceptInvitation(friendUid: String) {
