@@ -70,7 +70,7 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
                         requireView(),
                         { messageUid ->
 
-                            mainViewModel.readMessage(messageUid)
+                            mainViewModel.userReadMessage(messageUid)
                         },
                         { messageUid ->
 

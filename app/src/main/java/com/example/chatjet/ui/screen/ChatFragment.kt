@@ -4,6 +4,7 @@ import android.icu.text.SimpleDateFormat
 import android.util.Log
 import android.view.View
 import androidx.fragment.app.activityViewModels
+import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -14,6 +15,7 @@ import com.example.chatjet.data.model.*
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.ui.adapter.ChatAdapter
+import com.example.chatjet.view_model.ChatViewModel
 import com.example.chatjet.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.*
@@ -27,15 +29,15 @@ import kotlin.collections.ArrayList
 class ChatFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_chat
 
-    private var chatList = ArrayList<Chat>()
+    private lateinit var chatList: ArrayList<Chat>
     private lateinit var adapter: ChatAdapter
 
     private val db = FirebaseFirestore.getInstance()
-    private val dbChat = db.collection("chat")
 
     // Added object which registration listener in Firebase
     private var chatListenerRegistration: ListenerRegistration? = null
 
+    private val viewModel: ChatViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
     private val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 
@@ -54,6 +56,8 @@ class ChatFragment : BaseFragment() {
         val chatRecyclerView = view?.findViewById<RecyclerView>(R.id.chatRecyclerView)
         chatRecyclerView?.layoutManager = layoutManager
         chatRecyclerView?.setHasFixedSize(true)
+
+        chatList = arrayListOf()
 
         mainViewModel.fetchUserOrFriend(userUid) {
             nameUser.text = it?.full_name
@@ -101,12 +105,14 @@ class ChatFragment : BaseFragment() {
                 }
             }
         }
+
         readMessage(FirebaseRepository().currentUserUid, userUid)
+
     }
 
     private fun sendMessage(senderId: String, receiverId: String, message: String) {
 
-        mainViewModel.sendMessage(senderId, receiverId, message)
+        viewModel.sendMessage(senderId, receiverId, message)
 
     }
 
@@ -136,14 +142,14 @@ class ChatFragment : BaseFragment() {
                         }
                     }
 
-                    // Sort the chatList by timestamp in descending order
-                    chatList.sortByDescending { it.sentAt }
+                        // Sort the chatList by timestamp in descending order
+                        chatList.sortByDescending { it.sentAt }
 
-                    // If database has more than 1 message
-                    if (chatList.size > 1) {
-                        // Reverse the chatList to display the latest messages at the bottom
-                        chatList = chatList.reversed() as ArrayList<Chat>
-                    }
+                        // If database has more than 1 message
+                        if (chatList.size > 1) {
+                            // Reverse the chatList to display the latest messages at the bottom
+                            chatList = chatList.reversed() as ArrayList<Chat>
+                        }
 
                     // Group the chatList by date
                     val groupedChatList =
@@ -162,16 +168,20 @@ class ChatFragment : BaseFragment() {
                         return@addSnapshotListener
                     }
 
-                    //TODO: cos jest nie tak z wyrownainiem do dolu ostatniej wiadomosci
-                    chatRecyclerView.post {
-                        adapter = ChatAdapter(chatList)
-                        chatRecyclerView.adapter = adapter
-                        Log.d("REPOADAPTER", "$adapter")
-                        chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
-                    }
+                    //TODO: rozwiazac problem z wczytywaniem wiadomosci na gorze i pozniej na dole
+                    // Reverse the order of chatGroupList with a delay
+                    chatRecyclerView.postDelayed({
+
+                        chatRecyclerView.post {
+                            adapter = ChatAdapter(chatList)
+                            chatRecyclerView.adapter = adapter
+                            Log.d("REPOADAPTER", "$adapter")
+                            chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                        }
+
+                    }, 250)
 
                 } else {
-
                     // List is empty, load empty layout
                     chatList.clear()
                 }

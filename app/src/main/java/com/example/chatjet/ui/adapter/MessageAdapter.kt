@@ -5,7 +5,6 @@ import android.graphics.Color
 import android.graphics.Typeface
 import android.icu.text.SimpleDateFormat
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,14 +18,13 @@ import com.example.chatjet.R
 import com.example.chatjet.data.model.Friend
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AnimationUtils
-import com.google.firebase.firestore.FirebaseFirestore
 import java.util.*
 import kotlin.collections.ArrayList
 
 class MessageAdapter(
     private val messageList: ArrayList<Friend>,
     private val v: View,
-    val onReadMessage: (String) -> Unit,
+    val onUserReadMessage: (String) -> Unit,
     val onDeleteChat: (String) -> Unit,
 ) :
     RecyclerView.Adapter<MessageAdapter.MyViewHolder>() {
@@ -55,7 +53,7 @@ class MessageAdapter(
             )
 
             if (message.readMessage == false) {
-                onReadMessage(message.uid.toString())
+                onUserReadMessage(message.uid.toString())
             }
 
             v.findNavController().navigate(

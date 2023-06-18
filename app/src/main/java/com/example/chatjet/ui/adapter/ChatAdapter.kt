@@ -10,7 +10,7 @@ import com.example.chatjet.R
 import com.example.chatjet.data.model.Chat
 import com.google.firebase.auth.FirebaseAuth
 
-class ChatAdapter(private val chatList: ArrayList<Chat>) :
+class ChatAdapter(var chatList: ArrayList<Chat>) :
     RecyclerView.Adapter<ChatAdapter.MyViewHolder>() {
 
     companion object {
@@ -49,7 +49,7 @@ class ChatAdapter(private val chatList: ArrayList<Chat>) :
         }
     }
 
-    inner class MyViewHolder(private var view: View) : RecyclerView.ViewHolder(view) {
+    inner class MyViewHolder(private val view: View) : RecyclerView.ViewHolder(view) {
 
         private val message = view.findViewById<TextView>(R.id.messageTV)
         private val image = view.findViewById<ImageView>(R.id.photo)

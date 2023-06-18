@@ -1,11 +1,10 @@
 package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
+import android.icu.text.SimpleDateFormat
 import android.util.Log
-import com.example.chatjet.data.model.Chat
-import com.example.chatjet.data.model.Friend
-import com.example.chatjet.data.model.InvitationReceived
-import com.example.chatjet.data.model.User
+import com.example.chatjet.data.model.*
+import com.example.chatjet.ui.adapter.ChatAdapter
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.firestore.*
@@ -341,6 +340,35 @@ class FirebaseRepository {
             }
     }
 
+    //TODO: do przeniesienia kodu z fragmenty chat
+    fun fetchChat(senderId: String, receiverId: String, onComplete: (ArrayList<Chat>) -> Unit) {
+        db.collection(CHAT).document(senderId)
+            .collection(receiverId)
+            .orderBy("sentAt", Query.Direction.DESCENDING)
+            .addSnapshotListener { snapshot, error ->
+                if (error != null) {
+                    Log.w("TAG", "Listen failed.", error)
+                    return@addSnapshotListener
+                }
+
+                val chatList = arrayListOf<Chat>()
+
+                if (snapshot != null && !snapshot.isEmpty) {
+                    for (document in snapshot.documents) {
+                        val chat = document.toObject(Chat::class.java)
+
+                        if (chat?.senderId == senderId && chat.receiverId == receiverId ||
+                            chat?.senderId == receiverId && chat.receiverId == senderId
+                        ) {
+                            chatList.add(chat)
+                        }
+                    }
+                }
+
+                onComplete.invoke(chatList)
+            }
+    }
+
     fun fetchLastMessage(
         senderId: String,
         receiverId: String,
@@ -376,7 +404,7 @@ class FirebaseRepository {
             }
     }
 
-    fun readMessage(uidFriend: String) {
+    fun userReadMessage(uidFriend: String) {
         // pobierz dokument użytkownika, który odbiera wiadomość
         val receiverDocRef = db.collection(USERS).document(currentUserUid)
 

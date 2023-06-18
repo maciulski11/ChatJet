@@ -66,13 +66,8 @@ class MainViewModel(var user: User? = null) : ViewModel() {
         FirebaseRepository().uploadUserPhoto(bytes)
     }
 
-    fun sendMessage(senderId: String, receiverId: String, message: String) {
-        repository.sendMessage(senderId, receiverId, message) {
-        }
-    }
-
-    fun readMessage(uidFriend: String) {
-        repository.readMessage(uidFriend)
+    fun userReadMessage(uidFriend: String) {
+        repository.userReadMessage(uidFriend)
     }
 
     fun deleteChat(messageUid: String) {
