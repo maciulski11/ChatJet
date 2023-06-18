@@ -26,6 +26,7 @@ class MessageAdapter(
     private val v: View,
     val onUserReadMessage: (String) -> Unit,
     val onDeleteChat: (String) -> Unit,
+    val onFetchFullName: (String, View) -> Unit
 ) :
     RecyclerView.Adapter<MessageAdapter.MyViewHolder>() {
 
@@ -87,6 +88,8 @@ class MessageAdapter(
         private val status = view.findViewById<ImageView>(R.id.statusColor)
 
         fun bind(friend: Friend, uidFriend: String, uidMessage: String) {
+
+            onFetchFullName(uidFriend, view)
 
             FirebaseRepository().fetchFriends(uidFriend) { f ->
 

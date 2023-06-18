@@ -3,6 +3,7 @@ package com.example.chatjet.ui.screen
 import android.annotation.SuppressLint
 import android.icu.text.SimpleDateFormat
 import android.view.View
+import android.widget.TextView
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -72,9 +73,13 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
 
                             mainViewModel.userReadMessage(messageUid)
                         },
-                        { messageUid ->
+                        { uid ->
+                            mainViewModel.deleteChat(uid)
 
-                            mainViewModel.deleteChat(messageUid)
+                        },
+                        { friendUid, itemView ->
+
+                            fetchFullName(friendUid, itemView)
                         }
                     )
 
@@ -92,6 +97,15 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
 
                 adapter.notifyDataSetChanged()
             }
+        }
+    }
+
+    private fun fetchFullName(friendUid: String, itemView: View) {
+
+        val fullName = itemView.findViewById<TextView>(R.id.fullName)
+
+        mainViewModel.fetchFriend(friendUid) { friend ->
+            fullName.text = friend?.full_name
         }
     }
 

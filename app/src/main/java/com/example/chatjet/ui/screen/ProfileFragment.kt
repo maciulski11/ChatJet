@@ -7,13 +7,14 @@ import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AnimationUtils
+import com.example.chatjet.ui.activity.OnBackPressedListener
 import com.example.chatjet.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.editProfileButton
 import kotlinx.android.synthetic.main.fragment_profile.statusColor
 import kotlinx.android.synthetic.main.fragment_profile.statusText
 
-class ProfileFragment : BaseFragment() {
+class ProfileFragment : BaseFragment(), OnBackPressedListener {
     override val layout: Int = R.layout.fragment_profile
 
     private val mainViewModel: MainViewModel by activityViewModels()
@@ -57,6 +58,22 @@ class ProfileFragment : BaseFragment() {
                     .circleCrop()
                     .into(photoProfile)
             }
+        }
+    }
+
+    // This function change option button on visible after login
+    override fun onResume() {
+        super.onResume()
+        requireActivity().invalidateOptionsMenu()
+    }
+
+    override fun onBackPressed(): Boolean {
+        val navController = findNavController()
+        return if (navController.currentDestination?.id == R.id.invitationFragment) {
+            navController.navigateUp()
+            true
+        } else {
+            false
         }
     }
 

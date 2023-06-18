@@ -8,12 +8,14 @@ import android.widget.Toast
 import androidx.appcompat.widget.SearchView
 import androidx.fragment.app.activityViewModels
 import androidx.fragment.app.viewModels
+import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.utils.ToastUtils
+import com.example.chatjet.ui.activity.OnBackPressedListener
 import com.example.chatjet.ui.adapter.FindUserAdapter
 import com.example.chatjet.view_model.FindUserViewModel
 import com.example.chatjet.view_model.MainViewModel
@@ -21,7 +23,7 @@ import kotlinx.android.synthetic.main.fragment_find_user.*
 import java.util.*
 import kotlin.collections.ArrayList
 
-class FindUserFragment : BaseFragment() {
+class FindUserFragment : BaseFragment(), OnBackPressedListener {
     override val layout: Int = R.layout.fragment_find_user
 
     private var usersList = ArrayList<User>()
@@ -131,6 +133,22 @@ class FindUserFragment : BaseFragment() {
             } else {
                 adapter.setFilteredList(filteredList)
             }
+        }
+    }
+
+    // This function change option button on visible after login
+    override fun onResume() {
+        super.onResume()
+        requireActivity().invalidateOptionsMenu()
+    }
+
+    override fun onBackPressed(): Boolean {
+        val navController = findNavController()
+        return if (navController.currentDestination?.id == R.id.invitationFragment) {
+            navController.navigateUp()
+            true
+        } else {
+            false
         }
     }
 

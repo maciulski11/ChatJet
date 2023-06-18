@@ -55,15 +55,27 @@ class MainActivity : AppCompatActivity() {
                 when (menuItem.itemId) {
                     R.id.messageFragment -> {
                         backPressedListener = null
-                        navController.navigate(R.id.messageFragment, null, AnimationUtils.topNavAnim)
+                        navController.navigate(
+                            R.id.messageFragment,
+                            null,
+                            AnimationUtils.topNavAnim
+                        )
                     }
                     R.id.profileFragment -> {
                         backPressedListener = null
-                        navController.navigate(R.id.profileFragment, null, AnimationUtils.rightNavAnim)
+                        navController.navigate(
+                            R.id.profileFragment,
+                            null,
+                            AnimationUtils.rightNavAnim
+                        )
                     }
                     R.id.findUserFragment -> {
                         backPressedListener = null
-                        navController.navigate(R.id.findUserFragment, null, AnimationUtils.leftNavAnim)
+                        navController.navigate(
+                            R.id.findUserFragment,
+                            null,
+                            AnimationUtils.leftNavAnim
+                        )
                     }
                 }
             }
@@ -84,7 +96,8 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.fragment)
 
         // Inflate the menu for the invitation fragment if it is the current destination
-        if (navController.currentDestination?.id == R.id.messageFragment) {
+        if (navController.currentDestination?.id in listOf(R.id.messageFragment, R.id.profileFragment, R.id.findUserFragment))
+        {
             menuInflater.inflate(R.menu.invitation_menu, menu)
             return true
         }
@@ -126,7 +139,11 @@ class MainActivity : AppCompatActivity() {
             R.id.invitation -> {
                 // Navigate to the invitation fragment only if it is not the current destination
                 if (navController.currentDestination?.id != R.id.invitationFragment) {
-                    navController.navigate(R.id.invitationFragment, null, AnimationUtils.downNavAnim)
+                    navController.navigate(
+                        R.id.invitationFragment,
+                        null,
+                        AnimationUtils.downNavAnim
+                    )
                 }
                 return true
             }
