@@ -87,14 +87,14 @@ class InvitationFragment : BaseFragment() {
 
             if (friend?.photo.isNullOrEmpty()) {
 
-                Glide.with(requireView())
+                Glide.with(itemView.context)
                     .load(R.drawable.ic_baseline_account_circle_24)
                     .circleCrop()
                     .into(photo)
 
             } else {
 
-                Glide.with(requireView())
+                Glide.with(itemView.context)
                     .load(friend?.photo)
                     .circleCrop()
                     .into(photo)
