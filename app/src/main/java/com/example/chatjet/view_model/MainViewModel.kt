@@ -9,6 +9,7 @@ import com.example.chatjet.data.model.Friend
 import com.example.chatjet.data.model.User
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.ToastUtils
+import com.google.firebase.auth.FirebaseUser
 
 class MainViewModel(var user: User? = null) : ViewModel() {
 
@@ -16,10 +17,10 @@ class MainViewModel(var user: User? = null) : ViewModel() {
 
     var users: MutableLiveData<User?> = MutableLiveData(null)
 
-    fun loginUser(email: String, password: String, navController: NavController) {
+    fun loginUser(email: String, password: String, onLoginSuccess: (FirebaseUser) -> Unit) {
         repository.loginUser(email, password,
-            {
-                navController.navigate(R.id.action_loginFragment_to_messageFragment)
+            { user ->
+                onLoginSuccess(user)
             },
             {
                 ToastUtils.showToast(
@@ -85,7 +86,7 @@ class MainViewModel(var user: User? = null) : ViewModel() {
     }
 
     fun fetchFriend(uidFriend: String, onComplete: (User?) -> Unit) {
-        repository.fetchFriends(uidFriend){ friend ->
+        repository.fetchFriends(uidFriend) { friend ->
             onComplete(friend)
         }
     }

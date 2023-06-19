@@ -96,8 +96,12 @@ class MainActivity : AppCompatActivity() {
         val navController = findNavController(R.id.fragment)
 
         // Inflate the menu for the invitation fragment if it is the current destination
-        if (navController.currentDestination?.id in listOf(R.id.messageFragment, R.id.profileFragment, R.id.findUserFragment))
-        {
+        if (navController.currentDestination?.id in listOf(
+                R.id.messageFragment,
+                R.id.profileFragment,
+                R.id.findUserFragment
+            )
+        ) {
             menuInflater.inflate(R.menu.invitation_menu, menu)
             return true
         }

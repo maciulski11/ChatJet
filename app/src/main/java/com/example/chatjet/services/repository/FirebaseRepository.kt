@@ -7,6 +7,7 @@ import com.example.chatjet.data.model.*
 import com.example.chatjet.ui.adapter.ChatAdapter
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.firestore.*
 import com.google.firebase.firestore.EventListener
 import com.google.firebase.messaging.FirebaseMessaging
@@ -73,7 +74,7 @@ class FirebaseRepository {
     fun loginUser(
         email: String,
         password: String,
-        onNavigate: () -> Unit,
+        onLoginSuccess: (FirebaseUser) -> Unit,
         onVerifyEmail: () -> Unit,
         onNotExistUser: () -> Unit,
     ) {
@@ -109,7 +110,7 @@ class FirebaseRepository {
                             Log.d("LoginFragment", "FCM registration token: $token")
                         }
 
-                    onNavigate()
+                    onLoginSuccess(fbAuth.currentUser!!)
 
                 } else {
 

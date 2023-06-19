@@ -2,17 +2,19 @@ package com.example.chatjet.ui.screen
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Context
 import android.content.pm.PackageManager
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.activityViewModels
-import androidx.fragment.app.viewModels
 import androidx.navigation.fragment.findNavController
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.view_model.MainViewModel
+import com.google.firebase.auth.FirebaseAuth
+import com.google.firebase.auth.FirebaseUser
 import kotlinx.android.synthetic.main.fragment_login.*
 import kotlinx.android.synthetic.main.fragment_login.emailET
 import kotlinx.android.synthetic.main.fragment_login.passwordET
@@ -25,6 +27,7 @@ class LoginFragment : BaseFragment() {
     private val REQUEST_RECEIVE_NOTIFICATIONS = 2
 
     private val mainViewModel: MainViewModel by activityViewModels()
+    private var currentUser: FirebaseUser? = null
 
     @SuppressLint("SetTextI18n")
     override fun subscribeUi() {
@@ -42,11 +45,19 @@ class LoginFragment : BaseFragment() {
         }
 
         registerBT.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_registrationFragment, null, AnimationUtils.leftNavAnim)
+            findNavController().navigate(
+                R.id.action_loginFragment_to_registrationFragment,
+                null,
+                AnimationUtils.leftNavAnim
+            )
         }
 
         forgotPasswordButton.setOnClickListener {
-            findNavController().navigate(R.id.action_loginFragment_to_resetPasswordFragment2, null, AnimationUtils.rightNavAnim)
+            findNavController().navigate(
+                R.id.action_loginFragment_to_resetPasswordFragment2,
+                null,
+                AnimationUtils.rightNavAnim
+            )
         }
     }
 
@@ -54,6 +65,18 @@ class LoginFragment : BaseFragment() {
         super.onResume()
 
         checkNotificationAndCallPermission()
+
+        val sharedPrefs = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+        val myArgument = sharedPrefs.getString("myArgument", null)
+
+        if (myArgument == null) {
+            // Jeśli wartość argumentu jest null, wykonaj normalne logowanie
+            currentUser = FirebaseAuth.getInstance().currentUser
+            if (currentUser != null) {
+                // Użytkownik jest już zalogowany, przekieruj go do odpowiedniego ekranu
+                findNavController().navigate(R.id.action_loginFragment_to_messageFragment)
+            }
+        }
     }
 
     private fun checkNotificationAndCallPermission() {
@@ -102,7 +125,14 @@ class LoginFragment : BaseFragment() {
             return false
         }
 
-        mainViewModel.loginUser(email, password, findNavController())
+        mainViewModel.loginUser(email, password) { user ->
+            currentUser = user
+
+            val sharedPrefs = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            sharedPrefs.edit().putString("myArgument", null).apply()
+
+            findNavController().navigate(R.id.action_loginFragment_to_messageFragment)
+        }
 
         return true
     }

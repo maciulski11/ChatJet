@@ -1,5 +1,6 @@
 package com.example.chatjet.ui.screen
 
+import android.content.Context
 import androidx.fragment.app.activityViewModels
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
@@ -22,11 +23,28 @@ class ProfileFragment : BaseFragment(), OnBackPressedListener {
     override fun subscribeUi() {
 
         friendsList.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_friendsFragment, null , AnimationUtils.topNavAnim)
+            findNavController().navigate(
+                R.id.action_profileFragment_to_friendsFragment,
+                null,
+                AnimationUtils.topNavAnim
+            )
         }
 
         editProfileButton.setOnClickListener {
-            findNavController().navigate(R.id.action_profileFragment_to_profileEditFragment, null, AnimationUtils.rightNavAnim)
+            findNavController().navigate(
+                R.id.action_profileFragment_to_profileEditFragment,
+                null,
+                AnimationUtils.rightNavAnim
+            )
+        }
+
+        logoutButton.setOnClickListener {
+
+            val sharedPrefs = requireContext().getSharedPreferences("MyPrefs", Context.MODE_PRIVATE)
+            sharedPrefs.edit().putString("myArgument", "xx").apply()
+
+            findNavController().navigate(R.id.action_profileFragment_to_loginFragment)
+            activity?.finish()
         }
 
         fetchProfileData()
