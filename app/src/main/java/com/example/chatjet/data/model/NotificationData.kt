@@ -2,5 +2,6 @@ package com.example.chatjet.data.model
 
 data class NotificationData(
         var title:String,
-        var message:String
+        var message:String,
+        var userUid: String
         )

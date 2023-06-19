@@ -114,7 +114,7 @@ class MessageAdapter(
 
                 if (f?.photo?.isEmpty() == true || f?.photo == "") {
 
-                    Glide.with(view)
+                    Glide.with(view.context)
                         .load(R.drawable.ic_baseline_account_circle_240)
                         .override(220, 220)
                         .circleCrop()
@@ -122,7 +122,7 @@ class MessageAdapter(
 
                 } else {
 
-                    Glide.with(view)
+                    Glide.with(view.context)
                         .load(f?.photo)
                         .override(220, 220)
                         .circleCrop()

@@ -15,6 +15,7 @@ import androidx.annotation.RequiresApi
 import androidx.core.app.NotificationCompat
 import com.example.chatjet.R
 import com.example.chatjet.ui.activity.MainActivity
+import com.example.chatjet.ui.screen.ChatFragment
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import kotlin.random.Random
@@ -52,8 +53,12 @@ class FirebaseServices : FirebaseMessagingService() {
             createNotificationChannel(notificationManager)
         }
 
+        val uid = remoteMessage.data["userUid"] // Pobierz UID użytkownika z danych powiadomienia
+
         val intent = Intent(this, MainActivity::class.java).apply {
             addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+             putExtra("userUid", uid)
+            Log.d("REPO NOTIFICATION", "uid usera wich sent message: $uid")
         }
 
         val message = remoteMessage.data["message"]

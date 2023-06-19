@@ -93,14 +93,14 @@ class ChatFragment : BaseFragment() {
             } else {
 
                 sendMessage(FirebaseRepository().currentUserUid, userUid, message)
-                Log.d("REPOUSER", "$userUid, $message")
+                Log.d("REPOUSER", "$userUid, $message, ${FirebaseRepository().currentUserUid}")
                 writeMessage.setText("")
 
                 FirebaseRepository().getCurrentUserName { userName ->
 
                     FirebaseRepository().fetchTokenUser(userUid) { token ->
 
-                        sendNotification(token ?: "", userName, message)
+                        sendNotification(token ?: "", userName, message, FirebaseRepository().currentUserUid)
                     }
                 }
             }
@@ -193,12 +193,12 @@ class ChatFragment : BaseFragment() {
         return dateFormat.format(date)
     }
 
-    private fun sendNotification(token: String, userName: String, messageContent: String) {
+    private fun sendNotification(token: String, userName: String, messageContent: String, userUid: String) {
 
         CoroutineScope(Dispatchers.IO).launch {
 
             val not = PushNotification(
-                NotificationData(userName, messageContent),
+                NotificationData(userName, messageContent, userUid),
                 token
             )
 
