@@ -9,7 +9,7 @@ import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
-import com.example.chatjet.RetrofitInstance
+import com.example.chatjet.services.network.RetrofitInstance
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.data.model.*
 import com.example.chatjet.services.repository.FirebaseRepository

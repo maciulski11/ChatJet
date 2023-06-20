@@ -1,4 +1,4 @@
-package com.example.chatjet.services.interfaces
+package com.example.chatjet.services.`interface`
 
 import com.example.chatjet.data.model.PushNotification
 import com.example.chatjet.services.constants.Constants.Companion.CONTENT_TYPE
