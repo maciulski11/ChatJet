@@ -2,7 +2,6 @@ package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
 import android.util.Log
-import com.example.chatjet.data.model.*
 import com.example.chatjet.models.data.Friend
 import com.example.chatjet.models.data.Chat
 import com.example.chatjet.models.data.InvitationReceived
