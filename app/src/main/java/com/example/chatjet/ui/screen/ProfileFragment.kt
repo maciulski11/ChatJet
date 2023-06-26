@@ -9,7 +9,7 @@ import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.ui.activity.OnBackPressedListener
-import com.example.chatjet.view_model.MainViewModel
+import com.example.chatjet.models.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_profile.*
 import kotlinx.android.synthetic.main.fragment_profile.editProfileButton
 import kotlinx.android.synthetic.main.fragment_profile.statusColor

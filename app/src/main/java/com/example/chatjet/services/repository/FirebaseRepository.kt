@@ -1,10 +1,12 @@
 package com.example.chatjet.services.repository
 
 import android.annotation.SuppressLint
-import android.icu.text.SimpleDateFormat
 import android.util.Log
 import com.example.chatjet.data.model.*
-import com.example.chatjet.ui.adapter.ChatAdapter
+import com.example.chatjet.models.data.Friend
+import com.example.chatjet.models.data.Chat
+import com.example.chatjet.models.data.InvitationReceived
+import com.example.chatjet.models.data.User
 import com.google.firebase.Timestamp
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.FirebaseUser

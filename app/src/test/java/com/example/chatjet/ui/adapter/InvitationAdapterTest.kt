@@ -8,8 +8,8 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import android.widget.ImageView
 import android.widget.TextView
-import com.example.chatjet.data.model.InvitationReceived
-import com.example.chatjet.data.model.User
+import com.example.chatjet.models.data.InvitationReceived
+import com.example.chatjet.models.data.User
 import com.example.chatjet.services.repository.FirebaseRepository
 import org.junit.Assert.assertEquals
 import org.junit.Before

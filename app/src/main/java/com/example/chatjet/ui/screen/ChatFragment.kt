@@ -11,12 +11,12 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
 import com.example.chatjet.services.network.RetrofitInstance
 import com.example.chatjet.base.BaseFragment
-import com.example.chatjet.data.model.*
+import com.example.chatjet.models.data.*
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.ui.adapter.ChatAdapter
-import com.example.chatjet.view_model.ChatViewModel
-import com.example.chatjet.view_model.MainViewModel
+import com.example.chatjet.models.view_model.ChatViewModel
+import com.example.chatjet.models.view_model.MainViewModel
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.firestore.*
 import kotlinx.android.synthetic.main.fragment_chat.*

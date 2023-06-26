@@ -1,6 +1,6 @@
 package com.example.chatjet.services.`interface`
 
-import com.example.chatjet.data.model.PushNotification
+import com.example.chatjet.models.data.PushNotification
 import com.example.chatjet.services.constants.Constants.Companion.CONTENT_TYPE
 import com.example.chatjet.services.constants.Constants.Companion.SERVER_KEY
 import okhttp3.ResponseBody

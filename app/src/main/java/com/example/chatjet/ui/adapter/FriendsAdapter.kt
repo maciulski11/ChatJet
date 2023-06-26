@@ -11,7 +11,7 @@ import android.widget.TextView
 import androidx.navigation.findNavController
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
-import com.example.chatjet.data.model.Friend
+import com.example.chatjet.models.data.Friend
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AnimationUtils
 

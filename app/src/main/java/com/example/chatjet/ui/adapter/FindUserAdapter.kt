@@ -8,7 +8,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
-import com.example.chatjet.data.model.User
+import com.example.chatjet.models.data.User
 import kotlinx.android.synthetic.main.item_find_user.view.*
 
 class FindUserAdapter(

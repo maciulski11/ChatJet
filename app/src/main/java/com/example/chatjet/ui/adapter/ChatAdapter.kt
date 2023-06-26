@@ -7,7 +7,7 @@ import android.widget.ImageView
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
-import com.example.chatjet.data.model.Chat
+import com.example.chatjet.models.data.Chat
 import com.google.firebase.auth.FirebaseAuth
 
 class ChatAdapter(var chatList: ArrayList<Chat>) :

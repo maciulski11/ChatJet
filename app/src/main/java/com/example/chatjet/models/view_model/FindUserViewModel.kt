@@ -1,8 +1,8 @@
-package com.example.chatjet.view_model
+package com.example.chatjet.models.view_model
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.chatjet.data.model.User
+import com.example.chatjet.models.data.User
 import com.example.chatjet.services.repository.FirebaseRepository
 
 class FindUserViewModel: ViewModel() {

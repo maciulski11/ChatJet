@@ -1,4 +1,4 @@
-package com.example.chatjet.data.model
+package com.example.chatjet.models.data
 
 import java.util.*
 

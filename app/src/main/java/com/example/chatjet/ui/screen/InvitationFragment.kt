@@ -11,11 +11,11 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
-import com.example.chatjet.data.model.InvitationReceived
+import com.example.chatjet.models.data.InvitationReceived
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.ui.adapter.InvitationAdapter
-import com.example.chatjet.view_model.InvitationViewModel
-import com.example.chatjet.view_model.MainViewModel
+import com.example.chatjet.models.view_model.InvitationViewModel
+import com.example.chatjet.models.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
 import kotlinx.android.synthetic.main.fragment_invitation.*
 import kotlinx.android.synthetic.main.item_ivitation.*

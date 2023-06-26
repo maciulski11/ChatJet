@@ -6,7 +6,7 @@ import android.view.ViewGroup
 import android.widget.ImageButton
 import androidx.recyclerview.widget.RecyclerView
 import com.example.chatjet.R
-import com.example.chatjet.data.model.InvitationReceived
+import com.example.chatjet.models.data.InvitationReceived
 
 class InvitationAdapter(
     var invitationsList: ArrayList<InvitationReceived>,

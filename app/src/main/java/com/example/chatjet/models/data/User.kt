@@ -1,6 +1,7 @@
-package com.example.chatjet.data.model
+package com.example.chatjet.models.data
 
 import android.os.Parcelable
+import com.example.chatjet.models.data.Friend
 import kotlinx.android.parcel.Parcelize
 import kotlinx.android.parcel.RawValue
 

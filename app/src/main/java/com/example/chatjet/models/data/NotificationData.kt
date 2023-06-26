@@ -1,4 +1,4 @@
-package com.example.chatjet.data.model
+package com.example.chatjet.models.data
 
 data class NotificationData(
         var title:String,

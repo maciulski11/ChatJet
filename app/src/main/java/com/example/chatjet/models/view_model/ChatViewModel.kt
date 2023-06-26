@@ -1,8 +1,8 @@
-package com.example.chatjet.view_model
+package com.example.chatjet.models.view_model
 
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import com.example.chatjet.data.model.Chat
+import com.example.chatjet.models.data.Chat
 import com.example.chatjet.services.repository.FirebaseRepository
 
 class ChatViewModel: ViewModel() {

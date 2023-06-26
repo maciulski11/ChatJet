@@ -13,12 +13,12 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.bumptech.glide.Glide
 import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
-import com.example.chatjet.data.model.User
+import com.example.chatjet.models.data.User
 import com.example.chatjet.services.utils.ToastUtils
 import com.example.chatjet.ui.activity.OnBackPressedListener
 import com.example.chatjet.ui.adapter.FindUserAdapter
-import com.example.chatjet.view_model.FindUserViewModel
-import com.example.chatjet.view_model.MainViewModel
+import com.example.chatjet.models.view_model.FindUserViewModel
+import com.example.chatjet.models.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_find_user.*
 import java.util.*
 import kotlin.collections.ArrayList

@@ -18,7 +18,7 @@ import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.AlertDialogUtils
 import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.services.utils.ToastUtils
-import com.example.chatjet.view_model.MainViewModel
+import com.example.chatjet.models.view_model.MainViewModel
 import kotlinx.android.synthetic.main.custom_dialog.*
 import kotlinx.android.synthetic.main.fragment_profile_edit.*
 import kotlinx.android.synthetic.main.fragment_profile_edit.statusColor

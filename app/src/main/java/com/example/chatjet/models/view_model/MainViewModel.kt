@@ -1,12 +1,12 @@
-package com.example.chatjet.view_model
+package com.example.chatjet.models.view_model
 
 import android.widget.Toast
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.navigation.NavController
 import com.example.chatjet.R
-import com.example.chatjet.data.model.Friend
-import com.example.chatjet.data.model.User
+import com.example.chatjet.models.data.Friend
+import com.example.chatjet.models.data.User
 import com.example.chatjet.services.repository.FirebaseRepository
 import com.example.chatjet.services.utils.ToastUtils
 import com.google.firebase.auth.FirebaseUser

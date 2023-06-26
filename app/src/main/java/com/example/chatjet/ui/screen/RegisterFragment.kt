@@ -8,7 +8,7 @@ import com.example.chatjet.R
 import com.example.chatjet.base.BaseFragment
 import com.example.chatjet.services.utils.AnimationUtils
 import com.example.chatjet.services.utils.ToastUtils
-import com.example.chatjet.view_model.MainViewModel
+import com.example.chatjet.models.view_model.MainViewModel
 import kotlinx.android.synthetic.main.fragment_register.*
 import kotlinx.android.synthetic.main.fragment_register.fullNameET
 import kotlinx.android.synthetic.main.fragment_register.phoneNumberET
