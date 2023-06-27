@@ -47,7 +47,7 @@ class MessageFragment : BaseFragment(), OnBackPressedListener {
                 findNavController().navigate(R.id.action_messageFragment_to_profileEditFragment)
             }
 
-            mainViewModel.users.observe(this) {
+            mainViewModel.users.observe(viewLifecycleOwner) {
 
                 messageList.clear()
 

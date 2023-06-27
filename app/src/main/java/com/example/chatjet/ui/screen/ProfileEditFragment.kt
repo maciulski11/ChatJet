@@ -49,7 +49,7 @@ class ProfileEditFragment : BaseFragment() {
                 ) { mainViewModel.firstLogin() }
             }
 
-            mainViewModel.users.observe(this) {
+            mainViewModel.users.observe(viewLifecycleOwner) {
 
                 phoneNumberET?.hint = user?.number.toString()
                 locationET?.hint = user?.location

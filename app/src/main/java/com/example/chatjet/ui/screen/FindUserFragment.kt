@@ -153,7 +153,6 @@ class FindUserFragment : BaseFragment(), OnBackPressedListener {
     }
 
     override fun unsubscribeUi() {
-        // Unsubscribes from observing the invitations list LiveData in the ViewModel
-        viewModel.usersList.removeObservers(viewLifecycleOwner)
+
     }
 }

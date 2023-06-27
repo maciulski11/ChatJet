@@ -130,7 +130,6 @@ class InvitationFragment : BaseFragment() {
     }
 
     override fun unsubscribeUi() {
-        // Unsubscribes from observing the invitations list LiveData in the ViewModel
-        viewModel.invitationsList.removeObservers(viewLifecycleOwner)
+
     }
 }

@@ -40,7 +40,7 @@ class FriendsFragment : BaseFragment() {
         FirebaseRepository().fetchFriends(FirebaseRepository().currentUserUid) { user ->
             mainViewModel.user = user
 
-            mainViewModel.users.observe(this) {
+            mainViewModel.users.observe(viewLifecycleOwner) {
 
                 friendsList.clear()
 

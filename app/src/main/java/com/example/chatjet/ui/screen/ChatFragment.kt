@@ -23,7 +23,6 @@ import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -204,15 +203,12 @@ class ChatFragment : BaseFragment() {
                 val response = RetrofitInstance.api.postNotification(not)
 
                 if (response.isSuccessful) {
-                    Log.d("TAG", "Response: $response")
-                    Log.d("REPO_NOTIFICATION", "fun sendNotification")
+                    Log.d("REPO_NOTIFICATION", "Response: $response")
                 } else {
-                    Log.e("TAG", response.errorBody()!!.string())
-                    Log.d("REPO_NOTIFICATION", "fun sendNotification error")
+                    Log.e("REPO_NOTIFICATION", response.errorBody()!!.string())
                 }
             } catch (e: Exception) {
-                Log.e("TAG", e.toString())
-                Log.d("REPO_NOTIFICATION", "fun sendNotification exception")
+                Log.e("REPO_NOTIFICATION", e.toString())
             }
         }
     }
