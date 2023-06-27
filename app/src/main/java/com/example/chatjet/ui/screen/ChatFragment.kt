@@ -23,6 +23,7 @@ import kotlinx.android.synthetic.main.fragment_chat.*
 import kotlinx.coroutines.CoroutineScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
 import java.util.*
 import kotlin.collections.ArrayList
 
@@ -100,7 +101,12 @@ class ChatFragment : BaseFragment() {
 
                     FirebaseRepository().fetchTokenUser(userUid) { token ->
 
-                        sendNotification(token ?: "", userName, message, FirebaseRepository().currentUserUid)
+                        sendNotification(
+                            token ?: "",
+                            userName,
+                            message,
+                            FirebaseRepository().currentUserUid
+                        )
                     }
                 }
             }
@@ -121,7 +127,8 @@ class ChatFragment : BaseFragment() {
         // Implemented object listener which is listening change in Firebase
         db.collection(FirebaseRepository.CHAT).document(senderId)
             .collection(receiverId)
-            .orderBy("sentAt", Query.Direction.DESCENDING)
+            // Sorts messages from oldest to newest and new messages will be on bottom
+            .orderBy("sentAt", Query.Direction.ASCENDING)
 //            .limit(20)
             .addSnapshotListener { snapshot, error ->
                 if (error != null) {
@@ -142,21 +149,13 @@ class ChatFragment : BaseFragment() {
                         }
                     }
 
-                        // Sort the chatList by timestamp in descending order
-                        chatList.sortByDescending { it.sentAt }
-
-                        // If database has more than 1 message
-                        if (chatList.size > 1) {
-                            // Reverse the chatList to display the latest messages at the bottom
-                            chatList = chatList.reversed() as ArrayList<Chat>
-                        }
-
                     // Group the chatList by date
                     val groupedChatList =
                         chatList.groupBy { it.sentAt?.let { it1 -> getDateString(it1) } }
 
                     // Create a new list to display chat groups
                     val chatGroupList = mutableListOf<ChatGroup>()
+
 
                     // Iterate through the groupedChatList and create ChatGroup objects
                     for ((date, chats) in groupedChatList) {
@@ -168,19 +167,13 @@ class ChatFragment : BaseFragment() {
                         return@addSnapshotListener
                     }
 
-                    //TODO: rozwiazac problem z wczytywaniem wiadomosci na gorze i pozniej na dole
-                    // Reverse the order of chatGroupList with a delay
-                    chatRecyclerView.postDelayed({
-
-                        chatRecyclerView.post {
-                            adapter = ChatAdapter(chatList)
-                            chatRecyclerView.adapter = adapter
-                            Log.d("REPOADAPTER", "$adapter")
-                            chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
-                        }
-
-                    }, 250)
-
+                    chatRecyclerView?.post {
+                        adapter = ChatAdapter(chatList)
+                        chatRecyclerView.adapter = adapter
+                        Log.d("REPOADAPTER", "$adapter")
+                        chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
+                    }
+                    
                 } else {
                     // List is empty, load empty layout
                     chatList.clear()
@@ -193,7 +186,12 @@ class ChatFragment : BaseFragment() {
         return dateFormat.format(date)
     }
 
-    private fun sendNotification(token: String, userName: String, messageContent: String, userUid: String) {
+    private fun sendNotification(
+        token: String,
+        userName: String,
+        messageContent: String,
+        userUid: String
+    ) {
 
         CoroutineScope(Dispatchers.IO).launch {
 
