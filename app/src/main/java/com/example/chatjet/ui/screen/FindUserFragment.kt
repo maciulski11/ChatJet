@@ -54,7 +54,7 @@ class FindUserFragment : BaseFragment(), OnBackPressedListener {
 
         recyclerViewSearch.adapter = adapter
 
-        viewModel.usersList.observe(this) {
+        viewModel.usersList.observe(viewLifecycleOwner) {
             adapter.usersList = it
             adapter.notifyDataSetChanged()
 

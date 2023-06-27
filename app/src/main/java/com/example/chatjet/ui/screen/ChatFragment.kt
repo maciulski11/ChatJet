@@ -173,7 +173,7 @@ class ChatFragment : BaseFragment() {
                         Log.d("REPOADAPTER", "$adapter")
                         chatRecyclerView.scrollToPosition(adapter.itemCount - 1)
                     }
-                    
+
                 } else {
                     // List is empty, load empty layout
                     chatList.clear()

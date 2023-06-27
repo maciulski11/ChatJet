@@ -20,8 +20,6 @@ import kotlinx.android.synthetic.main.fragment_find_user.*
 import kotlinx.android.synthetic.main.fragment_invitation.*
 import kotlinx.android.synthetic.main.item_ivitation.*
 
-//TODO: sprawdzicz czemu powiadomienie znika tylko po wejsciu w messageFragment
-
 class InvitationFragment : BaseFragment() {
     override val layout: Int = R.layout.fragment_invitation
 
@@ -57,17 +55,21 @@ class InvitationFragment : BaseFragment() {
 
         recyclerViewInvitations.adapter = adapter
 
-        viewModel.invitationsList.observe(this) {
+        viewModel.invitationsList.observe(viewLifecycleOwner) {
+
             adapter.invitationsList = it
             adapter.notifyDataSetChanged()
 
-            if (adapter.invitationsList.isEmpty()) {
-                recyclerViewInvitations.visibility = View.GONE
-                emptyTextView.visibility = View.VISIBLE
-            } else {
-                recyclerViewInvitations.visibility = View.VISIBLE
-                emptyTextView.visibility = View.GONE
-            }
+            recyclerViewInvitations.postDelayed({
+
+                if (adapter.invitationsList.isEmpty()) {
+                    recyclerViewInvitations.visibility = View.GONE
+                    emptyTextView.visibility = View.VISIBLE
+                } else {
+                    recyclerViewInvitations.visibility = View.VISIBLE
+                    emptyTextView.visibility = View.GONE
+                }
+            }, 200)
         }
 
         viewModel.fetchAndUpdateInvitationsList()
@@ -104,15 +106,15 @@ class InvitationFragment : BaseFragment() {
 
     private fun acceptInvitation(friendUid: String) {
 
-            viewModel.acceptInvitation(friendUid)
-            viewModel.notAcceptInvitation(friendUid)
+        viewModel.acceptInvitation(friendUid)
+        viewModel.notAcceptInvitation(friendUid)
 
-            ToastUtils.showToast(
-                "Invitation accepted!",
-                R.drawable.ic_baseline_check_circle_outline_24,
-                R.color.green,
-                Toast.LENGTH_SHORT
-            )
+        ToastUtils.showToast(
+            "Invitation accepted!",
+            R.drawable.ic_baseline_check_circle_outline_24,
+            R.color.green,
+            Toast.LENGTH_SHORT
+        )
     }
 
     private fun notAcceptInvitation(friendUid: String) {

@@ -11,7 +11,7 @@ class InvitationViewModel : ViewModel() {
 
     var invitationsList = MutableLiveData<ArrayList<InvitationReceived>>()
 
-    private fun fetchInvitations() {
+     private fun fetchInvitations() {
         repository.fetchInvitationsList {
             invitationsList.postValue(it)
         }
