@@ -158,7 +158,7 @@ class MessageAdapter(
 
                     onDeleteChat(message.uid.toString())
                 }
-                .setNegativeButton("Anuluj") { dialog, which ->
+                .setNegativeButton("Cancel") { dialog, which ->
 
                 }
                 .create()

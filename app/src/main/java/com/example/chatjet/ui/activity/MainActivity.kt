@@ -36,7 +36,7 @@ class MainActivity : AppCompatActivity() {
     }
 
     private fun bottomNavView() {
-        val navController = findNavController(R.id.fragment)
+        val navController = findNavController(R.id.fragmentContainer)
         val bottomNavigationView = findViewById<BottomNavigationView>(R.id.bottomNavigation)
 
         bottomNavigationView.selectedItemId = R.id.messageFragment
@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onCreateOptionsMenu(menu: Menu?): Boolean {
         // Get the NavController
-        val navController = findNavController(R.id.fragment)
+        val navController = findNavController(R.id.fragmentContainer)
 
         // Inflate the menu for the invitation fragment if it is the current destination
         if (navController.currentDestination?.id in listOf(
@@ -136,7 +136,7 @@ class MainActivity : AppCompatActivity() {
 
     @Deprecated("Deprecated in Java")
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        val navController = findNavController(R.id.fragment)
+        val navController = findNavController(R.id.fragmentContainer)
 
         // Handle the click event for the invitation menu item
         when (item.itemId) {
