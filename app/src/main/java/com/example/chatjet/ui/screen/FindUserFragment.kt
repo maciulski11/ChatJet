@@ -77,7 +77,6 @@ class FindUserFragment : BaseFragment(), OnBackPressedListener {
         }
 
         viewModel.fetchUsersList()
-
     }
 
     private fun fetchUser(userUid: String, itemView: View) {
