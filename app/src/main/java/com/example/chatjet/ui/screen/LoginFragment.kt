@@ -135,6 +135,6 @@ class LoginFragment : BaseFragment() {
     }
 
     override fun unsubscribeUi() {
-        
+
     }
 }
