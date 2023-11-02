@@ -36,8 +36,6 @@ class ChatFragment : BaseFragment() {
 
     // Added object which registration listener in Firebase
     private var chatListenerRegistration: ListenerRegistration? = null
-
-    private val viewModel: ChatViewModel by viewModels()
     private val mainViewModel: MainViewModel by activityViewModels()
     private val layoutManager = LinearLayoutManager(context, LinearLayoutManager.VERTICAL, false)
 

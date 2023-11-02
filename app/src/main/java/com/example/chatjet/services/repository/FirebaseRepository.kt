@@ -41,14 +41,14 @@ class FirebaseRepository {
         email: String,
         fullName: String,
         number: Int,
-        password: String,
-    ) {
+        password: String
+    ) { 
         fbAuth.createUserWithEmailAndPassword(email, password)
             .addOnSuccessListener { authResults ->
                 if (authResults.user != null) {
                     val user = User(
                         authResults.user!!.email,
-                        authResults.user!!.uid,
+                        authResult.user!!.uid,
                         "",
                         fullName,
                         "",
